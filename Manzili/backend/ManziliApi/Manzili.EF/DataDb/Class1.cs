@@ -1,7 +1,11 @@
-﻿namespace Manzili.Core
+﻿namespace Manzili.EF.DataDb
 {
     public class Class1
     {
 
     }
 }
+
+
+
+
