@@ -1,0 +1,6 @@
+@ManziliApi_HostAddress = http://localhost:5012
+
+GET {{ManziliApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManziliApi", "ManziliApi\ManziliApi.csproj", "{E3E23DD8-1F80-45C4-B0DD-C995B8CDE9F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Manzili.Core", "Manzili.Core\Manzili.Core.csproj", "{07D1179C-44CB-4CD5-952F-FD6920340A0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Manzili.EF", "Manzili.EF\Manzili.EF.csproj", "{DFAA73B8-8E8E-47E0-87B9-84C394AC3A92}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3E23DD8-1F80-45C4-B0DD-C995B8CDE9F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3E23DD8-1F80-45C4-B0DD-C995B8CDE9F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3E23DD8-1F80-45C4-B0DD-C995B8CDE9F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3E23DD8-1F80-45C4-B0DD-C995B8CDE9F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07D1179C-44CB-4CD5-952F-FD6920340A0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07D1179C-44CB-4CD5-952F-FD6920340A0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07D1179C-44CB-4CD5-952F-FD6920340A0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07D1179C-44CB-4CD5-952F-FD6920340A0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFAA73B8-8E8E-47E0-87B9-84C394AC3A92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFAA73B8-8E8E-47E0-87B9-84C394AC3A92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFAA73B8-8E8E-47E0-87B9-84C394AC3A92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFAA73B8-8E8E-47E0-87B9-84C394AC3A92}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {87AEA9FC-E714-446B-9A0E-4CB6C8C7FAE4}
+	EndGlobalSection
+EndGlobal
