@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Manzili.Core.Mapper
 {
-    internal class Class1
+    public static class MapsterConfig
     {
+        public static void RegisterMappings()
+        {
+            UserMappingConfig.Register();
+        }
     }
 }

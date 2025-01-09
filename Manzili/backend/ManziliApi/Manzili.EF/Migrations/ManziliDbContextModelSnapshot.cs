@@ -351,11 +351,6 @@ namespace Manzili.EF.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -410,11 +405,9 @@ namespace Manzili.EF.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Users", (string)null);
 
-                    b.HasDiscriminator().HasValue("User");
-
-                    b.UseTphMappingStrategy();
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -540,7 +533,7 @@ namespace Manzili.EF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Store");
+                    b.ToTable("Store", (string)null);
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Comment", b =>
@@ -548,7 +541,7 @@ namespace Manzili.EF.Migrations
                     b.HasOne("Manzili.Core.Entities.Product", "Product")
                         .WithMany("Comments")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Manzili.Core.Entities.User", "User")
@@ -573,7 +566,7 @@ namespace Manzili.EF.Migrations
                     b.HasOne("Manzili.Core.Entities.User", "User")
                         .WithMany("Favorites")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Store");
@@ -586,7 +579,7 @@ namespace Manzili.EF.Migrations
                     b.HasOne("Manzili.Core.Entities.Product", "Product")
                         .WithMany("Likes")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Manzili.Core.Entities.User", "User")
@@ -626,7 +619,7 @@ namespace Manzili.EF.Migrations
                     b.HasOne("Manzili.Core.Entities.Product", "Product")
                         .WithMany("OrderProducts")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -658,7 +651,7 @@ namespace Manzili.EF.Migrations
                     b.HasOne("Manzili.Core.Entities.Product", "Product")
                         .WithMany("ProductRatings")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Manzili.Core.Entities.User", "User")
@@ -741,6 +734,15 @@ namespace Manzili.EF.Migrations
                     b.HasOne("Manzili.Core.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
+                {
+                    b.HasOne("Manzili.Core.Entities.User", null)
+                        .WithOne()
+                        .HasForeignKey("Manzili.Core.Entities.Store", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

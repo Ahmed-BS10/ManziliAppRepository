@@ -1,6 +1,10 @@
 using Manzili.Core.Entities;
+using Manzili.Core.Helper;
+using Manzili.Core.Mapper;
 using Manzili.Core.Repositories;
+using Manzili.Core.Services;
 using Manzili.EF.RepoistpryImpelemation;
+using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +27,16 @@ builder.Services.AddDbContext<ManziliDbContext>(options =>
 #region  Dependency Injection 
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddTransient( typeof( UserServices));
 #endregion
+
+#region jwtSettings
+var jwtSettings = new JwtSettings();
+builder.Configuration.GetSection("Jwt").Bind(jwtSettings);
+builder.Services.AddSingleton(jwtSettings);
+#endregion
+
+MapsterConfig.RegisterMappings();
 
 
 // Add Identity

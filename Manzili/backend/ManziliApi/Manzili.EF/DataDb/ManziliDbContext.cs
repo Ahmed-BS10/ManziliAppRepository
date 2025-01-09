@@ -15,6 +15,7 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderProduct> OrderProducts { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<User> Users { get; set; }
     public DbSet<Store> Stores { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<SubCategory> SubCategories { get; set; }
@@ -29,15 +30,12 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
         base.OnModelCreating(modelBuilder);
 
 
-
-
-        // Configure User
-        //modelBuilder.Entity<User>()
-        //    .HasMany(u => u.Favorites)
-        //    .WithOne(f => f.User)
-        //    .HasForeignKey(f => f.UserId);
+        modelBuilder.Entity<Store>()
+             .ToTable("Store");
 
         modelBuilder.Entity<User>()
+
+            .ToTable("Users")
             .HasMany(u => u.StoreRatings)
             .WithOne(sr => sr.User)
             .HasForeignKey(sr => sr.UserId);
@@ -55,12 +53,17 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<User>()
             .HasMany(u => u.Likes)
             .WithOne(l => l.User)
-            .HasForeignKey(l => l.UserId);
+            .HasForeignKey(l => l.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<User>()
-            .HasMany(u => u.Comments)
-            .WithOne(c => c.User)
-            .HasForeignKey(c => c.UserId);
+
+
+        // علاقة بين Comment و User
+        modelBuilder.Entity<Comment>()
+            .HasOne(c => c.User)
+            .WithMany(u => u.Comments)
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Configure Favorite
         modelBuilder.Entity<Favorite>()
@@ -69,13 +72,14 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<Favorite>()
              .HasOne(f => f.User)
              .WithMany(u => u.Favorites)
-             .HasForeignKey(f => f.UserId);
+             .HasForeignKey(f => f.UserId)
+             .OnDelete(DeleteBehavior.Restrict);
 
 
-        modelBuilder.Entity<Favorite>()
-            .HasOne(f => f.Store)
-            .WithMany()
-            .HasForeignKey(f => f.StoreId);
+        //modelBuilder.Entity<Favorite>()
+        //    .HasOne(f => f.Store)
+        //    .WithMany()
+        //    .HasForeignKey(f => f.StoreId);
 
         // Configure StoreRating
         modelBuilder.Entity<StoreRating>()
@@ -107,7 +111,9 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<OrderProduct>()
             .HasOne(op => op.Product)
             .WithMany(p => p.OrderProducts)
-            .HasForeignKey(op => op.ProductId);
+            .HasForeignKey(op => op.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
         // Configure Product
         modelBuilder.Entity<Product>()
@@ -126,45 +132,22 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
         modelBuilder.Entity<Product>()
             .HasMany(p => p.ProductRatings)
             .WithOne(pr => pr.Product)
-            .HasForeignKey(pr => pr.ProductId);
+            .HasForeignKey(pr => pr.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
         modelBuilder.Entity<Product>()
             .HasMany(p => p.Likes)
             .WithOne(l => l.Product)
-            .HasForeignKey(l => l.ProductId);
+            .HasForeignKey(l => l.ProductId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<Product>()
-            .HasMany(p => p.Comments)
-            .WithOne(c => c.Product)
-            .HasForeignKey(c => c.ProductId);
-
-        // Configure Store
-        //modelBuilder.Entity<Store>()
-        //    .HasKey(s => s.StoreId);
-
-        // Configure Category
-        modelBuilder.Entity<Category>()
-            .HasKey(c => c.CategoryId);
-
-        modelBuilder.Entity<Category>()
-            .HasMany(c => c.SubCategories)
-            .WithOne(sc => sc.Category)
-            .HasForeignKey(sc => sc.CategoryId);
-
-        // Configure SubCategory
-        modelBuilder.Entity<SubCategory>()
-            .HasKey(sc => sc.SubCategoryId);
-
-        // Configure ProductRating
-        modelBuilder.Entity<ProductRating>()
-            .HasKey(pr => pr.ProductRatingId);
-
-        // Configure Like
-        modelBuilder.Entity<Like>()
-            .HasKey(l => l.LikeId);
-
-        // Configure Comment
         modelBuilder.Entity<Comment>()
-            .HasKey(c => c.CommentId);
+              .HasOne(c => c.Product)
+              .WithMany(p => p.Comments)
+              .HasForeignKey(c => c.ProductId)
+              .OnDelete(DeleteBehavior.NoAction);
+
+
     }
 }
