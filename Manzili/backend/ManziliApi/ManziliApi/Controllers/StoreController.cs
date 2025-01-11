@@ -1,14 +1,10 @@
 ﻿using Manzili.Core.Dto.StoreDtp;
-using Manzili.Core.Dto.UserDto;
-using Manzili.Core.Entities;
 using Manzili.Core.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static Manzili.Core.Routes.Route;
 
 namespace ManziliApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class StoreController : ControllerBase
     {
@@ -16,54 +12,54 @@ namespace ManziliApi.Controllers
 
         public StoreController(StoreServices storeServices)
         {
-            _storeServices= storeServices;
+            _storeServices = storeServices;
         }
 
-
-        [HttpGet(UserRouting.List)]
+        [HttpGet(StoreRouting.List)]
         public async Task<IActionResult> GetList()
         {
-
-            var users = await _storeServices.GetListAsync();
-            return Ok(users);
+            var result = await _storeServices.GetListAsync();
+            return Ok(result);
         }
 
-
-        [HttpGet("jo")]
+        [HttpGet(StoreRouting.GetById)]
         public async Task<IActionResult> Get(int id)
         {
+            var result = await _storeServices.GetByIdAsync(id);
+            if (result == null)
+                return NotFound(OperationResult.Failure("Store not found."));
 
-            var users = await _storeServices.GetByIAsync(id);
-            return Ok(users);
+            return Ok(result);
         }
 
-
-        [HttpPost(UserRouting.Create)]
+        [HttpPost(StoreRouting.Create)]
         public async Task<IActionResult> Create(StoreCreateDto store)
         {
-           
-            var createStore = await _storeServices.AddAsycn(store);
-            return Ok(createStore);
+            var result = await _storeServices.CreateAsync(store);
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
         }
 
-
-        [HttpPut(UserRouting.Edit)]
+        [HttpPut(StoreRouting.Edit)]
         public async Task<IActionResult> Update(StoreUpdateDto store)
         {
+            var result = await _storeServices.UpdateAsync(store);
+            if (!result.IsSuccess)
+                return BadRequest(result);
 
-            var updateStore = await _storeServices.UpdateAsync(store);
-            return Ok(updateStore);
+            return Ok(result);
         }
 
-
-
-        [HttpDelete(UserRouting.Delete)]
+        [HttpDelete(StoreRouting.Delete)]
         public async Task<IActionResult> Delete(int id)
         {
+            var result = await _storeServices.DeleteAsync(id);
+            if (!result.IsSuccess)
+                return NotFound(result);
 
-            var delteUser = await _storeServices.DeleteAsync(id);
-            return Ok(delteUser);
+            return Ok(result);
         }
-
     }
 }
