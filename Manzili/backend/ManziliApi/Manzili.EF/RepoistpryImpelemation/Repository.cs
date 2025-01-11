@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,25 +30,37 @@ namespace Manzili.EF.RepoistpryImpelemation
         #endregion
 
         #region Method
-
-        public async Task<T?> GetByIdAsync(int id)
+        public async Task<T> Find(Expression<Func<T, bool>> predicate, string[] includes = null)
         {
+            IQueryable<T> values = _dbContext.Set<T>();
 
-            return await _dbSet.FindAsync(id);
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    values = values.Include(include);
+                }
+            }
+            return await values.SingleOrDefaultAsync(predicate);
         }
         public async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
 
         }
-        public void Update(T entity)
+        public async Task Update(T entity)
         {
             _dbSet.Update(entity);
+           await _dbContext.SaveChangesAsync();
+
 
         }
-        public void Delete(T entity)
+        public async Task Delete(T entity)
         {
             _dbSet.Remove(entity);
+            await _dbContext.SaveChangesAsync();
+
 
         }
 
@@ -68,15 +81,20 @@ namespace Manzili.EF.RepoistpryImpelemation
         {
             return await _dbContext.SaveChangesAsync() > 0;
         }
-
         public async Task<IEnumerable<T>> GetListNoTrackingAsync()
         {
             var itmes = await _dbContext.Set<T>().AsNoTracking().ToListAsync();
 
             return (itmes != null ? itmes : Enumerable.Empty<T>());
         }
-
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AnyAsync(predicate); // يستخدم AnyAsync للتحقق من وجود سجل
+        }
         #endregion
+
+
+
 
 
     }

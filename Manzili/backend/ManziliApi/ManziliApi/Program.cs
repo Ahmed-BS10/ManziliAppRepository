@@ -27,16 +27,11 @@ builder.Services.AddDbContext<ManziliDbContext>(options =>
 #region  Dependency Injection 
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddTransient( typeof( UserServices));
+builder.Services.AddScoped( typeof(UserServices));
+builder.Services.AddScoped(typeof(StoreServices));
+
 #endregion
 
-#region jwtSettings
-var jwtSettings = new JwtSettings();
-builder.Configuration.GetSection("Jwt").Bind(jwtSettings);
-builder.Services.AddSingleton(jwtSettings);
-#endregion
-
-MapsterConfig.RegisterMappings();
 
 
 // Add Identity
@@ -59,6 +54,16 @@ builder.Services.AddIdentity<User, Role>(option =>
     option.User.RequireUniqueEmail = false;
     // option.User.AllowedUserNameCharacters = ""
 }).AddEntityFrameworkStores<ManziliDbContext>().AddDefaultTokenProviders();
+
+#region jwtSettings
+var jwtSettings = new JwtSettings();
+builder.Configuration.GetSection("Jwt").Bind(jwtSettings);
+builder.Services.AddSingleton(jwtSettings);
+#endregion
+
+MapsterConfig.RegisterMappings();
+
+
 
 
 var app = builder.Build();
