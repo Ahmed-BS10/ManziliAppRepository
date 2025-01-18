@@ -1,5 +1,4 @@
 using Manzili.Core.Entities;
-using Manzili.Core.Helper;
 using Manzili.Core.Mapper;
 using Manzili.Core.Repositories;
 using Manzili.Core.Services;
@@ -29,6 +28,7 @@ builder.Services.AddDbContext<ManziliDbContext>(options =>
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped( typeof(UserServices));
 builder.Services.AddScoped(typeof(StoreServices));
+builder.Services.AddScoped(typeof(AuthenticationServices));
 
 #endregion
 
@@ -78,7 +78,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

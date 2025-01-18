@@ -33,6 +33,17 @@ namespace Manzili.Core.Routes
             public const string Delete = $"{Prefix}Delete{"Id"}";
 
         }
+
+
+        public static class AuthenticationRouting
+        {
+            public const string Prefix = $"{Rule}Authentication/";
+            public const string RegsiterUser = $"{Prefix}RegsiterUser";
+            public const string RegsiterStore = $"{Prefix}RegsiterStore";
+            public const string Login = $"{Prefix}Login";
+            public const string Logout = $"{Prefix}Logout{"Id"}";
+
+        }
         public static class RoleRouting
         {
             public const string Prefix = $"{Rule}Role/";

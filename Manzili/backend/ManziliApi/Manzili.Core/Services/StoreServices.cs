@@ -285,6 +285,9 @@ namespace Manzili.Core.Services
                 BankAccount = store.BankAccount,
                 Image = store.Image
             };
+
+               
+            
         }
 
         public async Task<IEnumerable<StoreGetDto>> GetListAsync()

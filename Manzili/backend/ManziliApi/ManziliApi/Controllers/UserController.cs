@@ -23,10 +23,18 @@ namespace ManziliApi.Controllers
 
         #region Methods
 
+
+        [HttpGet(UserRouting.GetById)]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var user = await _userServices.GetByIdAsync(id);
+            return Ok(user);
+        }
+
         [HttpPost(UserRouting.Create)]
         public async Task<IActionResult> Create(UserCreateDto user)
         {
-            var result = await _userServices.CreateAsync(user, user.Password);
+            var result = await _userServices.CreateAsync(user);
 
             if (result.IsSuccess)
             {

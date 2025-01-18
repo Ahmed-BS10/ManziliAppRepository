@@ -30,8 +30,9 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
         base.OnModelCreating(modelBuilder);
 
 
+        #region Config Relationship
         modelBuilder.Entity<Store>()
-             .ToTable("Store");
+            .ToTable("Store");
 
         modelBuilder.Entity<User>()
 
@@ -148,6 +149,25 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
               .HasForeignKey(c => c.ProductId)
               .OnDelete(DeleteBehavior.NoAction);
 
+        #endregion
+
+        #region Seed Data
+        modelBuilder.Entity<Category>().HasData(
+           new Category { CategoryId = 1, Name = "Electronics" },
+           new Category { CategoryId = 2, Name = "Fashion" },
+           new Category { CategoryId = 3, Name = "Home & Kitchen" }
+       );
+
+        // Seed data for SubCategories
+        modelBuilder.Entity<SubCategory>().HasData(
+            new SubCategory { SubCategoryId = 1, CategoryId = 1, Name = "Mobile Phones" },
+            new SubCategory { SubCategoryId = 2, CategoryId = 1, Name = "Laptops" },
+            new SubCategory { SubCategoryId = 3, CategoryId = 2, Name = "Men's Clothing" },
+            new SubCategory { SubCategoryId = 4, CategoryId = 2, Name = "Women's Clothing" },
+            new SubCategory { SubCategoryId = 5, CategoryId = 3, Name = "Furniture" },
+            new SubCategory { SubCategoryId = 6, CategoryId = 3, Name = "Kitchen Appliances" }
+        );
+        #endregion
 
     }
 }
