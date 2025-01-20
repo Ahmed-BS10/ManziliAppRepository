@@ -7,8 +7,10 @@ class CustomTextButton extends StatelessWidget {
     required this.name,
     required this.fontColor,
     required this.backColor,
+    this.radius = 18,
   });
 
+  final double? radius;
   final VoidCallback? onPressed;
   final String name;
   final Color fontColor;
@@ -27,7 +29,7 @@ class CustomTextButton extends StatelessWidget {
             backgroundColor: backColor,
             foregroundColor: fontColor,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(radius!),
                 side: const BorderSide(
                   // Define the border properties
                   color: Colors.black, // Border color

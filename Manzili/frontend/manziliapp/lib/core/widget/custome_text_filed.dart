@@ -52,17 +52,17 @@ import 'package:flutter/material.dart';
 
 class CustomeTextFiled extends StatelessWidget {
   const CustomeTextFiled(
-      {super.key, this.hintText, this.size = 43, this.line = 1, this.iconData});
+      {super.key, this.hintText, this.line = 1, this.iconData});
 
   final String? hintText;
-  final double? size;
   final int? line;
   final Widget? iconData;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: size,
+      height: 51,
+      width: 298,
       child: TextFormField(
           maxLines: line ?? 1,
           textAlign: TextAlign.right,
@@ -73,10 +73,10 @@ class CustomeTextFiled extends StatelessWidget {
             return null;
           },
           decoration: InputDecoration(
-            suffixIcon: iconData,
+            prefixIcon: iconData,
             hintText: hintText,
             filled: true,
-            fillColor: const Color(0xFFF5FCF9),
+            fillColor: const Color(0xF4F4F4),
             contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16.0 * 1.5, vertical: 16.0),
             border: const OutlineInputBorder(
@@ -84,8 +84,8 @@ class CustomeTextFiled extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(8)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.blue, width: 1.5),
+              borderSide: const BorderSide(
+                  color: Color.fromARGB(255, 2, 12, 20), width: 1.5),
             ),
           )),
     );
