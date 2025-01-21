@@ -15,7 +15,6 @@ class CustomTextButton extends StatelessWidget {
   final String name;
   final Color fontColor;
   final Color backColor;
-  //final IconData? iconData;
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +30,7 @@ class CustomTextButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(radius!),
                 side: const BorderSide(
-                  // Define the border properties
-                  color: Colors.black, // Border color
+                  color: Colors.black,
                   width: 1,
                 ))),
         child: Text(

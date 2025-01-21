@@ -33,14 +33,18 @@ class StartViewBody extends StatelessWidget {
           ),
           SizedBox(height: 20),
           CustomTextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, 'login');
+            },
             name: 'عميل ',
             fontColor: const Color(0xFFFFFFFF),
             backColor: const Color(0xFF8E6CEF),
           ),
           SizedBox(height: 15),
           CustomTextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, 'login');
+            },
             name: 'أسرة منتجة',
             fontColor: const Color(0xFFFFFFFF),
             backColor: const Color(0xFF8E6CEF),

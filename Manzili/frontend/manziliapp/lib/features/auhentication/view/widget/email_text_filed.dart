@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-class CustomeTextFiled extends StatelessWidget {
-  const CustomeTextFiled({super.key, this.hintText, this.iconData});
+class EmailTextFiled extends StatelessWidget {
+  const EmailTextFiled({super.key, this.iconData});
 
-  final String? hintText;
   final Widget? iconData;
 
   @override
@@ -15,13 +14,17 @@ class CustomeTextFiled extends StatelessWidget {
           textAlign: TextAlign.right,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'الحقل فارغ';
+              return 'البريد الإلكتروني مطلوب';
+            }
+
+            if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
+              return 'البريد الإلكتروني غير صالح';
             }
             return null;
           },
           decoration: InputDecoration(
             prefixIcon: iconData,
-            hintText: hintText,
+            hintText: 'أدخل بريدك الإلكتروني',
             filled: true,
             fillColor: const Color(0xF4F4F4),
             contentPadding: const EdgeInsets.symmetric(

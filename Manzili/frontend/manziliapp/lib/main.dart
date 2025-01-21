@@ -12,8 +12,12 @@ class ManziliApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: '/',
+      routes: {
+        '/': (context) => StartView(),
+        'login': (context) => LoginView(),
+      },
       debugShowCheckedModeBanner: false,
-      home: StartView(),
     );
   }
 }

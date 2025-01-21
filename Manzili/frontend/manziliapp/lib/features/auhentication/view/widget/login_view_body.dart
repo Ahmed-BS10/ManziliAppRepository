@@ -1,106 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
-import 'package:manziliapp/core/widget/custom_text_button_icon.dart';
-
 import 'package:manziliapp/core/widget/custome_text_filed.dart';
 import 'package:manziliapp/features/auhentication/view/widget/custom_divider.dart';
+import 'package:manziliapp/features/auhentication/view/widget/custom_password_text.dart';
+import 'package:manziliapp/features/auhentication/view/widget/email_text_filed.dart';
+import 'package:manziliapp/features/auhentication/view/widget/header_image.dart';
+import 'package:manziliapp/features/auhentication/view/widget/register_text.dart';
+import 'package:manziliapp/features/auhentication/view/widget/social_login_buttons.dart';
 
-class LoginViewBody extends StatelessWidget {
+class LoginViewBody extends StatefulWidget {
   const LoginViewBody({super.key});
 
   @override
+  State<LoginViewBody> createState() => _LoginViewBodyState();
+}
+
+class _LoginViewBodyState extends State<LoginViewBody> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Form(
+      key: _formKey,
       child: Column(
         children: [
-          Container(
-            height: 200,
-            width: 383,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('lib/assets/image/loginimg.jpg'),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(8))),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'مرحبا',
-            style: TextStyle(fontSize: 48, fontWeight: FontWeight.w500),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 30),
-          CustomeTextFiled(
-            hintText: 'أيمليك او رقمك',
-          ),
+          const HeaderImage(),
           const SizedBox(height: 15),
-          CustomeTextFiled(
-            hintText: 'كلمة السر',
-            iconData: Icon(Icons.visibility),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 45),
-                child: Text(
-                  'نسيت كلمة السر؟',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-              ),
-            ],
-          ),
+          const WelcomeText(),
           const SizedBox(height: 20),
+          EmailTextFiled(),
+          const SizedBox(height: 10),
+          const PasswordTextField(hintText: 'كلمة السر'),
+          const SizedBox(height: 10),
+          const ForgotPasswordText(),
+          const SizedBox(height: 15),
           CustomTextButton(
-            onPressed: () {},
+            onPressed: () {
+              _validateForm();
+            },
             name: 'تسجيل الدخول',
             radius: 23,
             fontColor: Colors.white,
             backColor: pColor,
           ),
-          const SizedBox(height: 30),
-          CustomDivider(),
-          SizedBox(height: 15),
-          CustomTextButtonIcon(
-            title: 'Continue With Apple',
-            icon: Icon(Icons.apple),
-          ),
-          SizedBox(height: 15),
-          CustomTextButtonIcon(
-            title: 'Continue With Google',
-            icon: Icon(Icons.phone),
-          ),
-          SizedBox(height: 10),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'أنشاء حساب',
-                  style: TextStyle(
-                    color: pColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const Text(
-                  'ليس لديك حساب ؟  ',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const SizedBox(height: 20),
+          const CustomDivider(),
+          const SizedBox(height: 15),
+          const SocialLoginButtons(),
+          const SizedBox(height: 10),
+          const RegisterText(),
         ],
+      ),
+    );
+  }
+
+  void _validateForm() {
+    if (_formKey.currentState!.validate()) {
+      print('Successed');
+    } else {
+      print('Failed');
+    }
+  }
+}
+
+class WelcomeText extends StatelessWidget {
+  const WelcomeText();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text(
+      'مرحبا',
+      style: TextStyle(fontSize: 48, fontWeight: FontWeight.w500),
+      textAlign: TextAlign.center,
+    );
+  }
+}
+
+class ForgotPasswordText extends StatelessWidget {
+  const ForgotPasswordText();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 170),
+      child: InkWell(
+        onTap: () {},
+        child: Text(
+          'نسيت كلمة السر؟',
+          style: TextStyle(fontSize: 14, color: Colors.grey),
+        ),
       ),
     );
   }

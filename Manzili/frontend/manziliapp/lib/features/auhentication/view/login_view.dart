@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/features/auhentication/view/widget/login_view_body.dart';
-import 'package:manziliapp/main.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -10,5 +9,14 @@ class LoginView extends StatelessWidget {
     return Scaffold(
       body: LoginViewBody(),
     );
+  }
+}
+
+class RegisterViewBody extends StatelessWidget {
+  const RegisterViewBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
