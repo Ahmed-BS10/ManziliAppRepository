@@ -11,6 +11,8 @@
         public string ImageUrl { get; set; }
         public double Discount { get; set; }
 
+        public int Quantity { get; set; }
+
         // Navigation properties
         public Category Category { get; set; }
         public Store Store { get; set; }
