@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manziliapp/core/globals/globals.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
 
 class StartViewBody extends StatelessWidget {
@@ -34,6 +35,7 @@ class StartViewBody extends StatelessWidget {
           SizedBox(height: 20),
           CustomTextButton(
             onPressed: () {
+              userType = 'customer';
               Navigator.pushNamed(context, 'login');
             },
             name: 'عميل ',
@@ -43,6 +45,7 @@ class StartViewBody extends StatelessWidget {
           SizedBox(height: 15),
           CustomTextButton(
             onPressed: () {
+              userType = 'producer';
               Navigator.pushNamed(context, 'login');
             },
             name: 'أسرة منتجة',

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 
 class RegisterText extends StatelessWidget {
-  const RegisterText();
+  const RegisterText({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +12,9 @@ class RegisterText extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.pushNamed(context, 'register');
+          },
           child: Text(
             'إنشاء حساب',
             style: TextStyle(
