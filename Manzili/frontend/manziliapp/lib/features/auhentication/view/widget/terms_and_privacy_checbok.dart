@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 
 class TermsAndPrivacyCheckbox extends StatefulWidget {
-  const TermsAndPrivacyCheckbox({super.key});
+  final ValueChanged<bool> onChanged;
+
+  const TermsAndPrivacyCheckbox({super.key, required this.onChanged});
 
   @override
   _TermsAndPrivacyCheckboxState createState() =>
@@ -28,8 +30,9 @@ class _TermsAndPrivacyCheckboxState extends State<TermsAndPrivacyCheckbox> {
               value: _isAgreed,
               onChanged: (value) {
                 setState(() {
-                  _isAgreed = !_isAgreed;
+                  _isAgreed = value!;
                 });
+                widget.onChanged(_isAgreed);
               },
             ),
           ],
