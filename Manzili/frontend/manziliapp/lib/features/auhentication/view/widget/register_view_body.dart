@@ -165,26 +165,20 @@ class BusinessInfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        InkWell(
-          onTap: () {
-            pageController.previousPage(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          },
-          child: IconButton(
-            onPressed: () {
-              pageController.previousPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_rounded,
-              color: pColor,
-            ),
-          ),
-        ),
+        Align(
+            alignment: Alignment.topLeft,
+            child: IconButton(
+              onPressed: () {
+                pageController.previousPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_rounded,
+                color: pColor,
+              ),
+            )),
         SizedBox(height: 10),
         CustomeTextFiled(hintText: 'Business Name'),
         SizedBox(height: 10),
