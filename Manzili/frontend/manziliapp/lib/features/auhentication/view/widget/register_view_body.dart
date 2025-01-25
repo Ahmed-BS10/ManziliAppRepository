@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/globals/globals.dart';
-import 'package:manziliapp/core/widget/custom_text_bottun.dart';
-import 'package:manziliapp/core/widget/custome_text_filed.dart';
-import 'package:manziliapp/features/auhentication/view/widget/custom_indicator.dart';
-import 'package:manziliapp/features/auhentication/view/widget/custom_password_text.dart';
-import 'package:manziliapp/features/auhentication/view/widget/email_text_filed.dart';
-import 'package:manziliapp/features/auhentication/view/widget/terms_and_privacy_checbok.dart';
+import 'package:manziliapp/features/auhentication/view/widget/customer_registration_form.dart';
+import 'package:manziliapp/features/auhentication/view/widget/producer_registration_form.dart';
 
 class RegisterViewBody extends StatefulWidget {
   const RegisterViewBody({super.key});
@@ -40,9 +35,30 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
           children: [
             BuildHeaderText(),
             if (userType == 'customer')
-              BuildCustomerForm()
+              CustomerRegistrationForm(
+                formKey: _formKey,
+                isAgreed: isAgreed,
+                onAgreementChanged: (value) {
+                  setState(() {
+                    isAgreed = value;
+                  });
+                },
+                onFormSubmit: () {
+                  print('Successed');
+                },
+              )
             else
-              BuildProducerForm(),
+              ProducerRegistrationForm(
+                pageController: _pageController,
+                formKey: _formKey,
+                isAgreed: isAgreed,
+                onAgreementChanged: (value) {
+                  setState(() {
+                    isAgreed = value;
+                  });
+                },
+                currentIndex: currentIndex,
+              ),
           ],
         ),
       ),
@@ -61,160 +77,6 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
           color: Colors.black87,
         ),
       ),
-    );
-  }
-
-  Widget BuildCustomerForm() {
-    return Column(
-      children: [
-        PersonalInfoPage(),
-        TermsAndPrivacyCheckbox(
-          onChanged: (value) {
-            setState(() {
-              isAgreed = value;
-            });
-          },
-        ),
-        CustomTextButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate() && isAgreed) {
-              print('Successed');
-            } else {
-              print('Failed');
-            }
-          },
-          name: 'تسجيل الدخول',
-          fontColor: Colors.white,
-          backColor: pColor,
-        ),
-      ],
-    );
-  }
-
-  Widget BuildProducerForm() {
-    return Column(
-      children: [
-        SizedBox(
-          height: 500,
-          child: CustomPageView(pageController: _pageController),
-        ),
-        TermsAndPrivacyCheckbox(
-          onChanged: (value) {
-            setState(() {
-              isAgreed = value;
-            });
-          },
-        ),
-        const SizedBox(height: 10),
-        CustomIndicator(dotIndex: currentIndex),
-        CustomTextButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              if (isAgreed) {
-                _pageController.nextPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                        'يجب الموافقة على الشروط وسياسة الخصوصية للمتابعة'),
-                  ),
-                );
-              }
-            }
-          },
-          name: currentIndex == 1 ? 'التسجيل' : 'التالي',
-          fontColor: Colors.white,
-          backColor: pColor,
-        ),
-      ],
-    );
-  }
-}
-
-class PersonalInfoPage extends StatelessWidget {
-  const PersonalInfoPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: const [
-        SizedBox(height: 30),
-        CustomeTextFiled(hintText: 'اسمك الكامل '),
-        SizedBox(height: 10),
-        EmailTextFiled(),
-        SizedBox(height: 10),
-        CustomeTextFiled(hintText: 'رقمك'),
-        SizedBox(height: 10),
-        PasswordTextField(hintText: 'كلمة السر'),
-        SizedBox(height: 10),
-        PasswordTextField(hintText: 'تاكيد كلمة السر'),
-      ],
-    );
-  }
-}
-
-class BusinessInfoPage extends StatelessWidget {
-  const BusinessInfoPage({super.key, required this.pageController});
-
-  final PageController pageController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Align(
-            alignment: Alignment.topLeft,
-            child: IconButton(
-              onPressed: () {
-                pageController.previousPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-              icon: Icon(
-                Icons.arrow_back_ios_rounded,
-                color: pColor,
-              ),
-            )),
-        SizedBox(height: 10),
-        CustomeTextFiled(hintText: 'Business Name'),
-        SizedBox(height: 10),
-        CustomeTextFiled(hintText: 'Category Of Work'),
-        SizedBox(height: 10),
-        CustomeTextFiled(hintText: 'Business Address'),
-        SizedBox(height: 10),
-        CustomeTextFiled(hintText: 'Short Description About Your Work'),
-        SizedBox(height: 10),
-        CustomeTextFiled(hintText: 'Upload Your Business Image'),
-        SizedBox(height: 10),
-        PasswordTextField(hintText: ' '),
-        SizedBox(height: 10),
-        PasswordTextField(hintText: 'تاكيد كلمة السر'),
-      ],
-    );
-  }
-}
-
-class CustomPageView extends StatelessWidget {
-  final PageController pageController;
-
-  const CustomPageView({
-    Key? key,
-    required this.pageController,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return PageView(
-      controller: pageController,
-      physics: NeverScrollableScrollPhysics(),
-      children: [
-        const PersonalInfoPage(),
-        BusinessInfoPage(pageController: pageController),
-      ],
     );
   }
 }
