@@ -10,7 +10,6 @@
         public int StoreId { get; set; } // FK
         public string ImageUrl { get; set; }
         public double Discount { get; set; }
-
         public int Quantity { get; set; }
 
         // Navigation properties
