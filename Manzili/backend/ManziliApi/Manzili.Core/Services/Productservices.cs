@@ -119,6 +119,56 @@ namespace Manzili.Core.Services
             await _productRepository.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId)
+        {
+            var products = await _productRepository.GetListNoTrackingAsync();
+            var filteredProducts = products.Where(p => p.CategoryId == categoryId).ToList();
+
+            if (filteredProducts == null || !filteredProducts.Any())
+            {
+                throw new KeyNotFoundException($"No products found for Category ID {categoryId}.");
+            }
+
+            return filteredProducts;
+        }
+
+        public async Task<IEnumerable<Product>> GetProductsByStoreAsync(int storeId)
+        {
+            var store = await _storeRepository.Find(s => s.Id == storeId);
+            if (store == null)
+            {
+                throw new KeyNotFoundException($"Store with ID {storeId} not found.");
+            }
+
+            var products = await _productRepository.GetListNoTrackingAsync();
+            var filteredProducts = products.Where(p => p.StoreId == storeId).ToList();
+
+            if (!filteredProducts.Any())
+            {
+                throw new KeyNotFoundException($"No products found for Store ID {storeId}.");
+            }
+
+            return filteredProducts;
+        }
+
+        public async Task<IEnumerable<Product>> SearchProductsAsync(string searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm))
+            {
+                throw new ArgumentException("Search term cannot be null or empty.", nameof(searchTerm));
+            }
+
+            var products = await _productRepository.GetListNoTrackingAsync();
+            var filteredProducts = products.Where(p => p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (!filteredProducts.Any())
+            {
+                throw new KeyNotFoundException($"No products found for the search term: {searchTerm}");
+            }
+
+            return filteredProducts;
+        }
+
         #endregion
     }
 }
