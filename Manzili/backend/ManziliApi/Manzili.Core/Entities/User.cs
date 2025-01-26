@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Reflection.Metadata;
 
 namespace Manzili.Core.Entities
 {
     public class User : IdentityUser<int>
     {
+        public string age { get; set; } 
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string City { get; set; } // New attribute
