@@ -14,8 +14,8 @@ class AuthService {
 
     var response = await apiService.post("api/Auhencation/Login", requestBody);
 
-    if (response != null) {
-      return response;
+    if (response.isSuccess) {
+      return response.message;
     } else {
       return "Failed to login";
     }

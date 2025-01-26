@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:manziliapp/core/helper/OperationResult.dart';
 
 class ApiService {
   final String baseUrl = "http://man.runasp.net";
@@ -26,12 +27,12 @@ class ApiService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return response.body;
+        return OperationResult.success("Operation succeeded: ${response.body}");
       } else {
-        return "message Error: ${response.statusCode}";
+        return OperationResult.failure("Error: ${response.statusCode}");
       }
     } catch (e) {
-      return "Exception: $e";
+      return OperationResult.failure("Exception occurred: $e");
     }
   }
 }
