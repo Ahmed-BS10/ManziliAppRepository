@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:manziliapp/Services/api_service%20.dart';
+import 'package:manziliapp/Services/auth_service.dart';
 import 'package:manziliapp/features/auhentication/view/login_view.dart';
 import 'package:manziliapp/features/auhentication/view/register_view.dart';
 import 'package:manziliapp/features/start/view/start_view.dart';
 
-void main() {
-  runApp(ManziliApp());
+void main() async {
+  AuthService service = AuthService();
+  var result = await service.login('string', '777Aa@');
+
+  print(result);
+
+  // ApiService apiService = ApiService();
+  // var apis = await apiService.get('api/User/List');
+  // print(apis);
+
+  // runApp(ManziliApp());
 }
 
 class ManziliApp extends StatelessWidget {
