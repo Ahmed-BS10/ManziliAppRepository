@@ -3,6 +3,7 @@
     public class Store : User
     {
        // public int StoreId { get; set; } // PK
+       public string Image {  get; set; }
         public string BusinessName { get; set; }
         public string BankAccount { get; set; }
         public string Status { get; set; }

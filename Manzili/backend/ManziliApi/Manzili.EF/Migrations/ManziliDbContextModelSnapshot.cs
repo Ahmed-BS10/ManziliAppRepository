@@ -36,6 +36,23 @@ namespace Manzili.EF.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            Name = "Electronics"
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            Name = "Fashion"
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            Name = "Home & Kitchen"
+                        });
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Comment", b =>
@@ -211,6 +228,9 @@ namespace Manzili.EF.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<int>("StoreId")
                         .HasColumnType("int");
 
@@ -326,6 +346,44 @@ namespace Manzili.EF.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("SubCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            SubCategoryId = 1,
+                            CategoryId = 1,
+                            Name = "Mobile Phones"
+                        },
+                        new
+                        {
+                            SubCategoryId = 2,
+                            CategoryId = 1,
+                            Name = "Laptops"
+                        },
+                        new
+                        {
+                            SubCategoryId = 3,
+                            CategoryId = 2,
+                            Name = "Men's Clothing"
+                        },
+                        new
+                        {
+                            SubCategoryId = 4,
+                            CategoryId = 2,
+                            Name = "Women's Clothing"
+                        },
+                        new
+                        {
+                            SubCategoryId = 5,
+                            CategoryId = 3,
+                            Name = "Furniture"
+                        },
+                        new
+                        {
+                            SubCategoryId = 6,
+                            CategoryId = 3,
+                            Name = "Kitchen Appliances"
+                        });
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.User", b =>
