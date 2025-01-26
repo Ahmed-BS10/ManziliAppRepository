@@ -4,6 +4,7 @@ namespace Manzili.Core.Entities
 {
     public class User : IdentityUser<int>
     {
+        public int age { get; set; } // New attribute
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string City { get; set; } // New attribute
