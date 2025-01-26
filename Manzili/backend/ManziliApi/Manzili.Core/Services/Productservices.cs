@@ -68,6 +68,56 @@ namespace Manzili.Core.Services
             return await _productRepository.GetListNoTrackingAsync();
         }
 
+        public async Task<Product> GetProductByIdAsync(int productId)
+        {
+            var product = await _productRepository.Find(p => p.ProductId == productId);
+            if (product == null)
+            {
+                throw new KeyNotFoundException($"Product with ID {productId} not found.");
+            }
+            return product;
+        }
+
+        public async Task<Product> UpdateProductAsync(Product product)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product), "Product cannot be null.");
+            }
+
+            var existingProduct = await _productRepository.Find(p => p.ProductId == product.ProductId);
+            if (existingProduct == null)
+            {
+                throw new KeyNotFoundException($"Product with ID {product.ProductId} not found.");
+            }
+
+
+            existingProduct.Name = product.Name;
+            existingProduct.Description = product.Description;
+            existingProduct.Price = product.Price;
+            existingProduct.CategoryId = product.CategoryId;
+            existingProduct.StoreId = product.StoreId;
+            existingProduct.ImageUrl = product.ImageUrl;
+            existingProduct.Discount = product.Discount;
+            existingProduct.Quantity = product.Quantity;
+
+            await _productRepository.Update(existingProduct);
+            await _productRepository.SaveChangesAsync();
+
+            return existingProduct;
+        }
+
+        public async Task DeleteProductAsync(int productId)
+        {
+            var product = await _productRepository.Find(p => p.ProductId == productId);
+            if (product == null)
+            {
+                throw new KeyNotFoundException($"Product with ID {productId} not found.");
+            }
+
+            await _productRepository.Delete(product);
+            await _productRepository.SaveChangesAsync();
+        }
 
         #endregion
     }
