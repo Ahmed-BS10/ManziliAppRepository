@@ -6,6 +6,8 @@ using static Manzili.Core.Routes.Route;
 
 namespace ManziliApi.Controllers
 {
+    [Route("api/[controller]")]
+
     [ApiController]
     public class UserController : ControllerBase
     {
