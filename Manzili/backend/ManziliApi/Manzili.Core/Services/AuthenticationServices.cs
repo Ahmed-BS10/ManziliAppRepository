@@ -90,7 +90,7 @@ namespace Manzili.Core.Services
 
 
         }
-        public async Task<string> RegisterUser(UserCreateDto userCreate)
+        public async Task<OperationResult<string>> RegisterAsUser(UserCreateDto userCreate)
         {
 
             User user = new User
@@ -106,15 +106,15 @@ namespace Manzili.Core.Services
 
             var result = await _userServices.CreateAsync(userCreate);
             if (result.IsSuccess)
-                return await GenerateJwtToken(user);
+                return OperationResult<string>.Success(await GenerateJwtToken(user));
 
-            
 
-            return result.Message;
+
+            return OperationResult<string>.Failure(result.Message);
                 
 
         }
-        public async Task<string> RegisterStore(StoreCreateDto storeCreate)
+        public async Task<OperationResult<string>> RegisterAsStore(StoreCreateDto storeCreate)
         {
 
             var user = new Store
@@ -130,23 +130,20 @@ namespace Manzili.Core.Services
 
             var result = await _storeServices.CreateAsync(storeCreate);
             if (result.IsSuccess)
-                return await GenerateJwtToken(user);
+                return OperationResult<string>.Success(await GenerateJwtToken(user));
 
 
-
-            return result.Message;
+            return OperationResult<string>.Failure(result.Message);
 
 
         }
-        public async Task<string> Login(UserLoginDto userLogin)
+        public async Task<OperationResult<string>> Login(UserLoginDto userLogin)
         {
             var user = await _userManager.FindByEmailAsync(userLogin.Email);
             if (user == null || !await _userManager.CheckPasswordAsync(user, userLogin.Password))
-            {
-                 throw new Exception("Invalid email or password.");
-            }
+                return  OperationResult<string>.Failure("Invalid email or password");
 
-            return await GenerateJwtToken(user);
+            return OperationResult<string>.Success(await GenerateJwtToken(user));
 
         }
         #endregion  

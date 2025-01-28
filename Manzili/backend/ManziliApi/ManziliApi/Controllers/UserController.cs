@@ -29,8 +29,11 @@ namespace ManziliApi.Controllers
         [HttpGet(UserRouting.GetById)]
         public async Task<IActionResult> GetById(int id)
         {
-            var user = await _userServices.GetByIdAsync(id);
-            return Ok(user);
+            var result = await _userServices.GetByIdAsync(id);
+            if(result.IsSuccess)
+                return Ok(result);
+
+            return NotFound(result);
         }
 
         [HttpPost(UserRouting.Create)]
@@ -39,18 +42,19 @@ namespace ManziliApi.Controllers
             var result = await _userServices.CreateAsync(user);
 
             if (result.IsSuccess)
-            {
-                return Ok(result); // Success message
-            }
+             return Ok(result); 
 
-            return BadRequest(result); // Error message
+            return BadRequest(result); 
         }
 
         [HttpGet(UserRouting.List)]
         public async Task<IActionResult> GetList()
         {
-            var users = await _userServices.GetListAsync();
-            return Ok(users);
+            var result = await _userServices.GetListAsync();
+            if(result.IsSuccess)
+                return Ok(result);
+
+            return NotFound(result);
         }
 
         [HttpPut(UserRouting.Edit)]
@@ -59,11 +63,10 @@ namespace ManziliApi.Controllers
             var result = await _userServices.UpdateAsync(userDto, id);
 
             if (result.IsSuccess)
-            {
-                return Ok(result); // Success message
-            }
+                return Ok(result); 
+            
 
-            return BadRequest(result); // Error message
+            return BadRequest(result);
         }
 
         [HttpDelete(UserRouting.Delete)]
@@ -72,11 +75,10 @@ namespace ManziliApi.Controllers
             var result = await _userServices.DeleteAsync(id);
 
             if (result.IsSuccess)
-            {
-                return Ok(result); // Success message
-            }
+                return Ok(result); 
+            
 
-            return BadRequest(result); // Error message
+            return BadRequest(result); 
         }
 
         #endregion

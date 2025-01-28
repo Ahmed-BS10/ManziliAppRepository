@@ -1,5 +1,6 @@
 ﻿
 using Manzili.Core.Dto.StoreDtp;
+using Manzili.Core.Dto.UserDto;
 using Manzili.Core.Entities;
 using Manzili.Core.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +14,7 @@ namespace Manzili.Core.Services
         #region Fields
 
         private readonly IRepository<Store> _storeRepository;
-        private readonly UserManager<User> _storeManager;
+        private readonly UserManager<User> _userManager;
 
         #endregion
 
@@ -21,7 +22,7 @@ namespace Manzili.Core.Services
 
         public StoreServices(UserManager<User> storeManager, IRepository<Store> storeRepository)
         {
-            _storeManager = storeManager;
+            _userManager = storeManager;
             _storeRepository = storeRepository;
         }
 
@@ -29,15 +30,17 @@ namespace Manzili.Core.Services
 
         #region Methods
 
-        public async Task<StoreGetDto> GetByIdAsync(int id)
+        public async Task<OperationResult<StoreGetDto>> GetByIdAsync(int id)
         {
             var store = await _storeRepository.Find(x => x.Id == id);
-            if (store == null) return null;
+            if (store == null) return OperationResult<StoreGetDto>.Failure(message: "Store not found");
 
-            return new StoreGetDto
+            return OperationResult<StoreGetDto>.Success(new StoreGetDto
             {
                 PhoneNumber = store.PhoneNumber,
                 UserName = store.UserName,
+                FirstName = store.FirstName,
+                LastName = store.LastName,
                 BusinessName = store.BusinessName,
                 City = store.City,
                 Address = store.Address,
@@ -45,18 +48,26 @@ namespace Manzili.Core.Services
                 Status = store.Status,
                 BankAccount = store.BankAccount,
                 Image = store.Image
-            };
+            });
 
                
             
         }
 
-        public async Task<IEnumerable<StoreGetDto>> GetListAsync()
+        public async Task<OperationResult<IEnumerable<StoreGetDto>>> GetListAsync()
         {
             var stores = await _storeRepository.GetListNoTrackingAsync();
-            return stores.Select(store => new StoreGetDto
+
+            if (!stores.Any())
+            {
+                return OperationResult<IEnumerable<StoreGetDto>>.Failure("No stores found.");
+            }
+
+            var storeDtos = stores.Select(store => new StoreGetDto
             {
                 UserName = store.UserName,
+                FirstName = store.FirstName,
+                LastName = store.LastName,
                 PhoneNumber = store.PhoneNumber,
                 Email = store.Email,
                 City = store.City,
@@ -65,7 +76,9 @@ namespace Manzili.Core.Services
                 BankAccount = store.BankAccount,
                 Image = store.Image,
                 Status = store.Status
-            }).ToList();
+            });
+
+            return OperationResult<IEnumerable<StoreGetDto>>.Success(storeDtos);
         }
 
         public async Task<OperationResult<StoreCreateDto>> CreateAsync(StoreCreateDto storeDto)
@@ -75,10 +88,11 @@ namespace Manzili.Core.Services
             if (await _storeRepository.ExistsAsync(x => x.BusinessName == storeDto.BusinessName))
                 return OperationResult<StoreCreateDto>.Failure("BusinessName already exists");
 
-            if (await _storeManager.FindByEmailAsync(storeDto.Email) != null)
+            if (await _userManager.FindByEmailAsync(storeDto.Email) != null)
                 return OperationResult<StoreCreateDto>.Failure("Email already exists");
 
-            if (await _storeManager.Users.AnyAsync(u => u.PhoneNumber == storeDto.PhoneNumber))
+
+            if (await _userManager.Users.AnyAsync(u => u.PhoneNumber == storeDto.PhoneNumber))
                 return OperationResult<StoreCreateDto>.Failure("PhoneNumber already exists");
 
             var store = new Store
@@ -96,7 +110,7 @@ namespace Manzili.Core.Services
                 PhoneNumber = storeDto.PhoneNumber
             };
 
-            var result = await _storeManager.CreateAsync(store, storeDto.Password);
+            var result = await _userManager.CreateAsync(store, storeDto.Password);
             if (!result.Succeeded)
                 return OperationResult<StoreCreateDto>.Failure(string.Join("; ", result.Errors.Select(e => e.Description)));
 
@@ -105,17 +119,31 @@ namespace Manzili.Core.Services
 
         public async Task<OperationResult<StoreUpdateDto>> UpdateAsync(StoreUpdateDto newStore)
         {
+
+            var olduser = await _userManager.FindByIdAsync(newStore.storeId.ToString());
+            if (olduser.UserName != newStore.UserName)
+            {
+                var users = await _userManager.Users.AsNoTracking().AsQueryable().AnyAsync(x => x.UserName == newStore.UserName);
+
+                if (users)
+                {
+                    return OperationResult<StoreUpdateDto>.Failure("UserName Is Already Used");
+                }
+            }
+
+            
+
             var oldStore = await _storeRepository.Find(x => x.Id == newStore.storeId);
             if (oldStore == null) return OperationResult<StoreUpdateDto>.Failure("Store not found");
 
            
 
             if (oldStore.Email != newStore.Email &&
-                await _storeManager.FindByEmailAsync(newStore.Email) != null)
+                await _userManager.FindByEmailAsync(newStore.Email) != null)
                 return OperationResult<StoreUpdateDto>.Failure("Email already exists");
 
             if (oldStore.PhoneNumber != newStore.PhoneNumber &&
-                await _storeManager.Users.AnyAsync(u => u.PhoneNumber == newStore.PhoneNumber))
+                await _userManager.Users.AnyAsync(u => u.PhoneNumber == newStore.PhoneNumber))
                 return OperationResult<StoreUpdateDto>.Failure("PhoneNumber already exists");
 
             if (oldStore.BusinessName != newStore.BusinessName &&
@@ -132,8 +160,12 @@ namespace Manzili.Core.Services
             oldStore.BusinessName = newStore.BusinessName;
             oldStore.BankAccount = newStore.BankAccount;
 
+
+
+         
+
             await _storeRepository.Update(oldStore);
-            return OperationResult<StoreUpdateDto>.Success(data : newStore);
+            return OperationResult<StoreUpdateDto>.Success(newStore);
         }
 
         public async Task<OperationResult<Store>> DeleteAsync(int id)
@@ -142,7 +174,7 @@ namespace Manzili.Core.Services
             if (store == null) return OperationResult<Store>.Failure("Store not found");
 
             await _storeRepository.Delete(store);
-            return OperationResult<Store>.Success(data : store);
+            return OperationResult<Store>.Success(store);
         }
 
         #endregion

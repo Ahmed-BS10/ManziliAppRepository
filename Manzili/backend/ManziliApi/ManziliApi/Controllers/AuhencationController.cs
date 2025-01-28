@@ -29,11 +29,11 @@ namespace ManziliApi.Controllers
         [HttpPost(AuthenticationRouting.RegsiterUser)]
         public async Task<IActionResult> RegisterUser(UserCreateDto userCreate)
         {
-            var reslut = await _authenticationServices.RegisterUser(userCreate);
-            if (reslut !=  null)
+            var reslut = await _authenticationServices.RegisterAsUser(userCreate);
+            if (reslut.IsSuccess)
                 return Ok(reslut);
 
-            return BadRequest();
+            return BadRequest(reslut);
         }
 
 
@@ -41,10 +41,10 @@ namespace ManziliApi.Controllers
         public async Task<IActionResult> Login(UserLoginDto userLogin)
         {
             var reslut = await _authenticationServices.Login(userLogin);
-            if (reslut !=  null)
+            if (reslut.IsSuccess)
                 return Ok(reslut);
 
-            return BadRequest();
+            return BadRequest(reslut);
         }
 
 
@@ -52,11 +52,11 @@ namespace ManziliApi.Controllers
         [HttpPost(AuthenticationRouting.RegsiterStore)]
         public async Task<IActionResult> RegisterStore(StoreCreateDto storeCreate)
         {
-            var reslut = await _authenticationServices.RegisterStore(storeCreate);
-            if (reslut !=  null)
+            var reslut = await _authenticationServices.RegisterAsStore(storeCreate);
+            if (reslut.IsSuccess)
                 return Ok(reslut);
 
-            return BadRequest();
+            return BadRequest(reslut);
         }
 
     }

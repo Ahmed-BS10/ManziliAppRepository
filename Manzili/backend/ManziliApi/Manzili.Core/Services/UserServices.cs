@@ -4,6 +4,7 @@ using Manzili.Core.Repositories;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static System.Formats.Asn1.AsnWriter;
 
 public class UserServices
 {
@@ -16,20 +17,32 @@ public class UserServices
 
     }
 
-    public async Task<UserGetDto> GetByIdAsync(int id)
+    public async Task<OperationResult<UserGetDto>> GetByIdAsync(int id)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
-        return new UserGetDto { UserName = user.UserName , FirstName = user.FirstName, LastName = user.LastName, Email = user.Email,PhoneNumber = user.PhoneNumber ,City = user.City , Address = user.Address };
+        if (user == null) return OperationResult<UserGetDto>.Failure(message: "User not found");
+
+        return OperationResult<UserGetDto>.Success(new UserGetDto
+        {
+            UserName = user.UserName, 
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
+            City = user.City,
+            Address = user.Address,
+        });
+        
 
     }
-    public async Task<OperationResult> CreateAsync(UserCreateDto userDto)
+    public async Task<OperationResult<UserCreateDto>> CreateAsync(UserCreateDto userDto)
     {
 
         if (await _userManager.FindByEmailAsync(userDto.Email) != null)
-            return OperationResult.Failure("Email already exists");
+            return OperationResult<UserCreateDto>.Failure("Email already exists");
 
         if (await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == userDto.PhoneNumber) != null)
-            return OperationResult.Failure("PhoneNumber already exists");
+            return OperationResult<UserCreateDto>.Failure("PhoneNumber already exists");
 
         //var existenceCheck = await CheckUserExistenceAsync(userDto.Email, userDto.PhoneNumber);
         //if (!existenceCheck.IsSuccess)
@@ -49,25 +62,37 @@ public class UserServices
         var result = await _userManager.CreateAsync(user, userDto.Password);
 
         if (!result.Succeeded)
-            return OperationResult.Failure(string.Join("; ", result.Errors.Select(e => e.Description)));
+            return OperationResult<UserCreateDto>.Failure(string.Join("; ", result.Errors.Select(e => e.Description)));
 
-        return OperationResult.Success("Added Successfully");
+        return OperationResult<UserCreateDto>.Success(userDto);
     }
-    public async Task<IEnumerable<UserGetDto>> GetListAsync()
+    public async Task<OperationResult<IEnumerable<UserGetDto>>> GetListAsync()
     {
         var users = await _userManager.Users.AsNoTracking().ToListAsync();
-        return users.Adapt<IEnumerable<UserGetDto>>();
+        if(users is null)
+             return OperationResult<IEnumerable<UserGetDto>>.Failure(message: "Users not found");
+
+
+        return OperationResult<IEnumerable<UserGetDto>>.Success(
+
+
+            users.Adapt<IEnumerable<UserGetDto>>()
+
+            );
+        
+           
+
     }
-    public async Task<OperationResult> UpdateAsync(UserUpdateDto newUser, int id)
+    public async Task<OperationResult<UserUpdateDto>> UpdateAsync(UserUpdateDto newUser, int id)
     {
         var oldUser = await _userManager.FindByIdAsync(id.ToString());
         if (oldUser == null)
-            return OperationResult.Failure("User Not Found");
+            return OperationResult<UserUpdateDto>.Failure("User Not Found");
 
         if (oldUser.Email != newUser.Email)
         {
             if (await _userManager.FindByEmailAsync(newUser.Email) != null)
-                return OperationResult.Failure("Email already exists");
+                return OperationResult<UserUpdateDto>.Failure("Email already exists");
 
             //var existenceCheck = await CheckEmailExistenceAsync(newUser.Email);
             //if (!existenceCheck.IsSuccess)
@@ -77,7 +102,7 @@ public class UserServices
         if (oldUser.PhoneNumber != newUser.PhoneNumber)
         {
             if (await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == newUser.PhoneNumber) != null)
-                return OperationResult.Failure("PhoneNumber already exists");
+                return OperationResult<UserUpdateDto>.Failure("PhoneNumber already exists");
         }
 
 
@@ -92,18 +117,18 @@ public class UserServices
 
         var resultEdit = await _userManager.UpdateAsync(oldUser);
         if (!resultEdit.Succeeded)
-            return OperationResult.Failure(string.Join("; ", resultEdit.Errors.Select(e => e.Description)));
+            return OperationResult<UserUpdateDto>.Failure(string.Join("; ", resultEdit.Errors.Select(e => e.Description)));
 
-        return OperationResult.Success("Successfully Updated");
+        return OperationResult<UserUpdateDto>.Success(newUser);
     }
-    public async Task<OperationResult> DeleteAsync(int id)
+    public async Task<OperationResult<User>> DeleteAsync(int id)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
         if (user == null)
-            return OperationResult.Failure("User Not Found");
+            return OperationResult<User>.Failure("User Not Found");
 
         await _userManager.DeleteAsync(user);
-        return OperationResult.Success("Successfully Deleted");
+        return OperationResult<User>.Success(user);
     }
 
 

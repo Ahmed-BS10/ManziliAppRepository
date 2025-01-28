@@ -19,47 +19,57 @@ namespace ManziliApi.Controllers
         public async Task<IActionResult> GetList()
         {
             var result = await _storeServices.GetListAsync();
-            return Ok(result);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return NotFound(result);
+
         }
 
         [HttpGet(StoreRouting.GetById)]
         public async Task<IActionResult> Get(int id)
         {
             var result = await _storeServices.GetByIdAsync(id);
-            if (result == null)
-                return NotFound(OperationResult.Failure("Store not found."));
+            if (result.IsSuccess)
+                return Ok(result);
 
-            return Ok(result);
+            return NotFound(result);
+
+
         }
 
         [HttpPost(StoreRouting.Create)]
         public async Task<IActionResult> Create(StoreCreateDto store)
         {
             var result = await _storeServices.CreateAsync(store);
-            if (!result.IsSuccess)
-                return BadRequest(result);
+            if (result.IsSuccess)
+                return Ok(result);
 
-            return Ok(result);
+            return BadRequest(result);
         }
 
         [HttpPut(StoreRouting.Edit)]
         public async Task<IActionResult> Update(StoreUpdateDto store)
         {
             var result = await _storeServices.UpdateAsync(store);
-            if (!result.IsSuccess)
-                return BadRequest(result);
+            if (result.IsSuccess)
+                return Ok(result.Data);
 
-            return Ok(result);
+
+            return BadRequest(result);
+
         }
 
         [HttpDelete(StoreRouting.Delete)]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _storeServices.DeleteAsync(id);
-            if (!result.IsSuccess)
-                return NotFound(result);
+            if (result.IsSuccess)
 
-            return Ok(result);
+                return Ok(result);
+
+            return NotFound(result);
+
         }
     }
 }
