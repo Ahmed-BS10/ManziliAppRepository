@@ -11,11 +11,8 @@ void main() async {
 
   print(result);
 
-  // ApiService apiService = ApiService();
-  // var apis = await apiService.get('api/User/List');
-  // print(apis);
 
-  // runApp(ManziliApp());
+   runApp(ManziliApp());
 }
 
 class ManziliApp extends StatelessWidget {

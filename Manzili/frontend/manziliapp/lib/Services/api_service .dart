@@ -27,9 +27,9 @@ class ApiService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return OperationResult.success("Operation succeeded: ${response.body}");
+        return response.body;
       } else {
-        return OperationResult.failure("Error: ${response.statusCode}");
+        return response.statusCode;
       }
     } catch (e) {
       return OperationResult.failure("Exception occurred: $e");
