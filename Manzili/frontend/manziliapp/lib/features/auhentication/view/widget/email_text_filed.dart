@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class EmailTextFiled extends StatelessWidget {
-  const EmailTextFiled({super.key, this.iconData});
+  const EmailTextFiled({super.key, this.iconData, this.onChanged});
 
   final Widget? iconData;
+  final Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -12,16 +13,17 @@ class EmailTextFiled extends StatelessWidget {
       width: 298,
       child: TextFormField(
           textAlign: TextAlign.right,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'البريد الإلكتروني مطلوب';
-            }
+          onChanged: onChanged,
+          // validator: (value) {
+          //   if (value == null || value.isEmpty) {
+          //     return 'البريد الإلكتروني مطلوب';
+          //   }
 
-            if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
-              return 'البريد الإلكتروني غير صالح';
-            }
-            return null;
-          },
+          //   if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
+          //     return 'البريد الإلكتروني غير صالح';
+          //   }
+          //   return null;
+          // },
           decoration: InputDecoration(
             prefixIcon: iconData,
             hintText: 'أدخل بريدك الإلكتروني',

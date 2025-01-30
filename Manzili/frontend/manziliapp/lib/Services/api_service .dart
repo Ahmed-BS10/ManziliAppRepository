@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:manziliapp/core/helper/OperationResult.dart';
 
 class ApiService {
-  final String baseUrl = "http://man.runasp.net";
+  final String baseUrl = "http://man2.runasp.net";
 
   Future<dynamic> get(String endpoint) async {
     final url = Uri.parse('$baseUrl/$endpoint');
@@ -16,7 +16,7 @@ class ApiService {
     }
   }
 
-  Future<dynamic> post(String endpoint, Map<String, dynamic> body) async {
+  Future<ApiResponse> post(String endpoint, Map<String, dynamic> body) async {
     final url = Uri.parse('$baseUrl/$endpoint');
 
     try {
@@ -26,13 +26,13 @@ class ApiService {
         body: json.encode(body),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return response.body;
-      } else {
-        return response.statusCode;
-      }
+      final responseData = json.decode(response.body);
+      return ApiResponse(
+          isSuccess: responseData["isSuccess"],
+          message: responseData["message"],
+          data: responseData["data"]);
     } catch (e) {
-      return OperationResult.failure("Exception occurred: $e");
+      return ApiResponse(isSuccess: false, message: "Server error", data: null);
     }
   }
 }

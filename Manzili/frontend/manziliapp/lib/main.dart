@@ -6,13 +6,11 @@ import 'package:manziliapp/features/auhentication/view/register_view.dart';
 import 'package:manziliapp/features/start/view/start_view.dart';
 
 void main() async {
-  AuthService service = AuthService();
-  var result = await service.login('string', '777Aa@');
+  AuthService authService = AuthService(apiService: ApiService());
 
-  print(result);
-
-
-   runApp(ManziliApp());
+  // var result = await authService.login('string', '777Aa@');
+  // print({result.isSuccess, result.message, result.data});
+  runApp(ManziliApp());
 }
 
 class ManziliApp extends StatelessWidget {

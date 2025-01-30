@@ -1,6 +1,6 @@
 class LoginModel {
-  final String Email;
-  final String Password;
+  String Email;
+  String Password;
 
   LoginModel({required this.Email, required this.Password});
 }

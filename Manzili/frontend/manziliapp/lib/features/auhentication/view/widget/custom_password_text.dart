@@ -4,9 +4,11 @@ class PasswordTextField extends StatefulWidget {
   const PasswordTextField({
     super.key,
     this.hintText,
+    this.onChanged,
   });
 
   final String? hintText;
+  final Function(String)? onChanged;
 
   @override
   _PasswordTextFieldState createState() => _PasswordTextFieldState();
@@ -27,6 +29,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
       height: 51,
       width: 298,
       child: TextFormField(
+        onChanged: widget.onChanged,
         obscureText: _obscureText,
         textAlign: TextAlign.right,
         validator: (value) {

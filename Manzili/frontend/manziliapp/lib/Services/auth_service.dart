@@ -1,23 +1,27 @@
 import 'package:manziliapp/Services/api_service%20.dart';
+import 'package:manziliapp/core/helper/OperationResult.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final ApiService apiService = ApiService();
+  final ApiService apiService;
 
-  Future<String> login(String email, String password) async {
-    final apiService = ApiService();
+  AuthService({required this.apiService});
 
+  Future<ApiResponse> login(String email, String password) async {
     final Map<String, dynamic> requestBody = {
       "email": email,
       "password": password,
     };
 
-    var response = await apiService.post("api/Auhencation/Login", requestBody);
+    var response = await apiService.post(
+      "api/Auhencation/Login",
+      requestBody,
+    );
 
     if (response.isSuccess) {
-      return response.message;
+      return response;
     } else {
-      return "Failed to login";
+      return response;
     }
   }
 
