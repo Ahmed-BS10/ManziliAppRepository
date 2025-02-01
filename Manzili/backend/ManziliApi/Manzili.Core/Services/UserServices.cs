@@ -67,20 +67,28 @@ public class UserServices
         if (!result.Succeeded)
             return OperationResult<UserCreateDto>.Failure(string.Join("; ", result.Errors.Select(e => e.Description)));
 
-
-        string imagePath = await _fileService.UploadImageAsync("Profile", userDto.Image);
-        if (imagePath == "FailedToUploadImage" || imagePath == "NoImage")
+        if(userDto.Image != null)
         {
-          await  _userManager.DeleteAsync(user);
-          return OperationResult<UserCreateDto>.Failure("Failed to upload image");
+
+            if (!ImageValidator.IsValidImage(userDto.Image, out string errorMessage))
+            {
+                await _userManager.DeleteAsync(user);
+                return OperationResult<UserCreateDto>.Failure(message: errorMessage);
+            }
+
+            string imagePath = await _fileService.UploadImageAsync("Profile", userDto.Image);
+            if (imagePath == "FailedToUploadImage")
+            {
+                await _userManager.DeleteAsync(user);
+                return OperationResult<UserCreateDto>.Failure("Failed to upload image");
+            }
+
+            user.Image = imagePath;
+            await _userManager.UpdateAsync(user);
         }
            
 
-        user.Image = imagePath;
-        await _userManager.UpdateAsync(user);
-
-
-
+      
         return OperationResult<UserCreateDto>.Success(userDto);
     }
     public async Task<OperationResult<IEnumerable<UserGetDto>>> GetListAsync()

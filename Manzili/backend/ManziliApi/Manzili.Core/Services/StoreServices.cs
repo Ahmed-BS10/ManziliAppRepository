@@ -15,15 +15,17 @@ namespace Manzili.Core.Services
 
         private readonly IRepository<Store> _storeRepository;
         private readonly UserManager<User> _userManager;
+        private readonly FileService _fileService;
 
         #endregion
 
         #region Constructor
 
-        public StoreServices(UserManager<User> storeManager, IRepository<Store> storeRepository)
+        public StoreServices(UserManager<User> storeManager, IRepository<Store> storeRepository, FileService fileService)
         {
             _userManager = storeManager;
             _storeRepository = storeRepository;
+            _fileService = fileService;
         }
 
         #endregion
@@ -104,7 +106,6 @@ namespace Manzili.Core.Services
                 City = storeDto.City,
                 Address = storeDto.Address,
                 BankAccount = storeDto.BankAccount,
-                Image = storeDto.Image,
                 Status = storeDto.Status,
                 BusinessName = storeDto.BusinessName,
                 PhoneNumber = storeDto.PhoneNumber
@@ -113,6 +114,28 @@ namespace Manzili.Core.Services
             var result = await _userManager.CreateAsync(store, storeDto.Password);
             if (!result.Succeeded)
                 return OperationResult<StoreCreateDto>.Failure(string.Join("; ", result.Errors.Select(e => e.Description)));
+
+
+
+            if(storeDto.Image != null)
+            {
+                if (!ImageValidator.IsValidImage(storeDto.Image, out string errorMessage))
+                {
+                    await _userManager.DeleteAsync(store);
+                    return OperationResult<StoreCreateDto>.Failure(message: errorMessage);
+                }
+
+                string imagePath = await _fileService.UploadImageAsync("Profile", storeDto.Image);
+                if (imagePath == "FailedToUploadImage")
+                {
+                    await _userManager.DeleteAsync(store);
+                    return OperationResult<StoreCreateDto>.Failure("Failed to upload image");
+                }
+
+
+                store.Image = imagePath;
+                await _userManager.UpdateAsync(store);
+            }
 
             return OperationResult<StoreCreateDto>.Success(data : storeDto);
         }

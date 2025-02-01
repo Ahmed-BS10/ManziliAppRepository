@@ -9,6 +9,8 @@ public static class ImageValidator
     {
         errorMessage = string.Empty;
 
+        //if (file == null || file.Length == 0)
+        //    return true;
       
         var extension = Path.GetExtension(file.FileName).ToLower();
         if (!AllowedExtensions.Contains(extension))

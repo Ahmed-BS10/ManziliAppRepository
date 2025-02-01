@@ -14,7 +14,7 @@ namespace Manzili.Core.Dto.UserDto
         public string LastName { get; set; }
         public string UserName { get; set; }
 
-        public IFormFile Image {  get; set; } 
+        public IFormFile? Image {  get; set; } 
        
         [Phone]
         public string PhoneNumber { get; set; }

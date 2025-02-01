@@ -8,8 +8,8 @@ namespace Manzili.Core.Services
 
         public async Task<string> UploadImageAsync(string targetFolder, IFormFile file)
         {
-            if (file == null || file.Length == 0)
-                return "NoImage";
+            //if (file == null || file.Length == 0)
+            //    return "NoImage";
 
             try
             {
