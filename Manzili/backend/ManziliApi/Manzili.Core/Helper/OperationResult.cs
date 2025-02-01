@@ -1,4 +1,6 @@
-﻿public class OperationResult<T>
+﻿using System.Linq;
+
+public class OperationResult<T>
 {
     public bool IsSuccess { get; set; }
     public string Message { get; set; }

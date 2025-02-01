@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Manzili.EF\Manzili.EF.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

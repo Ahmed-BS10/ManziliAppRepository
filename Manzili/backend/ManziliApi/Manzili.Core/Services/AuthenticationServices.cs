@@ -27,13 +27,18 @@ namespace Manzili.Core.Services
 
 
         #region Constructor
-        public AuthenticationServices(IRepository<User> userRepo, JwtSettings jwtSettings, UserManager<User> userManager, UserServices userServices, StoreServices storeServices)
+        public AuthenticationServices(
+            IRepository<User> userRepo,
+            JwtSettings jwtSettings,
+            UserManager<User> userManager,
+            UserServices userServices,
+            StoreServices storeServices)
         {
-            _userRepo=userRepo;
-            _jwtSettings=jwtSettings;
-            _userManager=userManager;
-            _userServices=userServices;
-            _storeServices=storeServices;
+            _userRepo = userRepo;
+            _jwtSettings = jwtSettings;
+            _userManager = userManager;
+            _userServices = userServices;
+            _storeServices = storeServices;
         }
         #endregion
 
@@ -95,14 +100,16 @@ namespace Manzili.Core.Services
 
             User user = new User
             {
-                PhoneNumber = userCreate.PhoneNumber,
                 UserName = userCreate.UserName,
                 FirstName = userCreate.FirstName,
                 LastName = userCreate.LastName,
-                Email = userCreate.Email,
+                PhoneNumber = userCreate.PhoneNumber,
                 City = userCreate.City,
-                Address = userCreate.Address
+                Address = userCreate.Address,
+                
+               
             };
+
 
             var result = await _userServices.CreateAsync(userCreate);
             if (result.IsSuccess)
@@ -116,6 +123,7 @@ namespace Manzili.Core.Services
         }
         public async Task<OperationResult<string>> RegisterAsStore(StoreCreateDto storeCreate)
         {
+
 
             var user = new Store
             {

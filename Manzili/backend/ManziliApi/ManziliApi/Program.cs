@@ -27,6 +27,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped( typeof(UserServices));
 builder.Services.AddScoped(typeof(StoreServices));
 builder.Services.AddScoped(typeof(AuthenticationServices));
+builder.Services.AddScoped(typeof(FileService));
 
 #endregion
 

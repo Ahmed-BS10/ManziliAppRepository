@@ -1,6 +1,7 @@
 ﻿using Manzili.Core.Dto.UserDto;
 using Manzili.Core.Entities;
 using Manzili.Core.Repositories;
+using Manzili.Core.Services;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +10,13 @@ using static System.Formats.Asn1.AsnWriter;
 public class UserServices
 {
     private readonly UserManager<User> _userManager;
+    private readonly FileService _fileService;
 
 
-    public UserServices(UserManager<User> userManager)
+    public UserServices(UserManager<User> userManager, FileService fileService)
     {
         _userManager = userManager;
-
+        _fileService = fileService;
     }
 
     public async Task<OperationResult<UserGetDto>> GetByIdAsync(int id)
@@ -38,15 +40,13 @@ public class UserServices
     public async Task<OperationResult<UserCreateDto>> CreateAsync(UserCreateDto userDto)
     {
 
+      
         if (await _userManager.FindByEmailAsync(userDto.Email) != null)
             return OperationResult<UserCreateDto>.Failure("Email already exists");
 
         if (await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == userDto.PhoneNumber) != null)
             return OperationResult<UserCreateDto>.Failure("PhoneNumber already exists");
 
-        //var existenceCheck = await CheckUserExistenceAsync(userDto.Email, userDto.PhoneNumber);
-        //if (!existenceCheck.IsSuccess)
-        //    return existenceCheck;
 
         User user = new User
         {
@@ -57,12 +57,29 @@ public class UserServices
             Email = userDto.Email,
             City = userDto.City,
             Address = userDto.Address
+            
         };
+
+
 
         var result = await _userManager.CreateAsync(user, userDto.Password);
 
         if (!result.Succeeded)
             return OperationResult<UserCreateDto>.Failure(string.Join("; ", result.Errors.Select(e => e.Description)));
+
+
+        string imagePath = await _fileService.UploadImageAsync("Profile", userDto.Image);
+        if (imagePath == "FailedToUploadImage" || imagePath == "NoImage")
+        {
+          await  _userManager.DeleteAsync(user);
+          return OperationResult<UserCreateDto>.Failure("Failed to upload image");
+        }
+           
+
+        user.Image = imagePath;
+        await _userManager.UpdateAsync(user);
+
+
 
         return OperationResult<UserCreateDto>.Success(userDto);
     }

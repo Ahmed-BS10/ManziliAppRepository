@@ -7,6 +7,8 @@ namespace Manzili.Core.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
+        public string ? Image { get; set; }
         public string City { get; set; } // New attribute
         public string Address { get; set; } // New attribute
 

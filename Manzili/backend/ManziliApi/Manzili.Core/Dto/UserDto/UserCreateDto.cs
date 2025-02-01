@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace Manzili.Core.Dto.UserDto
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string UserName { get; set; }
+
+        public IFormFile Image {  get; set; } 
        
         [Phone]
         public string PhoneNumber { get; set; }

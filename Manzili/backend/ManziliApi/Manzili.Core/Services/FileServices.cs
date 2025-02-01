@@ -32,10 +32,6 @@ namespace Manzili.Core.Services
             }
             catch (Exception ex)
             {
-
-                Console.WriteLine($"Error: {ex.Message}");
-
-
                 return "FailedToUploadImage";
             }
         }
