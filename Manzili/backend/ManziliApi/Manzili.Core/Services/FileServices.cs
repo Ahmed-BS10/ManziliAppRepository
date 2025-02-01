@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Http;
+
 namespace Manzili.Core.Services
 {
     public class FileService
