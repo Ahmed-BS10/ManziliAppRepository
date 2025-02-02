@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:manziliapp/Services/api_service%20.dart';
 import 'package:manziliapp/core/helper/OperationResult.dart';
+import 'package:manziliapp/features/auhentication/model/user_create_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class AuthService {
   final ApiService apiService;
@@ -25,13 +29,35 @@ class AuthService {
     }
   }
 
-  Future<void> logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
-  }
+  Future<ApiResponse> register(UserCreateModel user) async {
+    final url =
+        Uri.parse('http://man9.runasp.net/api/Auhencation/RegsiterUser');
 
-  Future<bool> isAuthenticated() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.containsKey('token');
+    try {
+      var request = http.MultipartRequest('POST', url);
+      user.toMap().forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+
+      if (user.image != null) {
+        request.files
+            .add(await http.MultipartFile.fromPath('Image', user.image!.path));
+      }
+
+      var response = await request.send();
+      var responseData = await response.stream.bytesToString();
+      var jsonResponse = json.decode(responseData);
+
+      return ApiResponse(
+        isSuccess: jsonResponse["isSuccess"],
+        message: jsonResponse["message"],
+        data: jsonResponse["data"],
+      );
+    } catch (e) {
+      return ApiResponse(
+          isSuccess: false,
+          message: "Server error: ${e.toString()}",
+          data: null);
+    }
   }
 }

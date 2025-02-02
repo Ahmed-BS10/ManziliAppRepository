@@ -41,6 +41,7 @@ dependencies:
   shared_preferences: ^2.4.0
   bloc: ^9.0.0
   flutter_bloc: ^9.0.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

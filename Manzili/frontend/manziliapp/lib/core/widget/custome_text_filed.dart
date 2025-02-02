@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class CustomeTextFiled extends StatelessWidget {
-  const CustomeTextFiled({super.key, this.hintText, this.iconData});
+  const CustomeTextFiled(
+      {super.key, this.hintText, this.iconData, this.onChanged});
 
   final String? hintText;
   final Widget? iconData;
+  final Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +15,7 @@ class CustomeTextFiled extends StatelessWidget {
       width: 298,
       child: TextFormField(
           textAlign: TextAlign.right,
+          onChanged: onChanged,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'الحقل فارغ';

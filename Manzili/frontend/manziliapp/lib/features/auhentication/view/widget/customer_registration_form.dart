@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
+import 'package:manziliapp/features/auhentication/model/user_create_model.dart';
 import 'package:manziliapp/features/auhentication/view/widget/personal_info_page.dart';
 import 'package:manziliapp/features/auhentication/view/widget/terms_and_privacy_checbok.dart';
 
@@ -23,11 +24,13 @@ class CustomerRegistrationForm extends StatelessWidget {
     return Column(
       children: [
         const PersonalInfoPage(),
+        SizedBox(height: 0),
         TermsAndPrivacyCheckbox(
           onChanged: (value) {
             onAgreementChanged(value);
           },
         ),
+        SizedBox(height: 0),
         CustomTextButton(
           onPressed: () {
             if (formKey.currentState!.validate()) {
