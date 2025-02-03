@@ -16,12 +16,12 @@ class CustomeTextFiled extends StatelessWidget {
       child: TextFormField(
           textAlign: TextAlign.right,
           onChanged: onChanged,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'الحقل فارغ';
-            }
-            return null;
-          },
+          // validator: (value) {
+          //   if (value == null || value.isEmpty) {
+          //     return 'الحقل فارغ';
+          //   }
+          //   return null;
+          // },
           decoration: InputDecoration(
             prefixIcon: iconData,
             hintText: hintText,

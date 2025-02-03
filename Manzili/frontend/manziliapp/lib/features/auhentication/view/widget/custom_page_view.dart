@@ -16,7 +16,7 @@ class CustomPageView extends StatelessWidget {
       controller: pageController,
       physics: NeverScrollableScrollPhysics(),
       children: [
-        const PersonalInfoPage(),
+        // const PersonalInfoPage(),
         BusinessInfoPage(pageController: pageController),
       ],
     );

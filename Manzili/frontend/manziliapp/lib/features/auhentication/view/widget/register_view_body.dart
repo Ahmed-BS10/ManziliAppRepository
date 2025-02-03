@@ -43,9 +43,6 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
                     isAgreed = value;
                   });
                 },
-                onFormSubmit: () {
-                  print('Successed');
-                },
               )
             else
               ProducerRegistrationForm(

@@ -10,62 +10,8 @@ import 'package:manziliapp/features/auhentication/view/register_view.dart';
 import 'package:manziliapp/features/start/view/start_view.dart';
 
 void main() async {
-  runApp(MyWidget());
+  runApp(ManziliApp());
 }
-
-// class MyWidget extends StatefulWidget {
-//   const MyWidget({super.key});
-
-//   @override
-//   State<MyWidget> createState() => _MyWidgetState();
-// }
-
-// class _MyWidgetState extends State<MyWidget> {
-//   UserCreateModel newUser = UserCreateModel(
-//     firstName: "Ali",
-//     lastName: "Ahmed",
-//     email: "ali.ahmed@example.com",
-//     phone: "+967771234567",
-//     city: "المكلا",
-//     address: "الديس - الدائرة",
-//     userName: "AliAhmed",
-//     password: "777Aa@",
-//     confirmPassword: "777Aa@",
-//   );
-
-//   Future<void> _pickImage() async {
-//     final pickedFile =
-//         await ImagePicker().pickImage(source: ImageSource.gallery);
-
-//     if (pickedFile != null) {
-//       setState(() {
-//         newUser.image = File(pickedFile.path);
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         body: Column(children: [
-//           GestureDetector(
-//             onTap: _pickImage,
-//             child: CircleAvatar(
-//               radius: 50,
-//               backgroundColor: Colors.grey[300],
-//               backgroundImage:
-//                   newUser.image != null ? FileImage(newUser.image!) : null,
-//               child: newUser.image == null
-//                   ? const Icon(Icons.camera_alt, size: 40, color: Colors.grey)
-//                   : null,
-//             ),
-//           ),
-//         ]),
-//       ),
-//     );
-//   }
-// }
 
 class ManziliApp extends StatelessWidget {
   const ManziliApp({super.key});

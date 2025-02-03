@@ -25,7 +25,6 @@ class UserCreateModel {
     this.image,
   });
 
-  /// ✅ **تحويل البيانات إلى `Map<String, String>` لإرسالها في `API`**
   Map<String, dynamic> toMap() {
     return {
       "FirstName": firstName,

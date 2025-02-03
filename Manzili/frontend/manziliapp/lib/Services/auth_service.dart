@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:manziliapp/Services/api_service%20.dart';
 import 'package:manziliapp/core/helper/OperationResult.dart';
 import 'package:manziliapp/features/auhentication/model/user_create_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
@@ -13,8 +11,8 @@ class AuthService {
 
   Future<ApiResponse> login(String email, String password) async {
     final Map<String, dynamic> requestBody = {
-      "email": email,
-      "password": password,
+      "Email": email,
+      "Password": password,
     };
 
     var response = await apiService.post(
