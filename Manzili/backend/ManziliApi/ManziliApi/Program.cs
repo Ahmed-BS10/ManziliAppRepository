@@ -28,7 +28,7 @@ builder.Services.AddScoped( typeof(UserServices));
 builder.Services.AddScoped(typeof(StoreServices));
 builder.Services.AddScoped(typeof(AuthenticationServices));
 builder.Services.AddScoped(typeof(FileService));
-
+builder.Services.AddScoped(typeof(CategoryServices));
 #endregion
 
 
