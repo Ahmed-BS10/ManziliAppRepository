@@ -11,58 +11,8 @@ import 'package:manziliapp/features/auhentication/cubit/register_state.dart';
 import 'package:manziliapp/features/auhentication/model/user_create_model.dart';
 import 'package:manziliapp/features/auhentication/view/widget/custom_password_text.dart';
 import 'package:manziliapp/features/auhentication/view/widget/email_text_filed.dart';
-import 'package:manziliapp/features/auhentication/view/widget/personal_info_page.dart';
 import 'package:manziliapp/features/auhentication/view/widget/terms_and_privacy_checbok.dart';
 
-// class CustomerRegistrationForm extends StatelessWidget {
-//   final GlobalKey<FormState> formKey;
-//   final bool isAgreed;
-//   final Function(bool) onAgreementChanged;
-//   final VoidCallback onFormSubmit;
-
-//   const CustomerRegistrationForm({
-//     super.key,
-//     required this.formKey,
-//     required this.isAgreed,
-//     required this.onAgreementChanged,
-//     required this.onFormSubmit,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         const PersonalInfoPage(),
-//         SizedBox(height: 0),
-//         TermsAndPrivacyCheckbox(
-//           onChanged: (value) {
-//             onAgreementChanged(value);
-//           },
-//         ),
-//         SizedBox(height: 0),
-//         CustomTextButton(
-//           onPressed: () {
-//             if (formKey.currentState!.validate()) {
-//               if (isAgreed) {
-//                 onFormSubmit();
-//               } else {
-//                 ScaffoldMessenger.of(context).showSnackBar(
-//                   SnackBar(
-//                     content: Text(
-//                         'يجب الموافقة على الشروط وسياسة الخصوصية للمتابعة'),
-//                   ),
-//                 );
-//               }
-//             }
-//           },
-//           name: 'تسجيل الدخول',
-//           fontColor: Colors.white,
-//           backColor: pColor,
-//         ),
-//       ],
-//     );
-//   }
-// }
 class CustomerRegistrationForm extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final bool isAgreed;
@@ -139,19 +89,7 @@ class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
               ),
             ),
             const SizedBox(height: 15),
-            CustomeTextFiled(
-              onChanged: (value) {
-                userCreateModel.firstName = value;
-              },
-              hintText: 'اسمك الاول',
-            ),
-            const SizedBox(height: 10),
-            CustomeTextFiled(
-              onChanged: (value) {
-                userCreateModel.lastName = value;
-              },
-              hintText: 'اسمك الاخير',
-            ),
+
             const SizedBox(height: 10),
             CustomeTextFiled(
               onChanged: (value) {

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class EmailTextFiled extends StatelessWidget {
-  const EmailTextFiled({super.key, this.iconData, this.onChanged});
+  const EmailTextFiled(
+      {super.key, this.iconData, this.onChanged, this.controller});
 
   final Widget? iconData;
   final Function(String)? onChanged;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +16,7 @@ class EmailTextFiled extends StatelessWidget {
       child: TextFormField(
           textAlign: TextAlign.right,
           onChanged: onChanged,
+          controller: controller,
           // validator: (value) {
           //   if (value == null || value.isEmpty) {
           //     return 'البريد الإلكتروني مطلوب';

@@ -5,10 +5,12 @@ class PasswordTextField extends StatefulWidget {
     super.key,
     this.hintText,
     this.onChanged,
+    this.controller,
   });
 
   final String? hintText;
   final Function(String)? onChanged;
+  final TextEditingController? controller;
 
   @override
   _PasswordTextFieldState createState() => _PasswordTextFieldState();
@@ -29,6 +31,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
       height: 51,
       width: 298,
       child: TextFormField(
+        controller: widget.controller,
         onChanged: widget.onChanged,
         obscureText: _obscureText,
         textAlign: TextAlign.right,

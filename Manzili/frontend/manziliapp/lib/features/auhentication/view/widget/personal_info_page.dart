@@ -7,217 +7,176 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 // class PersonalInfoPage extends StatefulWidget {
-//   const PersonalInfoPage({super.key});
+//   const PersonalInfoPage({
+//     super.key,
+//   });
 
 //   @override
 //   _PersonalInfoPageState createState() => _PersonalInfoPageState();
 // }
 
 // class _PersonalInfoPageState extends State<PersonalInfoPage> {
-//   final UserCreateModel userCreateModel = UserCreateModel(
-//       firstName: '',
-//       lastName: '',
-//       email: '',
-//       password: '',
-//       phone: '',
-//       city: '',
-//       address: '',
-//       userName: '',
-//       confirmPassword: '');
-
+//   late File image;
 //   Future<void> _pickImage() async {
 //     final pickedFile =
 //         await ImagePicker().pickImage(source: ImageSource.gallery);
 
 //     if (pickedFile != null) {
 //       setState(() {
-//         userCreateModel.image = File(pickedFile.path);
+//         image = File(pickedFile.path);
 //       });
 //     }
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         // زر اختيار الصورة وعرضها
-//         GestureDetector(
-//           onTap: _pickImage,
-//           child: CircleAvatar(
-//             radius: 50,
-//             backgroundColor: Colors.grey[300],
-//             backgroundImage: userCreateModel.image != null
-//                 ? FileImage(userCreateModel.image!)
-//                 : null,
-//             child: userCreateModel.image == null
-//                 ? const Icon(Icons.camera_alt, size: 40, color: Colors.grey)
-//                 : null,
+//     return SingleChildScrollView(
+//       child: Column(
+//         children: [
+//           GestureDetector(
+//             onTap: _pickImage,
+//             child: CircleAvatar(
+//               radius: 50,
+//               backgroundColor: Colors.grey[300],
+//               backgroundImage: image != null ? FileImage(image!) : null,
+//               child: image == null
+//                   ? const Icon(Icons.camera_alt, size: 40, color: Colors.grey)
+//                   : null,
+//             ),
 //           ),
-//         ),
-//         const SizedBox(height: 15),
-
-//         CustomeTextFiled(
-//           onChanged: (value) {
-//             userCreateModel.firstName = value;
-//           },
-//           hintText: 'اسمك الاول',
-//         ),
-
-//         const SizedBox(height: 10),
-//         CustomeTextFiled(
-//             onChanged: (value) {
-//               userCreateModel.lastName = value;
-//             },
-//             hintText: 'اسمك الاخير'),
-
-//         const SizedBox(height: 10),
-//         CustomeTextFiled(
-//             onChanged: (value) {
-//               userCreateModel.userName = value;
-//             },
-//             hintText: 'اسم المستخدم'),
-
-//         CustomeTextFiled(
-//             onChanged: (value) {
-//               userCreateModel.phone = value;
-//             },
-//             hintText: 'رقمك'),
-//         const SizedBox(height: 10),
-//         EmailTextFiled(
-//           onChanged: (value) {
-//             userCreateModel.email = value;
-//           },
-//         ),
-//         const SizedBox(height: 10),
-
-//         CustomeTextFiled(
-//             onChanged: (value) {
-//               userCreateModel.city = value;
-//             },
-//             hintText: 'المدينة'),
-//         const SizedBox(height: 10),
-//         CustomeTextFiled(
-//             onChanged: (value) {
-//               userCreateModel.address = value;
-//             },
-//             hintText: 'عنوانك : مثل الديس - الدائرة '),
-//         const SizedBox(height: 10),
-//         PasswordTextField(
-//             onChanged: (value) {
-//               userCreateModel.password = value;
-//             },
-//             hintText: 'كلمة السر'),
-//         const SizedBox(height: 10),
-//         PasswordTextField(
-//             onChanged: (value) {
-//               userCreateModel.confirmPassword = value;
-//             },
-//             hintText: 'تاكيد كلمة السر'),
-//       ],
+//           const SizedBox(height: 15),
+//           const SizedBox(height: 10),
+//           CustomeTextFiled(
+//             onChanged: (value) {},
+//             hintText: 'اسم المستخدم',
+//           ),
+//           const SizedBox(height: 10),
+//           CustomeTextFiled(
+//             onChanged: (value) {},
+//             hintText: 'رقمك',
+//           ),
+//           const SizedBox(height: 10),
+//           EmailTextFiled(
+//             onChanged: (value) {},
+//           ),
+//           const SizedBox(height: 10),
+//           CustomeTextFiled(
+//             onChanged: (value) {},
+//             hintText: 'المدينة',
+//           ),
+//           const SizedBox(height: 10),
+//           CustomeTextFiled(
+//             onChanged: (value) {},
+//             hintText: 'عنوانك : مثل الديس - الدائرة ',
+//           ),
+//           const SizedBox(height: 10),
+//           PasswordTextField(
+//             onChanged: (value) {},
+//             hintText: 'كلمة السر',
+//           ),
+//           const SizedBox(height: 10),
+//           PasswordTextField(
+//             onChanged: (value) {},
+//             hintText: 'تاكيد كلمة السر',
+//           ),
+//         ],
+//       ),
 //     );
 //   }
 // }
 
 class PersonalInfoPage extends StatefulWidget {
-  final UserCreateModel userCreateModel;
+  final TextEditingController usernameController;
+  final TextEditingController phoneController;
+  final TextEditingController emailController;
+  final TextEditingController cityController;
+  final TextEditingController addressController;
+  final TextEditingController passwordController;
+  final TextEditingController confirmPasswordController;
+  final Function(File) onImagePicked;
 
-  const PersonalInfoPage({super.key, required this.userCreateModel});
+  const PersonalInfoPage({
+    super.key,
+    required this.usernameController,
+    required this.phoneController,
+    required this.emailController,
+    required this.cityController,
+    required this.addressController,
+    required this.passwordController,
+    required this.confirmPasswordController,
+    required this.onImagePicked,
+  });
 
   @override
   _PersonalInfoPageState createState() => _PersonalInfoPageState();
 }
 
 class _PersonalInfoPageState extends State<PersonalInfoPage> {
+  File? image;
+
   Future<void> _pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       setState(() {
-        widget.userCreateModel.image = File(pickedFile.path);
+        image = File(pickedFile.path);
       });
+      widget.onImagePicked(image!);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: _pickImage,
-          child: CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.grey[300],
-            backgroundImage: widget.userCreateModel.image != null
-                ? FileImage(widget.userCreateModel.image!)
-                : null,
-            child: widget.userCreateModel.image == null
-                ? const Icon(Icons.camera_alt, size: 40, color: Colors.grey)
-                : null,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: _pickImage,
+            child: CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.grey[300],
+              backgroundImage: image != null ? FileImage(image!) : null,
+              child: image == null
+                  ? const Icon(Icons.camera_alt, size: 40, color: Colors.grey)
+                  : null,
+            ),
           ),
-        ),
-        const SizedBox(height: 15),
-        CustomeTextFiled(
-          onChanged: (value) {
-            widget.userCreateModel.firstName = value;
-          },
-          hintText: 'اسمك الاول',
-        ),
-        const SizedBox(height: 10),
-        CustomeTextFiled(
-          onChanged: (value) {
-            widget.userCreateModel.lastName = value;
-          },
-          hintText: 'اسمك الاخير',
-        ),
-        const SizedBox(height: 10),
-        CustomeTextFiled(
-          onChanged: (value) {
-            widget.userCreateModel.userName = value;
-          },
-          hintText: 'اسم المستخدم',
-        ),
-        CustomeTextFiled(
-          onChanged: (value) {
-            widget.userCreateModel.phone = value;
-          },
-          hintText: 'رقمك',
-        ),
-        const SizedBox(height: 10),
-        EmailTextFiled(
-          onChanged: (value) {
-            widget.userCreateModel.email = value;
-          },
-        ),
-        const SizedBox(height: 10),
-        CustomeTextFiled(
-          onChanged: (value) {
-            widget.userCreateModel.city = value;
-          },
-          hintText: 'المدينة',
-        ),
-        const SizedBox(height: 10),
-        CustomeTextFiled(
-          onChanged: (value) {
-            widget.userCreateModel.address = value;
-          },
-          hintText: 'عنوانك : مثل الديس - الدائرة ',
-        ),
-        const SizedBox(height: 10),
-        PasswordTextField(
-          onChanged: (value) {
-            widget.userCreateModel.password = value;
-          },
-          hintText: 'كلمة السر',
-        ),
-        const SizedBox(height: 10),
-        PasswordTextField(
-          onChanged: (value) {
-            widget.userCreateModel.confirmPassword = value;
-          },
-          hintText: 'تاكيد كلمة السر',
-        ),
-      ],
+          const SizedBox(height: 15),
+          CustomeTextFiled(
+            controller: widget.usernameController,
+            hintText: 'اسم المستخدم',
+          ),
+          const SizedBox(height: 10),
+          CustomeTextFiled(
+            controller: widget.phoneController,
+            hintText: 'رقمك',
+          ),
+          const SizedBox(height: 10),
+          EmailTextFiled(
+            controller: widget.emailController,
+          ),
+          const SizedBox(height: 10),
+          CustomeTextFiled(
+            controller: widget.cityController,
+            hintText: 'المدينة',
+          ),
+          const SizedBox(height: 10),
+          CustomeTextFiled(
+            controller: widget.addressController,
+            hintText: 'عنوانك : مثل الديس - الدائرة ',
+          ),
+          const SizedBox(height: 10),
+          PasswordTextField(
+            controller: widget.passwordController,
+            hintText: 'كلمة السر',
+          ),
+          const SizedBox(height: 10),
+          PasswordTextField(
+            controller: widget.confirmPasswordController,
+            hintText: 'تاكيد كلمة السر',
+          ),
+        ],
+      ),
     );
   }
 }

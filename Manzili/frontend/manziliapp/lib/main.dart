@@ -66,7 +66,7 @@ class _MyWidgetState extends State<MyWidget> {
 
   // Register the user after picking the image
   Future<void> _registerUser() async {
-    var response = await authService.register(newUser);
+    var response = await authService.Userregister(newUser);
     print(response.isSuccess);
     print(response.message);
     print(response.data);

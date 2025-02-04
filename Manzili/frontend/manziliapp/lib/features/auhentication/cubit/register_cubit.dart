@@ -12,7 +12,7 @@ class RegisterCubit extends Cubit<RegisterState> {
   Future<void> register(UserCreateModel user) async {
     emit(RegisterLoading());
 
-    final response = await authService.register(user);
+    final response = await authService.Userregister(user);
     if (response.isSuccess)
       emit(RegisterSuccess('تم تسجيل الدخول بنجاح'));
     else
