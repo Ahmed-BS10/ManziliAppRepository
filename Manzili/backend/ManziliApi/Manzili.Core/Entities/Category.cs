@@ -2,10 +2,10 @@
 {
     public class Category
     {
-        public int CategoryId { get; set; } // PK
+        public int CategoryId { get; set; }
         public string Name { get; set; }
+        public string Image { get; set; }
 
-        // Navigation properties
         public ICollection<Product> Products { get; set; }
         public ICollection<SubCategory> SubCategories { get; set; }
     }
