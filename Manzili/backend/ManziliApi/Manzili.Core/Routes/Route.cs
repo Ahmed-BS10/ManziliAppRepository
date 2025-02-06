@@ -22,7 +22,7 @@
             public const string List = "List";
             public const string GetById = $"{"Id"}";
             public const string Create = "Create";
-            public const string Edit = "Edit";
+            public const string Update = $"Edit{"Id"}";
             public const string Delete = $"Delete";
 
         }

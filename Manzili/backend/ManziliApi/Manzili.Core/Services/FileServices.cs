@@ -1,4 +1,5 @@
 ﻿
+using Manzili.Core.Constant;
 using Microsoft.AspNetCore.Http;
 
 namespace Manzili.Core.Services
@@ -35,6 +36,32 @@ namespace Manzili.Core.Services
                 return "FailedToUploadImage";
             }
         }
+
+        public async Task<OperationResult<bool>> Delete(string imageUrl)
+        {
+            if (string.IsNullOrWhiteSpace(imageUrl))
+                return OperationResult<bool>.Failure("Invalid image URL.");
+
+
+            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var imagePath = Path.Combine(wwwRootPath, imageUrl.TrimStart('/'));
+
+            if (!File.Exists(imagePath))
+                return OperationResult<bool>.Failure("Image not found.");
+
+            try
+            {
+                File.Delete(imagePath);
+                return OperationResult<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<bool>.Failure(message : $"Failed to delete image: {ex.Message}");
+            }
+        }
+
+
+
     }
 }
 
