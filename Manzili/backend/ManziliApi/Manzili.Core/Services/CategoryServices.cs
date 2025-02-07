@@ -125,8 +125,33 @@ namespace Manzili.Core.Services
             return OperationResult<CatagoryUpdateDto>.Failure(message : "Image cannt be empty");
 
         }
+        public async Task<OperationResult<bool>> Delete(int id)
+        {
+            var existingCategory = await _categoryRepository.Find(x => x.CategoryId == id);
+            if (existingCategory == null)
+                return OperationResult<bool>.Failure("Category not found.");
 
 
+            try
+            {
+                var deleteReslut = await _fileService.Delete(existingCategory.Image);
+                if (deleteReslut.IsSuccess)
+                {
+                    await _categoryRepository.Delete(existingCategory);
+                    return OperationResult<bool>.Success(true);
+                }
+            }
+
+            catch (Exception e){
+
+                return OperationResult<bool>.Failure(message: e.Message);
+
+            }
+
+            return OperationResult<bool>.Failure(message : "");
+
+
+        }
 
         #endregion
 

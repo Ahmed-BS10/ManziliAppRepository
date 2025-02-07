@@ -60,44 +60,21 @@ namespace ManziliApi.Controllers
 
 
 
-        [HttpDelete("DeleteImage")]
-        public async Task<IActionResult> DeleteImage(string imageName = "6acff1a84961473398a33f7877adbafc.jpg")
+        [HttpDelete(CategoryRouting.Delete)]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (string.IsNullOrWhiteSpace(imageName))
-                return BadRequest("Invalid image name.");
+          var   result = await _categoryServices.Delete(id);
+            if (!result.IsSuccess)
+                return BadRequest(result);
 
-            // المسار إلى wwwroot/Profile
-            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Profile");
-            var imagePath = Path.Combine(wwwRootPath, imageName);
+            return Ok(result);
 
-            if (!System.IO.File.Exists(imagePath))
-                return NotFound("Image not found.");
-
-            try
-            {
-                System.IO.File.Delete(imagePath);
-                return Ok("Image deleted successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Failed to delete image: {ex.Message}");
-            }
         }
 
 
 
 
 
-        //[HttpDelete(CategoryRouting.Delete)]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    var result = await _categoryServices.De(id);
-
-        //    if (!result.IsSuccess)
-        //        return NotFound(new { message = result.Message });
-
-        //    return Ok(new { message = "Category deleted successfully" });
-        //}
 
         #endregion
     }
