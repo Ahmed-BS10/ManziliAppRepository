@@ -101,8 +101,7 @@ namespace Manzili.Core.Services
             User user = new User
             {
                 UserName = userCreate.UserName,
-                FirstName = userCreate.FirstName,
-                LastName = userCreate.LastName,
+               
                 PhoneNumber = userCreate.PhoneNumber,
                 City = userCreate.City,
                 Address = userCreate.Address,
@@ -129,8 +128,7 @@ namespace Manzili.Core.Services
             {
                 PhoneNumber = storeCreate.PhoneNumber,
                 UserName = storeCreate.UserName,
-                FirstName = storeCreate.FirstName,
-                LastName = storeCreate.LastName,
+               
                 Email = storeCreate.Email,
                 City = storeCreate.City,
                 Address = storeCreate.Address

@@ -5,8 +5,7 @@ namespace Manzili.Core.Dto.UserDto
     public class UserUpdateDto
     {
        
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+       
         public string UserName { get; set; }
 
         [Phone]

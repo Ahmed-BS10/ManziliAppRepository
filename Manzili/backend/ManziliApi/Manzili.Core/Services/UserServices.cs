@@ -27,8 +27,7 @@ public class UserServices
         return OperationResult<UserGetDto>.Success(new UserGetDto
         {
             UserName = user.UserName, 
-            FirstName = user.FirstName,
-            LastName = user.LastName,
+           
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
             City = user.City,
@@ -52,8 +51,7 @@ public class UserServices
         {
             PhoneNumber = userDto.PhoneNumber,
             UserName = userDto.UserName,
-            FirstName = userDto.FirstName,
-            LastName = userDto.LastName,
+           
             Email = userDto.Email,
             City = userDto.City,
             Address = userDto.Address
@@ -133,8 +131,7 @@ public class UserServices
 
 
         oldUser.UserName = newUser.UserName;
-        oldUser.FirstName = newUser.FirstName;
-        oldUser.LastName = newUser.LastName;
+       
         oldUser.PhoneNumber = newUser.PhoneNumber;
         oldUser.City = newUser.City;
         oldUser.Address = newUser.Address;

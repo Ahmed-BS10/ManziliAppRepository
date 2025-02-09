@@ -41,8 +41,7 @@ namespace Manzili.Core.Services
             {
                 PhoneNumber = store.PhoneNumber,
                 UserName = store.UserName,
-                FirstName = store.FirstName,
-                LastName = store.LastName,
+               
                 BusinessName = store.BusinessName,
                 City = store.City,
                 Address = store.Address,
@@ -68,8 +67,7 @@ namespace Manzili.Core.Services
             var storeDtos = stores.Select(store => new StoreGetDto
             {
                 UserName = store.UserName,
-                FirstName = store.FirstName,
-                LastName = store.LastName,
+               
                 PhoneNumber = store.PhoneNumber,
                 Email = store.Email,
                 City = store.City,
@@ -100,8 +98,7 @@ namespace Manzili.Core.Services
             var store = new Store
             {
                 UserName = storeDto.UserName,
-                FirstName = storeDto.FirstName,
-                LastName = storeDto.LastName,
+               
                 Email = storeDto.Email,
                 City = storeDto.City,
                 Address = storeDto.Address,
@@ -174,8 +171,7 @@ namespace Manzili.Core.Services
                 return OperationResult<StoreUpdateDto>.Failure("BusinessName already exists");
 
             oldStore.UserName = newStore.UserName;
-            oldStore.FirstName = newStore.FirstName;
-            oldStore.LastName = newStore.LastName;
+           
             oldStore.PhoneNumber = newStore.PhoneNumber;
             oldStore.City = newStore.City;
             oldStore.Address = newStore.Address;
