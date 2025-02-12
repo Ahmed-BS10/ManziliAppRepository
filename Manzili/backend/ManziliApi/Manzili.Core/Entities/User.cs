@@ -6,9 +6,8 @@ namespace Manzili.Core.Entities
     public class User : IdentityUser<int>
     {
        
-        public string ? Image { get; set; }
-        public string City { get; set; } // New attribute
-        public string Address { get; set; } // New attribute
+        public string ? ImageUrl { get; set; }
+        public string Address { get; set; } 
 
         // Navigation properties
         public ICollection<Favorite> Favorites { get; set; }

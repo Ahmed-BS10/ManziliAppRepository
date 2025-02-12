@@ -37,7 +37,7 @@ namespace ManziliApi.Controllers
         }
 
         [HttpPost(UserRouting.Create)]
-        public async Task<IActionResult> Create(UserCreateDto user)
+        public async Task<IActionResult> Create(CreateUserDto user)
         {
             var result = await _userServices.CreateAsync(user);
 
@@ -58,7 +58,7 @@ namespace ManziliApi.Controllers
         }
 
         [HttpPut(UserRouting.Edit)]
-        public async Task<IActionResult> Update(UserUpdateDto userDto, int id)
+        public async Task<IActionResult> Update(UpdateUserDto userDto, int id)
         {
             var result = await _userServices.UpdateAsync(userDto, id);
 

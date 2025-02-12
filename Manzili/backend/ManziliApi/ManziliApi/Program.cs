@@ -1,12 +1,11 @@
 using Manzili.Core.Entities;
+using Manzili.Core.Extension;
 using Manzili.Core.Mapper;
-using Manzili.Core.Repositories;
 using Manzili.Core.Services;
-using Manzili.EF.RepoistpryImpelemation;
-using Mapster;
+using Manzili.EF.Extension;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,12 +22,8 @@ builder.Services.AddDbContext<ManziliDbContext>(options =>
 
 #region  Dependency Injection 
 
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped( typeof(UserServices));
-builder.Services.AddScoped(typeof(StoreServices));
-builder.Services.AddScoped(typeof(AuthenticationServices));
-builder.Services.AddScoped(typeof(FileService));
-builder.Services.AddScoped(typeof(CategoryServices));
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices();
 #endregion
 
 
@@ -44,7 +39,7 @@ builder.Services.AddCors(options =>
 });
 
 
-// Add Identity
+#region Add Identity
 builder.Services.AddIdentity<User, Role>(option =>
 {
     // Password settings
@@ -65,15 +60,13 @@ builder.Services.AddIdentity<User, Role>(option =>
     // option.User.AllowedUserNameCharacters = ""
 }).AddEntityFrameworkStores<ManziliDbContext>().AddDefaultTokenProviders();
 
+#endregion 
+
 #region jwtSettings
 var jwtSettings = new JwtSettings();
 builder.Configuration.GetSection("Jwt").Bind(jwtSettings);
 builder.Services.AddSingleton(jwtSettings);
 #endregion
-
-MapsterConfig.RegisterMappings();
-
-
 
 
 var app = builder.Build();

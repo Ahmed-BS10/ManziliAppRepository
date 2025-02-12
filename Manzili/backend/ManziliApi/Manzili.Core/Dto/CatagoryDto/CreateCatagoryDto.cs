@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Manzili.Core.Dto.CatagoryDto
 {
-    public class CatagoryCreateDto
+    public class CreateCatagoryDto
     {
         public string Name { get; set; }
 

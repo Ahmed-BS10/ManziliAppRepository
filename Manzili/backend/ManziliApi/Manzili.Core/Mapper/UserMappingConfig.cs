@@ -13,7 +13,7 @@ namespace Manzili.Core.Mapper
     {
         public static void Register()
         {
-            TypeAdapterConfig<User, UserGetDto>
+            TypeAdapterConfig<User, GetUserDto>
                 .NewConfig();
 
             

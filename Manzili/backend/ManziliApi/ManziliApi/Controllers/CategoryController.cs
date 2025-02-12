@@ -37,7 +37,7 @@ namespace ManziliApi.Controllers
         }
 
         [HttpPost(CategoryRouting.Create)]
-        public async Task<IActionResult> Create(CatagoryCreateDto catagoryCreate)
+        public async Task<IActionResult> Create(CreateCatagoryDto catagoryCreate)
         {
             var result = await _categoryServices.Create(catagoryCreate);
             if(result.IsSuccess)
@@ -47,7 +47,7 @@ namespace ManziliApi.Controllers
         }
 
         [HttpPut(CategoryRouting.Update)]
-        public async Task<IActionResult> Update(int id, [FromForm] CatagoryUpdateDto catagoryUpdateDto)
+        public async Task<IActionResult> Update(int id, [FromForm] UpdateCatagoryDto catagoryUpdateDto)
         {
             var result = await _categoryServices.Update(id, catagoryUpdateDto);
             if (!result.IsSuccess)

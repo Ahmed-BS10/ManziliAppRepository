@@ -2,7 +2,7 @@
 
 namespace Manzili.Core.Dto.CatagoryDto
 {
-    public class CatagoryUpdateDto
+    public class UpdateCatagoryDto
     {
         public string Name { get; set; }
 

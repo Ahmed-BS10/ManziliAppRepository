@@ -1,14 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Manzili.Core.Dto.UserDto
+﻿namespace Manzili.Core.Dto.UserDto
 {
-    public class UserUpdateDto
+    public class GetUserDto
     {
        
-       
         public string UserName { get; set; }
-
-        [Phone]
+       
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public string City { get; set; }

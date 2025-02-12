@@ -95,7 +95,7 @@ namespace Manzili.Core.Services
 
 
         }
-        public async Task<OperationResult<string>> RegisterAsUser(UserCreateDto userCreate)
+        public async Task<OperationResult<string>> RegisterAsUser(CreateUserDto userCreate)
         {
 
             User user = new User
@@ -103,7 +103,6 @@ namespace Manzili.Core.Services
                 UserName = userCreate.UserName,
                
                 PhoneNumber = userCreate.PhoneNumber,
-                City = userCreate.City,
                 Address = userCreate.Address,
                 
                
@@ -120,7 +119,7 @@ namespace Manzili.Core.Services
                 
 
         }
-        public async Task<OperationResult<string>> RegisterAsStore(StoreCreateDto storeCreate)
+        public async Task<OperationResult<string>> RegisterAsStore(CreateStoreDto storeCreate)
         {
 
 
@@ -130,7 +129,6 @@ namespace Manzili.Core.Services
                 UserName = storeCreate.UserName,
                
                 Email = storeCreate.Email,
-                City = storeCreate.City,
                 Address = storeCreate.Address
             };
 
@@ -143,7 +141,7 @@ namespace Manzili.Core.Services
 
 
         }
-        public async Task<OperationResult<string>> Login(UserLoginDto userLogin)
+        public async Task<OperationResult<string>> Login(LoginUserDto userLogin)
         {
             var user = await _userManager.FindByEmailAsync(userLogin.Email);
             if (user == null || !await _userManager.CheckPasswordAsync(user, userLogin.Password))

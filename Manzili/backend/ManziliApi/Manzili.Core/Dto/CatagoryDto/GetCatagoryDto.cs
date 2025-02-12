@@ -1,6 +1,6 @@
 ﻿namespace Manzili.Core.Dto.CatagoryDto
 {
-    public class CatagoryGetDto
+    public class GetCatagoryDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

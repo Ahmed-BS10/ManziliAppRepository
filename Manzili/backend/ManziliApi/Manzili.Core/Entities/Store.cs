@@ -1,13 +1,16 @@
-﻿namespace Manzili.Core.Entities
+﻿using Manzili.Core.Enum;
+
+namespace Manzili.Core.Entities
 {
     public class Store : User
     {
         public string BusinessName { get; set; }
+        public string Description { get; set; }
         public string BankAccount { get; set; }
-        public string Status { get; set; }
-
-      
+        public double ? Rate {  get; set; }
+        public string Status = enStoreStatus.Open.ToString();
         public ICollection<Product>? Products { get; set; }
+        
     }
 
 }

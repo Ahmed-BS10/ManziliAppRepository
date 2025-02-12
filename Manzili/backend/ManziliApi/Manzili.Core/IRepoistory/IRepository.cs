@@ -26,6 +26,9 @@ namespace Manzili.Core.Repositories
         void Commit();
         void RollBack();
 
+       Task<IEnumerable<T>> GetToPagination(int page, int pageSize);
+       
+
     }
 }
 

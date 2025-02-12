@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Manzili.Core.Dto.UserDto
 {
-    public class UserCreateDto
+    public class CreateUserDto
     {
    
         public string UserName { get; set;}

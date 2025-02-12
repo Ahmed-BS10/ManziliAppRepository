@@ -1,4 +1,5 @@
-﻿using Manzili.Core.Repositories;
+﻿using Manzili.Core.Extension;
+using Manzili.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
@@ -90,6 +91,11 @@ namespace Manzili.EF.RepoistpryImpelemation
         public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
         {
             return await _dbSet.AnyAsync(predicate); // يستخدم AnyAsync للتحقق من وجود سجل
+        }
+        public async Task<IEnumerable<T>> GetToPagination(int page , int pageSize)
+        {
+            var query =  _dbSet.AsQueryable().ToPageination(page, pageSize);
+            return await query.ToListAsync();
         }
         #endregion
 
