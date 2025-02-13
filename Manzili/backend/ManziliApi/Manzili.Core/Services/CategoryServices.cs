@@ -42,7 +42,7 @@ namespace Manzili.Core.Services
 
             var categoryDtos = result.Select(category => new GetCatagoryDto
             {
-                Id = category.CategoryId,
+                Id = category.Id,
                 Name = category.Name,
                 Image = $"{Constants.baseurl}{category.Image}"
             });
@@ -92,7 +92,7 @@ namespace Manzili.Core.Services
 
 
 
-            var existingCategory = await _categoryRepository.Find(x => x.CategoryId == id);
+            var existingCategory = await _categoryRepository.Find(x => x.Id == id);
             if (existingCategory == null)
                 return OperationResult<UpdateCatagoryDto>.Failure("Category not found.");
 
@@ -127,7 +127,7 @@ namespace Manzili.Core.Services
         }
         public async Task<OperationResult<bool>> Delete(int id)
         {
-            var existingCategory = await _categoryRepository.Find(x => x.CategoryId == id);
+            var existingCategory = await _categoryRepository.Find(x => x.Id == id);
             if (existingCategory == null)
                 return OperationResult<bool>.Failure("Category not found.");
 

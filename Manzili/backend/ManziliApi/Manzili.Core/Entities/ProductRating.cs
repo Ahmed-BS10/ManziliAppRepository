@@ -9,8 +9,8 @@
         public DateTime CreatedAt { get; set; }
 
         // Navigation properties
-        public Product Product { get; set; }
-        public User User { get; set; }
+        //public Product Product { get; set; }
+        //public User User { get; set; }
     }
 
 }

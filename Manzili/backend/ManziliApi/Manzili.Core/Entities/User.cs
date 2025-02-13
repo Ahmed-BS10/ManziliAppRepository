@@ -10,12 +10,12 @@ namespace Manzili.Core.Entities
         public string Address { get; set; } 
 
         // Navigation properties
-        public ICollection<Favorite> Favorites { get; set; }
-        public ICollection<StoreRating> StoreRatings { get; set; }
-        public ICollection<Order> Orders { get; set; }
-        public ICollection<ProductRating> ProductRatings { get; set; }
-        public ICollection<Like> Likes { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        //public ICollection<Favorite> Favorites { get; set; }
+        //public ICollection<StoreRating> StoreRatings { get; set; }
+        //public ICollection<Order> Orders { get; set; }
+        //public ICollection<ProductRating> ProductRatings { get; set; }
+        //public ICollection<Like> Likes { get; set; }
+        //public ICollection<Comment> Comments { get; set; }
     }
 
 }

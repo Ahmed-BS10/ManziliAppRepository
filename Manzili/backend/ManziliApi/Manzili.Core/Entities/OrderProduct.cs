@@ -9,8 +9,8 @@
         public int Quantity { get; set; }
 
         // Navigation properties
-        public Order Order { get; set; }
-        public Product Product { get; set; }
+      //  public Order Order { get; set; }
+    //    public Product Product { get; set; }
     }
 
 }

@@ -37,7 +37,7 @@ namespace Manzili.Core.Services
                 throw new ArgumentNullException(nameof(product), "Product cannot be null.");
             }
 
-            var category = await _categoryRepository.Find(c => c.CategoryId == product.CategoryId);
+            var category = await _categoryRepository.Find(c => c.Id == product.CategoryId);
             if (category == null)
             {
                 throw new ArgumentException("Category not found.", nameof(product.CategoryId));

@@ -14,7 +14,8 @@ namespace Manzili.EF.Extension
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            
+            services.AddScoped(typeof(IRepositoryStore), typeof(RepositoryStore));
+
 
             return services;
         }

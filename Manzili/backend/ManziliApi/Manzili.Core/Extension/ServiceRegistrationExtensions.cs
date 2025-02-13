@@ -21,6 +21,7 @@ namespace Manzili.Core.Extension
             services.AddScoped(typeof(AuthenticationServices));
             services.AddScoped(typeof(FileService));
             services.AddScoped(typeof(CategoryServices));
+            services.AddScoped(typeof(StoreCategoryServices));
 
             return services;
         }

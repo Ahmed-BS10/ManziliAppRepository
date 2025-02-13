@@ -13,7 +13,7 @@ namespace Manzili.Core.Services
     {
         #region Fields
 
-        private readonly IRepository<Store> _storeRepository;
+        private readonly IRepositoryStore _storeRepository;
         private readonly UserManager<User> _userManager;
         private readonly FileService _fileService;
 
@@ -21,7 +21,7 @@ namespace Manzili.Core.Services
 
         #region Constructor
 
-        public StoreServices(UserManager<User> storeManager, IRepository<Store> storeRepository, FileService fileService)
+        public StoreServices(UserManager<User> storeManager, IRepositoryStore storeRepository, FileService fileService)
         {
             _userManager = storeManager;
             _storeRepository = storeRepository;
@@ -32,91 +32,57 @@ namespace Manzili.Core.Services
 
         #region Methods
 
-        public async Task<OperationResult<GetStoreDto>> GetByIdAsync(int id)
-        {
-            var store = await _storeRepository.Find(x => x.Id == id);
-            if (store == null) return OperationResult<GetStoreDto>.Failure(message: "Store not found");
+        //public async Task<OperationResult<GetStoreDto>> GetByIdAsync(int id)
+        //{
+        //    var store = await _storeRepository.Find(x => x.Id == id);
+        //    if (store == null) return OperationResult<GetStoreDto>.Failure(message: "Store not found");
 
-            return OperationResult<GetStoreDto>.Success(new GetStoreDto
-            {
-                UserId = store.Id,
-                ImageUrl = store.ImageUrl,
-                BusinessName = store.BusinessName,
-                Description = store.Description,
-                Status = store.Status,
-                Rate = store.Rate  
-
-            });
+        //    return OperationResult<GetStoreDto>.Success(new GetStoreDto( store.Id, ImageUrl: store.ImageUrl, BusinessName: store.BusinessName, Status: store.Status, Rate: store.Rate));
+            
+              
 
                
             
-        }
+        //}
         public async Task<OperationResult<GetFullInfoStoreDto>> GetWithProductsAsync(int id)
         {
             var store = await _storeRepository.Find(x => x.Id == id , ["Product"]);
             if (store == null) return OperationResult<GetFullInfoStoreDto>.Failure(message: "Store not found");
 
-            return OperationResult<GetFullInfoStoreDto>.Success(new GetFullInfoStoreDto
-            {
-                UserId = store.Id,
-                ImageUrl = store.ImageUrl,
-                BusinessName = store.BusinessName,
-                Description = store.Description,
-                Address = store.Address,
-                BankAccount = store.BankAccount,
-                PhoneNumber = store.PhoneNumber,
-                Status = store.Status,
-                Rate = store.Rate,
-
-
-            });
+            return OperationResult<GetFullInfoStoreDto>.Success(new GetFullInfoStoreDto(Id :id , ImageUrl:store.ImageUrl , BusinessName : store.BusinessName , Description : store.Description , BankAccount : store.BankAccount , Address : store.Address , PhoneNumber : store.PhoneNumber , Rate  : store.Rate ,Status : store.Status ));
+           
 
 
 
         }
-        public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetListAsync()
-        {
-            var stores = await _storeRepository.GetListNoTrackingAsync();
+        //public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetListAsync()
+        //{
+        //    var stores = await _storeRepository.GetListNoTrackingAsync();
 
-            if (!stores.Any())
-            {
-                return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
-            }
+        //    if (!stores.Any())
+        //    {
+        //        return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
+        //    }
 
-            var storeDtos = stores.Select(store => new GetStoreDto
-            {
-                UserId = store.Id,
-                ImageUrl = store.ImageUrl,
-                BusinessName = store.BusinessName,
-                Description = store.Description,
-                Status = store.Status,
-                Rate = store.Rate
-            });
+        //    var storeDtos = stores.Select(store => new GetStoreDto(Id: store.Id, ImageUrl: store.ImageUrl, BusinessName: store.BusinessName, Rate: store.Rate, Status: store.Status , CategoryName));
+           
 
-            return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
-        }
+        //    return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
+        //}
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetListToPageinationAsync(int page , int pageSize )
         {
-            var stores = await _storeRepository.GetToPagination(page, pageSize);
+            string[] includes = { "Category" };
+            var stores = await _storeRepository.GetListPagination(page, pageSize);
 
             if (!stores.Any())
             {
                 return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
             }
 
-            var storeDtos = stores.Select(store => new GetStoreDto
-            {
-                UserId = store.Id,
-                ImageUrl = store.ImageUrl,
-                BusinessName = store.BusinessName,
-                Description = store.Description,
-                Status = store.Status,
-                Rate = store.Rate
-            });
-
+          
+            var storeDtos = stores.Select(store => new GetStoreDto(Id: store.Id, ImageUrl: store.ImageUrl, BusinessName: store.BusinessName, Rate: store.Rate, CategoryNames : [""] , Status: store.Status));
             return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
         }
-
         public async Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto)
         {
 
@@ -205,7 +171,6 @@ namespace Manzili.Core.Services
                 return OperationResult<UpdateStoreDto>.Failure("BusinessName already exists");
 
             oldStore.UserName = newStore.UserName;
-           
             oldStore.PhoneNumber = newStore.PhoneNumber;
             oldStore.Address = newStore.Address;
             oldStore.Email = newStore.Email;

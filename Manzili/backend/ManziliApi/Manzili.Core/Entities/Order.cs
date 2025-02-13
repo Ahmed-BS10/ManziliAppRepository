@@ -10,9 +10,9 @@
         public double Total { get; set; }
 
         // Navigation properties
-        public User User { get; set; }
+     //   public User User { get; set; }
       //  public Store Store { get; set; }
-        public ICollection<OrderProduct> OrderProducts { get; set; }
+       // public ICollection<OrderProduct> OrderProducts { get; set; }
     }
 
 }

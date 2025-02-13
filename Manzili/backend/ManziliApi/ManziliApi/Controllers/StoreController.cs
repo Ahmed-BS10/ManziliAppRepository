@@ -15,16 +15,16 @@ namespace ManziliApi.Controllers
             _storeServices = storeServices;
         }
 
-        [HttpGet(StoreRouting.List)]
-        public async Task<IActionResult> GetList()
-        {
-            var result = await _storeServices.GetListAsync();
-            if (result.IsSuccess)
-                return Ok(result);
+        //[HttpGet(StoreRouting.List)]
+        //public async Task<IActionResult> GetList()
+        //{
+        //    var result = await _storeServices.GetListAsync();
+        //    if (result.IsSuccess)
+        //        return Ok(result);
 
-            return NotFound(result);
+        //    return NotFound(result);
 
-        }
+        //}
 
 
         [HttpGet("ToPage")]
@@ -38,17 +38,17 @@ namespace ManziliApi.Controllers
 
         }
 
-        [HttpGet(StoreRouting.GetById)]
-        public async Task<IActionResult> Get(int id)
-        {
-            var result = await _storeServices.GetByIdAsync(id);
-            if (result.IsSuccess)
-                return Ok(result);
+        //[HttpGet(StoreRouting.GetById)]
+        //public async Task<IActionResult> Get(int id)
+        //{
+        //    var result = await _storeServices.GetByIdAsync(id);
+        //    if (result.IsSuccess)
+        //        return Ok(result);
 
-            return NotFound(result);
+        //    return NotFound(result);
 
 
-        }
+        //}
 
         [HttpPost(StoreRouting.Create)]
         public async Task<IActionResult> Create(CreateStoreDto storeDto)

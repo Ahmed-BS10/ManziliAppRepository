@@ -15,8 +15,8 @@ namespace Manzili.EF.RepoistpryImpelemation
     {
 
         #region Field
-        private readonly ManziliDbContext _dbContext;
-        private readonly DbSet<T> _dbSet;
+        protected readonly ManziliDbContext _dbContext;
+        protected readonly DbSet<T> _dbSet;
 
         #endregion
 
@@ -92,16 +92,7 @@ namespace Manzili.EF.RepoistpryImpelemation
         {
             return await _dbSet.AnyAsync(predicate); // يستخدم AnyAsync للتحقق من وجود سجل
         }
-        public async Task<IEnumerable<T>> GetToPagination(int page , int pageSize)
-        {
-            var query =  _dbSet.AsQueryable().ToPageination(page, pageSize);
-            return await query.ToListAsync();
-        }
         #endregion
-
-
-
-
 
     }
 }
