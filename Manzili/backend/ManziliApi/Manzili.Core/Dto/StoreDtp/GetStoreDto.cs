@@ -1,12 +1,9 @@
-﻿public class GetStoreDto
-{
-    public int UserId { get; set; }
-    public string ImageUrl { get; set; }
-    public string BusinessName { get; set; }
-    public string Description { get; set; }
-    public double ? Rate { get; set; }
-    public string Status { get; set; }
+﻿public record GetStoreDto(
+    int Id,
+    string ImageUrl,
+    string BusinessName,
+    double? Rate,
+    List<string> CategoryNames,
+    string Status
+);
 
-
-
-}

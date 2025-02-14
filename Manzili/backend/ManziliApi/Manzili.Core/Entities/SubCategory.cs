@@ -7,7 +7,7 @@
         public string Name { get; set; }
 
         // Navigation properties
-        public Category Category { get; set; }
+      //  public StoreCategory Category { get; set; }
     }
 
 }

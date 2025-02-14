@@ -9,7 +9,9 @@ namespace Manzili.Core.Entities
         public string BankAccount { get; set; }
         public double ? Rate {  get; set; }
         public string Status = enStoreStatus.Open.ToString();
-        public ICollection<Product>? Products { get; set; }
+
+        public ICollection<StoreCategoryStore> storeCategoryStores { get; set; }
+
         
     }
 

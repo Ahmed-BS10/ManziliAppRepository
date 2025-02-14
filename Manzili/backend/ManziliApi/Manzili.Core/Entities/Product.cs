@@ -13,12 +13,12 @@
         public int Quantity { get; set; }
 
         // Navigation properties
-        public Category Category { get; set; }
-        public Store Store { get; set; }
-        public ICollection<OrderProduct> OrderProducts { get; set; }
-        public ICollection<ProductRating> ProductRatings { get; set; }
-        public ICollection<Like> Likes { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        //public StoreCategory Category { get; set; }
+        //public Store Store { get; set; }
+        //public ICollection<OrderProduct> OrderProducts { get; set; }
+        //public ICollection<ProductRating> ProductRatings { get; set; }
+        //public ICollection<Like> Likes { get; set; }
+        //public ICollection<Comment> Comments { get; set; }
     }
 
 }
