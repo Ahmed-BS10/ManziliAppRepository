@@ -13,6 +13,8 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
     public DbSet<User> Users { get; set; }
     public DbSet<Store> Stores { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<StoreCategoryStore> StoreCategoryStores { get; set; }
+    public DbSet<StoreCategory> StoreCategories { get; set; }
 
 
 

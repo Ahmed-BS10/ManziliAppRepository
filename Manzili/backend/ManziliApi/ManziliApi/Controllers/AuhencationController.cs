@@ -50,9 +50,9 @@ namespace ManziliApi.Controllers
 
 
         [HttpPost(AuthenticationRouting.RegsiterStore)]
-        public async Task<IActionResult> RegisterStore(CreateStoreDto storeCreate)
+        public async Task<IActionResult> RegisterStore([FromForm]CreateStoreDto storeCreate , [FromQuery] List<int> categoreis)
         {
-            var reslut = await _authenticationServices.RegisterAsStore(storeCreate);
+            var reslut = await _authenticationServices.RegisterAsStore(storeCreate , categoreis);
             if (reslut.IsSuccess)
                 return Ok(reslut);
 

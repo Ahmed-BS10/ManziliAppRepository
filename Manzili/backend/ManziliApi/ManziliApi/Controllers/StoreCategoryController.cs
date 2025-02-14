@@ -13,12 +13,12 @@ namespace ManziliApi.Controllers
     {
         #region Fields
 
-        readonly StoreCategoryServices _storeCategoryServices;
+        readonly IStoreCategoryServices _storeCategoryServices;
         #endregion
 
         #region Constructor
 
-        public StoreCategoryController(StoreCategoryServices storeCategoryServices)
+        public StoreCategoryController(IStoreCategoryServices storeCategoryServices)
         {
             _storeCategoryServices = storeCategoryServices;
         }

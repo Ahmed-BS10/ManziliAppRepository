@@ -6,7 +6,7 @@ namespace Manzili.Core.Services
     public interface IAuthenticationServices
     {
         Task<OperationResult<string>> Login(LoginUserDto userLogin);
-        Task<OperationResult<string>> RegisterAsStore(CreateStoreDto storeCreate);
+        Task<OperationResult<string>> RegisterAsStore(CreateStoreDto storeCreate , List<int> categories);
         Task<OperationResult<string>> RegisterAsUser(CreateUserDto userCreate);
     }
 }

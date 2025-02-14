@@ -44,7 +44,7 @@ namespace Manzili.Core.Services
 
             var categoryDtos = result.Select(category => new GetCatagoryDto
             {
-                Id = category.CategoryId,
+                Id = category.Id,
                 Name = category.Name,
                 Image = $"{Constants.baseurl}{category.Image}"
             });

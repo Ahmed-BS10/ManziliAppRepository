@@ -1,7 +1,7 @@
 ﻿using Manzili.Core.Dto.CatagoryDto;
 using Manzili.Core.Dto.StoreCategoryDto;
 using Manzili.Core.Entities;
-using Manzili.Core.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +10,20 @@ using System.Threading.Tasks;
 
 namespace Manzili.Core.Services
 {
-    public class StoreCategoryServices
+    public class StoreCategoryServices : IStoreCategoryServices
     {
         #region Fields
-        readonly IRepository<StoreCategory> _storecategoryRepository;
+        readonly ManziliDbContext _db;
         readonly FileService _fileService;
+        readonly DbSet<StoreCategory> _dbSet;
         #endregion
 
         #region Constructor
-        public StoreCategoryServices(IRepository<StoreCategory> storecategoryRepository, FileService fileService)
+        public StoreCategoryServices( FileService fileService, ManziliDbContext db)
         {
-            _storecategoryRepository = storecategoryRepository;
             _fileService = fileService;
+            _db = db;
+            _dbSet = _db.Set<StoreCategory>();
         }
         #endregion
 
@@ -29,12 +31,16 @@ namespace Manzili.Core.Services
 
         public async Task<OperationResult<IEnumerable<GetStoreCategoryDto>>> GetList()
         {
-            var result = await _storecategoryRepository.GetListNoTrackingAsync();
+            var result = await _dbSet.Include("StoreCategoriesStores").AsNoTracking().ToListAsync();
 
             if (result == null || !result.Any())
                 return OperationResult<IEnumerable<GetStoreCategoryDto>>.Failure("No store categories found.");
 
-            var storeCategoryDtos = result.Select(storeCategory => new GetStoreCategoryDto(Id: storeCategory.Id, Name: storeCategory.Name, ImageUrl: storeCategory.Image, conunt: 0));
+            var storeCategoryDtos =
+                result.Select(storeCategory => new GetStoreCategoryDto
+                (
+                      storeCategory.Name,  storeCategory.Image,conunt : storeCategory.StoreCategoriesStores?.Count() ?? 0 , StoreId : storeCategory.StoreCategoriesStores.Select(x => x.StoreId).ToList())
+                );
 
             return OperationResult<IEnumerable<GetStoreCategoryDto>>.Success(storeCategoryDtos);
         }
@@ -64,8 +70,8 @@ namespace Manzili.Core.Services
                     };
 
 
-                    await _storecategoryRepository.AddAsync(storeCategory);
-
+                    await _dbSet.AddAsync(storeCategory);
+                    await _db.SaveChangesAsync();
                     return OperationResult<CreateStoreCatagoryDto>.Success(createStoreCategoryDto);
                 }
 
@@ -74,7 +80,7 @@ namespace Manzili.Core.Services
                     return OperationResult<CreateStoreCatagoryDto>.Failure(message: ex.Message);
                 }
 
-               
+
 
             }
 
@@ -89,7 +95,7 @@ namespace Manzili.Core.Services
 
 
 
-            var existingCategory = await _storecategoryRepository.Find(x => x.Id == id);
+            var existingCategory = await _dbSet.FindAsync(id);
             if (existingCategory == null)
                 return OperationResult<UpdateStoreCatagoryDto>.Failure(" Store Category not found.");
             existingCategory.Name = updateStoreCatagoryDto.Name ?? existingCategory.Name;
@@ -110,12 +116,14 @@ namespace Manzili.Core.Services
                         return OperationResult<UpdateStoreCatagoryDto>.Failure("Failed to upload image");
 
                     var deleteReslut = await _fileService.Delete(existingCategory.Image);
-                   
+
                     existingCategory.Image = imagePath;
-                    await _storecategoryRepository.Update(existingCategory);
+                    _dbSet.Update(existingCategory);
+                    await _db.SaveChangesAsync();
+
                     return OperationResult<UpdateStoreCatagoryDto>.Success(updateStoreCatagoryDto);
 
-                    
+
                 }
 
                 catch (Exception ex)
@@ -133,7 +141,7 @@ namespace Manzili.Core.Services
         }
         public async Task<OperationResult<bool>> Delete(int id)
         {
-            var existingCategory = await _storecategoryRepository.Find(x => x.Id == id);
+            var existingCategory = await _dbSet.FindAsync(id);
             if (existingCategory == null)
                 return OperationResult<bool>.Failure("Stoer Category not found.");
 
@@ -143,7 +151,9 @@ namespace Manzili.Core.Services
                 var deleteReslut = await _fileService.Delete(existingCategory.Image);
                 if (deleteReslut.IsSuccess)
                 {
-                    await _storecategoryRepository.Delete(existingCategory);
+                    _dbSet.Remove(existingCategory);
+                    await _db.SaveChangesAsync();
+
                     return OperationResult<bool>.Success(true);
                 }
             }

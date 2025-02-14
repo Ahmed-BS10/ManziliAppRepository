@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manzili.EF.Migrations
 {
     [DbContext(typeof(ManziliDbContext))]
-    partial class ManziliDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250214135905_edit11")]
+    partial class edit11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +95,7 @@ namespace Manzili.EF.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("StoreCategoryStores");
+                    b.ToTable("StoreCategoryStore");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.User", b =>
@@ -300,7 +303,7 @@ namespace Manzili.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("StoreCategories");
+                    b.ToTable("StoreCategory");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>

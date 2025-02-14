@@ -5,7 +5,7 @@ namespace Manzili.Core.Services
 {
     public interface IStoreServices
     {
-        Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto);
+        Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto , List<int> categories);
         Task<OperationResult<Store>> DeleteAsync(int id);
         Task<OperationResult<GetStoreDto>> GetByIdAsync(int id);
         Task<OperationResult<IEnumerable<GetStoreDto>>> GetListAsync();

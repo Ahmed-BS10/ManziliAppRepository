@@ -5,7 +5,7 @@ using static Manzili.Core.Routes.Route;
 
 namespace ManziliApi.Controllers
 {
-    [ApiController]
+    [Route("api/[controller]")]
     public class StoreController : ControllerBase
     {
         private readonly IStoreServices _storeServices;
@@ -51,16 +51,16 @@ namespace ManziliApi.Controllers
         //}
 
         [HttpPost(StoreRouting.Create)]
-        public async Task<IActionResult> Create(CreateStoreDto storeDto)
+        public async Task<IActionResult> Create(CreateStoreDto storeDto , List<int> categories)
         {
-            var result = await _storeServices.CreateAsync(storeDto);
+            var result = await _storeServices.CreateAsync(storeDto , categories);
             if (result.IsSuccess)
                 return Ok(result);
 
             return BadRequest(result);
         }
 
-        [HttpPut(StoreRouting.Edit)]
+        [HttpPut(StoreRouting.Update)]
         public async Task<IActionResult> Update(UpdateStoreDto storeDto , int storeId)
         {
             var result = await _storeServices.UpdateAsync(storeDto , storeId);

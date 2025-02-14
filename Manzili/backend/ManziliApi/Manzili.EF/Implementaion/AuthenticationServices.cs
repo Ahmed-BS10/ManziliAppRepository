@@ -113,7 +113,7 @@ namespace Manzili.Core.Services
 
 
         }
-        public async Task<OperationResult<string>> RegisterAsStore(CreateStoreDto storeCreate)
+        public async Task<OperationResult<string>> RegisterAsStore(CreateStoreDto storeCreate , List<int> categories)
         {
 
 
@@ -126,7 +126,7 @@ namespace Manzili.Core.Services
                 Address = storeCreate.Address
             };
 
-            var result = await _storeServices.CreateAsync(storeCreate);
+            var result = await _storeServices.CreateAsync(storeCreate , categories);
             if (result.IsSuccess)
                 return OperationResult<string>.Success(await GenerateJwtToken(user));
 
