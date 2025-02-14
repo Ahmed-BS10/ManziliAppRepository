@@ -21,7 +21,9 @@ namespace Manzili.Core.Dto.StoreDtp
         public string Address { get; set; }
         public string BankAccount { get; set; }
         public string Password { get; set; }
+
+
         [Compare("Password")]
-        public string ConfirmPassword { get; set; }
+        public string ConfirmPassword12 { get; set; }
     }
 }

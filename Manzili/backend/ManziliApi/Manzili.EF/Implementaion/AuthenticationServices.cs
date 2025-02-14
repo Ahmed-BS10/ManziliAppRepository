@@ -1,7 +1,6 @@
 ﻿using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Dto.UserDto;
 using Manzili.Core.Entities;
-using Manzili.Core.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -14,27 +13,23 @@ using System.Threading.Tasks;
 
 namespace Manzili.Core.Services
 {
-    public class AuthenticationServices
+    public class AuthenticationServices : IAuthenticationServices
     {
         #region Field
         private readonly UserServices _userServices;
-        private readonly StoreServices _storeServices;
+        private readonly IStoreServices _storeServices;
         private readonly UserManager<User> _userManager;
-        private readonly IRepository<User> _userRepo;
         private readonly JwtSettings _jwtSettings;
 
         #endregion
 
-
         #region Constructor
         public AuthenticationServices(
-            IRepository<User> userRepo,
             JwtSettings jwtSettings,
             UserManager<User> userManager,
             UserServices userServices,
-            StoreServices storeServices)
+            IStoreServices storeServices)
         {
-            _userRepo = userRepo;
             _jwtSettings = jwtSettings;
             _userManager = userManager;
             _userServices = userServices;
@@ -42,13 +37,12 @@ namespace Manzili.Core.Services
         }
         #endregion
 
-
         #region Method
 
         private async Task<string> GenerateJwtToken(User user)
         {
 
-           
+
 
             // initial claim
 
@@ -57,7 +51,7 @@ namespace Manzili.Core.Services
 
                 new Claim(ClaimTypes.Name , user.UserName),
                 new Claim(ClaimTypes.NameIdentifier , user.Id.ToString()),
-               
+
             };
 
 
@@ -68,7 +62,7 @@ namespace Manzili.Core.Services
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-          
+
             //var userClaims = await _userManager.GetClaimsAsync(user);
             //claims.AddRange(userClaims);
 
@@ -101,11 +95,11 @@ namespace Manzili.Core.Services
             User user = new User
             {
                 UserName = userCreate.UserName,
-               
+
                 PhoneNumber = userCreate.PhoneNumber,
                 Address = userCreate.Address,
-                
-               
+
+
             };
 
 
@@ -114,9 +108,9 @@ namespace Manzili.Core.Services
                 return OperationResult<string>.Success(await GenerateJwtToken(user));
 
 
- 
+
             return OperationResult<string>.Failure(result.Message);
-                
+
 
         }
         public async Task<OperationResult<string>> RegisterAsStore(CreateStoreDto storeCreate)
@@ -127,7 +121,7 @@ namespace Manzili.Core.Services
             {
                 PhoneNumber = storeCreate.PhoneNumber,
                 UserName = storeCreate.UserName,
-               
+
                 Email = storeCreate.Email,
                 Address = storeCreate.Address
             };
@@ -145,7 +139,7 @@ namespace Manzili.Core.Services
         {
             var user = await _userManager.FindByEmailAsync(userLogin.Email);
             if (user == null || !await _userManager.CheckPasswordAsync(user, userLogin.Password))
-                return  OperationResult<string>.Failure("Invalid email or password");
+                return OperationResult<string>.Failure("Invalid email or password");
 
             return OperationResult<string>.Success(await GenerateJwtToken(user));
 

@@ -1,6 +1,5 @@
 ﻿using Manzili.Core.Dto.UserDto;
 using Manzili.Core.Entities;
-using Manzili.Core.Repositories;
 using Manzili.Core.Services;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
@@ -10,10 +9,10 @@ using static System.Formats.Asn1.AsnWriter;
 public class UserServices
 {
     private readonly UserManager<User> _userManager;
-    private readonly FileService _fileService;
+    private readonly IFileService _fileService;
 
 
-    public UserServices(UserManager<User> userManager, FileService fileService)
+    public UserServices(UserManager<User> userManager, IFileService fileService)
     {
         _userManager = userManager;
         _fileService = fileService;

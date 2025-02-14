@@ -12,12 +12,12 @@ namespace ManziliApi.Controllers
     {
         #region Fields
 
-        readonly CategoryServices _categoryServices;
+        readonly ICategoryServices _categoryServices;
         #endregion
 
         #region Constructor
 
-        public CategoryController(CategoryServices categoryServices)
+        public CategoryController(ICategoryServices categoryServices)
         {
             _categoryServices = categoryServices;
         }

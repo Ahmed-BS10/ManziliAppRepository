@@ -13,12 +13,12 @@ namespace ManziliApi.Controllers
     {
         #region Field
 
-        private readonly AuthenticationServices _authenticationServices;
+        private readonly IAuthenticationServices _authenticationServices;
         #endregion
 
         #region Constructor
 
-        public AuhencationController(AuthenticationServices authenticationServices)
+        public AuhencationController(IAuthenticationServices authenticationServices)
         {
             _authenticationServices=authenticationServices;
         }

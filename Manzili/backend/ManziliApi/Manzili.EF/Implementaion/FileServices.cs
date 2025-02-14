@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Manzili.Core.Services
 {
-    public class FileService
+    public class FileService : IFileService
     {
 
         public async Task<string> UploadImageAsync(string targetFolder, IFormFile file)
@@ -56,7 +56,7 @@ namespace Manzili.Core.Services
             }
             catch (Exception ex)
             {
-                return OperationResult<bool>.Failure(message : $"Failed to delete image: {ex.Message}");
+                return OperationResult<bool>.Failure(message: $"Failed to delete image: {ex.Message}");
             }
         }
 

@@ -2,8 +2,8 @@
 using Manzili.Core.Dto.CatagoryDto;
 using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Entities;
-using Manzili.Core.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,19 +15,21 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace Manzili.Core.Services
 {
-    public class CategoryServices
+    public class CategoryServices : ICategoryServices
     {
 
         #region Fields
-        readonly IRepository<Category> _categoryRepository;
+        readonly ManziliDbContext _db;
         readonly FileService _fileService;
+        readonly DbSet<Category> _dbSet;
         #endregion
 
         #region Constructor
-        public CategoryServices(IRepository<Category> categoryRepository, FileService fileService)
+        public CategoryServices( FileService fileService, ManziliDbContext db)
         {
-            _categoryRepository = categoryRepository;
             _fileService = fileService;
+            _db = db;
+            _dbSet = _db.Set<Category>();
         }
         #endregion
 
@@ -35,7 +37,7 @@ namespace Manzili.Core.Services
 
         public async Task<OperationResult<IEnumerable<GetCatagoryDto>>> GetList()
         {
-            var result = await _categoryRepository.GetListNoTrackingAsync();
+            var result = await _dbSet.AsNoTracking().ToListAsync();
 
             if (result == null || !result.Any())
                 return OperationResult<IEnumerable<GetCatagoryDto>>.Failure("No categories found.");
@@ -72,14 +74,14 @@ namespace Manzili.Core.Services
                 };
 
 
-                await _categoryRepository.AddAsync(category);
+                await _dbSet.AddAsync(category);
 
                 return OperationResult<CreateCatagoryDto>.Success(catagoryCreateDto);
 
 
             }
 
-            return OperationResult<CreateCatagoryDto>.Failure(message : "Image cannt be null");
+            return OperationResult<CreateCatagoryDto>.Failure(message: "Image cannt be null");
 
 
 
@@ -92,7 +94,7 @@ namespace Manzili.Core.Services
 
 
 
-            var existingCategory = await _categoryRepository.Find(x => x.CategoryId == id);
+            var existingCategory = await _dbSet.FindAsync(id);
             if (existingCategory == null)
                 return OperationResult<UpdateCatagoryDto>.Failure("Category not found.");
 
@@ -110,24 +112,24 @@ namespace Manzili.Core.Services
                 if (imagePath == "FailedToUploadImage")
                     return OperationResult<UpdateCatagoryDto>.Failure("Failed to upload image");
 
-                var deleteReslut =  await _fileService.Delete(existingCategory.Image);
-                if(deleteReslut.IsSuccess)
+                var deleteReslut = await _fileService.Delete(existingCategory.Image);
+                if (deleteReslut.IsSuccess)
                 {
                     existingCategory.Image = imagePath;
-                    await _categoryRepository.Update(existingCategory);
+                    _dbSet.Update(existingCategory);
                     return OperationResult<UpdateCatagoryDto>.Success(catagoryUpdateDto);
 
                 }
 
-                return OperationResult<UpdateCatagoryDto>.Failure(message : deleteReslut.Message);
+                return OperationResult<UpdateCatagoryDto>.Failure(message: deleteReslut.Message);
             }
 
-            return OperationResult<UpdateCatagoryDto>.Failure(message : "Image cannt be empty");
+            return OperationResult<UpdateCatagoryDto>.Failure(message: "Image cannt be empty");
 
         }
         public async Task<OperationResult<bool>> Delete(int id)
         {
-            var existingCategory = await _categoryRepository.Find(x => x.CategoryId == id);
+            var existingCategory = await _dbSet.FindAsync(id);
             if (existingCategory == null)
                 return OperationResult<bool>.Failure("Category not found.");
 
@@ -137,18 +139,19 @@ namespace Manzili.Core.Services
                 var deleteReslut = await _fileService.Delete(existingCategory.Image);
                 if (deleteReslut.IsSuccess)
                 {
-                    await _categoryRepository.Delete(existingCategory);
+                    _dbSet.Remove(existingCategory);
                     return OperationResult<bool>.Success(true);
                 }
             }
 
-            catch (Exception e){
+            catch (Exception e)
+            {
 
                 return OperationResult<bool>.Failure(message: e.Message);
 
             }
 
-            return OperationResult<bool>.Failure(message : "");
+            return OperationResult<bool>.Failure(message: "");
 
 
         }

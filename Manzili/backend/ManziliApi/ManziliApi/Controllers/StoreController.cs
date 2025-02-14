@@ -8,9 +8,9 @@ namespace ManziliApi.Controllers
     [ApiController]
     public class StoreController : ControllerBase
     {
-        private readonly StoreServices _storeServices;
+        private readonly IStoreServices _storeServices;
 
-        public StoreController(StoreServices storeServices)
+        public StoreController(IStoreServices storeServices)
         {
             _storeServices = storeServices;
         }
