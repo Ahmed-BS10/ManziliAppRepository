@@ -1,4 +1,4 @@
-﻿using Manzili.Core.Dto.RateDto;
+﻿using Manzili.Core.Dto.StoreRateDto;
 using Manzili.Core.Entities;
 using Manzili.Core.Services;
 using Microsoft.EntityFrameworkCore;
@@ -28,17 +28,17 @@ public class StoreRateServices
 
     #region Methode
 
-    public async Task<OperationResult<CreateRateDto>> CreateOrUpdate(CreateRateDto createRateDto)
+    public async Task<OperationResult<CreateStoreRateDto>> CreateOrUpdate(CreateStoreRateDto createRateDto)
     {
         var existRate = await _dbSet.FirstOrDefaultAsync(r => r.UserId == createRateDto.UserId && r.StoreId == createRateDto.StoreId);
         if(existRate != null)
         {
             try
             {
-                existRate.RatingValue = createRateDto.Rate;
-                await _storeServices.UpdateToRateAsync(createRateDto.StoreId, createRateDto.Rate);
+                existRate.RatingValue = createRateDto.valueRate;
+                await _storeServices.UpdateToRateAsync(createRateDto.StoreId, createRateDto.valueRate);
                 _db.SaveChanges();
-                return OperationResult<CreateRateDto>.Success(createRateDto);
+                return OperationResult<CreateStoreRateDto>.Success(createRateDto);
             }
 
             catch(Exception e)
@@ -53,20 +53,20 @@ public class StoreRateServices
 
             UserId = createRateDto.UserId,
             StoreId = createRateDto.StoreId,
-            RatingValue = createRateDto.Rate,
+            RatingValue = createRateDto.valueRate,
 
         };
 
         try
         {
             var result = await _dbSet.AddAsync(storeRate);
-            await _storeServices.UpdateToRateAsync(createRateDto.StoreId, createRateDto.Rate);
-            return OperationResult<CreateRateDto>.Success(createRateDto);
+            await _storeServices.UpdateToRateAsync(createRateDto.StoreId, createRateDto.valueRate);
+            return OperationResult<CreateStoreRateDto>.Success(createRateDto);
 
         }
 
         catch (Exception e) {
-            return OperationResult<CreateRateDto>.Failure("Failed to create rate");
+            return OperationResult<CreateStoreRateDto>.Failure("Failed to create rate");
         }
        
       

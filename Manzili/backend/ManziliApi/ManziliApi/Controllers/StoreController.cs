@@ -27,6 +27,16 @@ namespace ManziliApi.Controllers
         //}
 
 
+        [HttpGet("OrderByDescending")]
+        public async Task<IActionResult> GetListOrderByDescending()
+        {
+            var result = await _storeServices.GetLatestStoresAsync();
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return NotFound(result);
+
+        }
         [HttpGet("ToPage")]
         public async Task<IActionResult> GetListToPage(int size , int pageSize)
         {

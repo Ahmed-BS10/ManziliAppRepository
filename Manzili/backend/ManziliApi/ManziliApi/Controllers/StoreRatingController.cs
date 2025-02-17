@@ -1,4 +1,4 @@
-﻿using Manzili.Core.Dto.RateDto;
+﻿using Manzili.Core.Dto.StoreRateDto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static Manzili.Core.Routes.Route;
@@ -25,7 +25,7 @@ namespace ManziliApi.Controllers
         #region Method
 
         [HttpPost(StoreRatingRouting.Create)]
-        public async Task<IActionResult> Create(CreateRateDto createRateDto)
+        public async Task<IActionResult> Create(CreateStoreRateDto createRateDto)
         {
             var result = await _storeRateServices.CreateOrUpdate(createRateDto);
             if (result.IsSuccess)

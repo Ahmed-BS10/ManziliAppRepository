@@ -1,4 +1,5 @@
-﻿using Manzili.Core.Dto.StoreDtp;
+﻿using Azure;
+using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Entities;
 using Manzili.Core.Extension;
 using Manzili.Core.Services;
@@ -89,6 +90,26 @@ namespace Manzili.EF.Implementaion
 
 
 
+        public  async Task<OperationResult<IEnumerable<GetStoreDto>>> GetLatestStoresAsync()
+        {
+            var stores = await _dbSet.AsNoTracking().OrderByDescending(x => x.CreateAt).ToListAsync();
+
+            if (!stores.Any())
+            {
+                return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
+            }
+
+            var storeDtos = stores.Select(store => new GetStoreDto(
+                  store.Id,
+                  store.ImageUrl,
+                  store.BusinessName,
+                  store.Rate,
+                  store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
+                  store.Status
+                  )).ToList();
+
+            return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
+        }
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetListToPageinationAsync(int page, int pageSize)
         {
             var stores =  _dbSet.ToPageination(page, pageSize);
