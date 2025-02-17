@@ -11,7 +11,8 @@ namespace Manzili.Core.Entities
 
         // Navigation properties
         //public ICollection<Favorite> Favorites { get; set; }
-        //public ICollection<StoreRating> StoreRatings { get; set; }
+
+        public ICollection<StoreRating>? RatingsGivenStore { get; set; }
         //public ICollection<Order> Orders { get; set; }
         //public ICollection<ProductRating> ProductRatings { get; set; }
         //public ICollection<Like> Likes { get; set; }

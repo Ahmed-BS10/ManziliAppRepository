@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manzili.EF.Migrations
 {
     [DbContext(typeof(ManziliDbContext))]
-    [Migration("20250212203409_edit4")]
-    partial class edit4
+    [Migration("20250216202757_Update")]
+    partial class Update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,129 +24,15 @@ namespace Manzili.EF.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Manzili.Core.Entities.Comment", b =>
+            modelBuilder.Entity("Manzili.Core.Entities.Category", b =>
                 {
-                    b.Property<int>("CommentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ReplyComment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CommentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Comment");
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.Favorite", b =>
-                {
-                    b.Property<int>("FavoriteId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavoriteId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("FavoriteId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Favorite");
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.Like", b =>
-                {
-                    b.Property<int>("LikeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LikeId"));
-
-                    b.Property<bool>("IsLike")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("LikeId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Like");
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.Order", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Total")
-                        .HasColumnType("float");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Order");
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.Product", b =>
-                {
-                    b.Property<int>("ProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Discount")
-                        .HasColumnType("float");
-
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -154,47 +40,9 @@ namespace Manzili.EF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    b.HasKey("Id");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductId");
-
-                    b.HasIndex("StoreId");
-
-                    b.ToTable("Product");
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.ProductRating", b =>
-                {
-                    b.Property<int>("ProductRatingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductRatingId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RatingValue")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductRatingId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProductRating");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Role", b =>
@@ -227,27 +75,6 @@ namespace Manzili.EF.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Manzili.Core.Entities.StoreCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
             modelBuilder.Entity("Manzili.Core.Entities.StoreCategoryStore", b =>
                 {
                     b.Property<int>("Id")
@@ -268,7 +95,7 @@ namespace Manzili.EF.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("StoreCategoryStore");
+                    b.ToTable("StoreCategoryStores");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.StoreRating", b =>
@@ -285,14 +112,19 @@ namespace Manzili.EF.Migrations
                     b.Property<int>("RatingValue")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("StoreRatingId");
 
+                    b.HasIndex("StoreId");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("StoreRating");
+                    b.ToTable("StoreRatings");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.User", b =>
@@ -482,6 +314,27 @@ namespace Manzili.EF.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("StoreCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StoreCategories");
+                });
+
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
                 {
                     b.HasBaseType("Manzili.Core.Entities.User");
@@ -504,64 +357,10 @@ namespace Manzili.EF.Migrations
                     b.HasDiscriminator().HasValue("Store");
                 });
 
-            modelBuilder.Entity("Manzili.Core.Entities.Comment", b =>
-                {
-                    b.HasOne("Manzili.Core.Entities.User", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.Favorite", b =>
-                {
-                    b.HasOne("Manzili.Core.Entities.User", null)
-                        .WithMany("Favorites")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.Like", b =>
-                {
-                    b.HasOne("Manzili.Core.Entities.User", null)
-                        .WithMany("Likes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.Order", b =>
-                {
-                    b.HasOne("Manzili.Core.Entities.User", null)
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.Product", b =>
-                {
-                    b.HasOne("Manzili.Core.Entities.Store", null)
-                        .WithMany("Products")
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.ProductRating", b =>
-                {
-                    b.HasOne("Manzili.Core.Entities.User", null)
-                        .WithMany("ProductRatings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Manzili.Core.Entities.StoreCategoryStore", b =>
                 {
-                    b.HasOne("Manzili.Core.Entities.StoreCategory", "StoreCategory")
-                        .WithMany("storeCategoryStores")
+                    b.HasOne("StoreCategory", "StoreCategory")
+                        .WithMany("StoreCategoriesStores")
                         .HasForeignKey("StoreCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -579,11 +378,17 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Manzili.Core.Entities.StoreRating", b =>
                 {
+                    b.HasOne("Manzili.Core.Entities.Store", "Store")
+                        .WithMany("RatingsReceived")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Manzili.Core.Entities.User", "User")
-                        .WithMany("StoreRatings")
+                        .WithMany("RatingsGivenStore")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Store");
 
                     b.Navigation("User");
                 });
@@ -639,29 +444,19 @@ namespace Manzili.EF.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Manzili.Core.Entities.StoreCategory", b =>
-                {
-                    b.Navigation("storeCategoryStores");
-                });
-
             modelBuilder.Entity("Manzili.Core.Entities.User", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("RatingsGivenStore");
+                });
 
-                    b.Navigation("Favorites");
-
-                    b.Navigation("Likes");
-
-                    b.Navigation("Orders");
-
-                    b.Navigation("ProductRatings");
-
-                    b.Navigation("StoreRatings");
+            modelBuilder.Entity("StoreCategory", b =>
+                {
+                    b.Navigation("StoreCategoriesStores");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("RatingsReceived");
 
                     b.Navigation("storeCategoryStores");
                 });

@@ -239,6 +239,16 @@ namespace Manzili.EF.Implementaion
             await _db.SaveChangesAsync();
             return OperationResult<UpdateStoreDto>.Success(newStore);
         }
+        public async Task<OperationResult<int>> UpdateToRateAsync(int storeId, int valueRate)
+        {   
+
+            var store = await _dbSet.Include("RatingsReceived").FirstOrDefaultAsync( x => x.Id == storeId);
+            double avg = store.RatingsReceived.Average(x => x.RatingValue);
+            store.Rate = avg;
+            _dbSet.Update(store);
+            await _db.SaveChangesAsync();
+            return OperationResult<int>.Success(valueRate);
+        }
         public async Task<OperationResult<Store>> DeleteAsync(int id)
         {
             var store = await _dbSet.FindAsync(id);

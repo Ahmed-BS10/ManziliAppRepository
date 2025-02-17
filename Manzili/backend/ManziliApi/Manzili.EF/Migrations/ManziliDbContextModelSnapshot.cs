@@ -95,6 +95,35 @@ namespace Manzili.EF.Migrations
                     b.ToTable("StoreCategoryStores");
                 });
 
+            modelBuilder.Entity("Manzili.Core.Entities.StoreRating", b =>
+                {
+                    b.Property<int>("StoreRatingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StoreRatingId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RatingValue")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StoreRatingId");
+
+                    b.HasIndex("StoreId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("StoreRatings");
+                });
+
             modelBuilder.Entity("Manzili.Core.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -113,11 +142,6 @@ namespace Manzili.EF.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -172,11 +196,9 @@ namespace Manzili.EF.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Users", (string)null);
 
-                    b.HasDiscriminator().HasValue("User");
-
-                    b.UseTphMappingStrategy();
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -322,7 +344,7 @@ namespace Manzili.EF.Migrations
                     b.Property<double?>("Rate")
                         .HasColumnType("float");
 
-                    b.HasDiscriminator().HasValue("Store");
+                    b.ToTable("Stores", (string)null);
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.StoreCategoryStore", b =>
@@ -342,6 +364,23 @@ namespace Manzili.EF.Migrations
                     b.Navigation("Store");
 
                     b.Navigation("StoreCategory");
+                });
+
+            modelBuilder.Entity("Manzili.Core.Entities.StoreRating", b =>
+                {
+                    b.HasOne("Manzili.Core.Entities.Store", "Store")
+                        .WithMany("RatingsReceived")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Manzili.Core.Entities.User", "User")
+                        .WithMany("RatingsGivenStore")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Store");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -395,6 +434,20 @@ namespace Manzili.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
+                {
+                    b.HasOne("Manzili.Core.Entities.User", null)
+                        .WithOne()
+                        .HasForeignKey("Manzili.Core.Entities.Store", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Manzili.Core.Entities.User", b =>
+                {
+                    b.Navigation("RatingsGivenStore");
+                });
+
             modelBuilder.Entity("StoreCategory", b =>
                 {
                     b.Navigation("StoreCategoriesStores");
@@ -402,6 +455,8 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
                 {
+                    b.Navigation("RatingsReceived");
+
                     b.Navigation("storeCategoryStores");
                 });
 #pragma warning restore 612, 618

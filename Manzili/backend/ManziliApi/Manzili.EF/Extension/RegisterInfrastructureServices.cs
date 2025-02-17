@@ -21,6 +21,7 @@ namespace Manzili.EF.Extension
             services.AddScoped(typeof(IFileService) , typeof(FileService));
             services.AddScoped(typeof(ICategoryServices) , typeof (CategoryServices));
             services.AddScoped(typeof(IStoreCategoryServices), typeof(StoreCategoryServices));
+            services.AddScoped(typeof(StoreRateServices));
 
             return services;
         }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manzili.EF.Migrations
 {
     [DbContext(typeof(ManziliDbContext))]
-    [Migration("20250212210747_edit7")]
-    partial class edit7
+    [Migration("20250216203132_Update2")]
+    partial class Update2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -95,7 +95,36 @@ namespace Manzili.EF.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("StoreCategoryStore");
+                    b.ToTable("StoreCategoryStores");
+                });
+
+            modelBuilder.Entity("Manzili.Core.Entities.StoreRating", b =>
+                {
+                    b.Property<int>("StoreRatingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StoreRatingId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RatingValue")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StoreRatingId");
+
+                    b.HasIndex("StoreId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("StoreRatings");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.User", b =>
@@ -303,7 +332,7 @@ namespace Manzili.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("StoreCategory");
+                    b.ToTable("StoreCategories");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
@@ -345,6 +374,23 @@ namespace Manzili.EF.Migrations
                     b.Navigation("Store");
 
                     b.Navigation("StoreCategory");
+                });
+
+            modelBuilder.Entity("Manzili.Core.Entities.StoreRating", b =>
+                {
+                    b.HasOne("Manzili.Core.Entities.Store", "Store")
+                        .WithMany("RatingsReceived")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Manzili.Core.Entities.User", "User")
+                        .WithMany("RatingsGivenStore")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Store");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -398,6 +444,11 @@ namespace Manzili.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Manzili.Core.Entities.User", b =>
+                {
+                    b.Navigation("RatingsGivenStore");
+                });
+
             modelBuilder.Entity("StoreCategory", b =>
                 {
                     b.Navigation("StoreCategoriesStores");
@@ -405,6 +456,8 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
                 {
+                    b.Navigation("RatingsReceived");
+
                     b.Navigation("storeCategoryStores");
                 });
 #pragma warning restore 612, 618

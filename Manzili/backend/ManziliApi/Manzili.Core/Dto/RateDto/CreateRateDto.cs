@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace Manzili.Core.Dto.RateDto
 {
-    public sealed record CreateRateDto(int UserId , int StoreId , int Rate);
+    public sealed record CreateRateDto(int UserId , int StoreId , int valueRate);
     
 }

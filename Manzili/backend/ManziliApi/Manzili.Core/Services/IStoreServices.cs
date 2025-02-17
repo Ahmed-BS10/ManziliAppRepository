@@ -12,5 +12,6 @@ namespace Manzili.Core.Services
         Task<OperationResult<IEnumerable<GetStoreDto>>> GetListToPageinationAsync(int page, int pageSize);
         Task<OperationResult<GetFullInfoStoreDto>> GetWithProductsAsync(int id);
         Task<OperationResult<UpdateStoreDto>> UpdateAsync(UpdateStoreDto newStore, int storeId);
+        Task<OperationResult<int>> UpdateToRateAsync(int storeId, int valueRate);
     }
 }

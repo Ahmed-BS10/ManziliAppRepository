@@ -10,7 +10,7 @@ namespace Manzili.Core.Dto.StoreCategoryDto
         string Name,
         string ImageUrl,
         int ? conunt,
-        List<int> StoreId
+        List<int> StoreIdList
         );
     
 }

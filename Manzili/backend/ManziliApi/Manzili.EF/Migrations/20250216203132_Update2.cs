@@ -5,7 +5,7 @@
 namespace Manzili.EF.Migrations
 {
     /// <inheritdoc />
-    public partial class edit10 : Migration
+    public partial class Update2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

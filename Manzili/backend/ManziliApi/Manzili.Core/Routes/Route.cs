@@ -6,6 +6,17 @@
         //public const string version = "V1";
         //public const string Rule = $"{root}/{version}/";
 
+
+        public static class StoreRatingRouting
+        {
+            public const string List = "List";
+            public const string GetById = $"{"Id"}";
+            public const string Create = "Create";
+            public const string Update = $"Update{"Id"}";
+            public const string Delete = $"Delete";
+
+        }
+
         public static class UserRouting
         {
             public const string List = "List";
