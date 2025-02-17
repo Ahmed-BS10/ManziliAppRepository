@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Manzili.Core.Dto.RateDto
+namespace Manzili.Core.Dto.StoreRateDto
 {
-    public sealed record CreateRateDto(int UserId , int StoreId , int valueRate);
+    public sealed record CreateStoreRateDto(int UserId , int StoreId , int valueRate);
     
 }
