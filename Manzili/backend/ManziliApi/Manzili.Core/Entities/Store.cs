@@ -13,9 +13,9 @@ namespace Manzili.Core.Entities
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
 
-        public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
-        public ICollection<StoreRating> RatingsReceived { get; set; } = new List<StoreRating>();
-        public ICollection<StoreCategoryStore> storeCategoryStores { get; set; } = new List<StoreCategoryStore>();
+        public ICollection<Favorite>? Favorites { get; set; } = new List<Favorite>();
+        public ICollection<StoreRating>? RatingsReceived { get; set; } = new List<StoreRating>();
+        public ICollection<StoreCategoryStore>? storeCategoryStores { get; set; } = new List<StoreCategoryStore>();
     }
 
 }

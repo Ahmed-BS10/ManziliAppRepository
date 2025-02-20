@@ -27,6 +27,19 @@ namespace ManziliApi.Controllers
         //}
 
 
+
+
+        [HttpGet("GetUserFavoriteStores")]
+        public async Task<IActionResult> GetUserFavoriteStores(int userId)
+        {
+            var result = await _storeServices.GetUserFavoriteStores(userId);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return NotFound(result);
+
+        }
+
         [HttpGet("StoresByCategore")]
         public async Task<IActionResult> GetStoresWithCategory(string categoryName)
         {

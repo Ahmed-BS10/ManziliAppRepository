@@ -10,7 +10,7 @@ namespace Manzili.Core.Entities
         public string Address { get; set; }
 
         // Navigation properties
-        public ICollection<Favorite> FavoritesStore { get; set; } = new List<Favorite>();
+        public ICollection<Favorite>? FavoritesStore { get; set; } = new List<Favorite>();
         public ICollection<StoreRating>? RatingsGivenStore { get; set; } = new List<StoreRating>();
         //public ICollection<Order> Orders { get; set; }
         //public ICollection<ProductRating> ProductRatings { get; set; }

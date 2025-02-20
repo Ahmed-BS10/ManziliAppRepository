@@ -89,10 +89,32 @@ namespace Manzili.EF.Implementaion
 
 
 
+        public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetUserFavoriteStores(int userId)
+        {
+            var storesWithUserFavorite = await _dbSet
+                .Include(x => x.storeCategoryStores).ThenInclude(x => x.StoreCategory)
+                .Where(x => x.Favorites.Any(f => f.UserId == userId))
+                .ToListAsync();
 
+            if (!storesWithUserFavorite.Any())
+            {
+                return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
+            }
+
+            var storeDtos = storesWithUserFavorite.Select(store => new GetStoreDto(
+                  store.Id,
+                  store.ImageUrl,
+                  store.BusinessName,
+                  store.Rate ?? 0,
+                  store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
+                  store.Status
+                  )).ToList();
+
+            return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
+        }
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetStoresWithCategory(string categoryName)
         {
-           var stores = _dbSet.Include(sci => sci.storeCategoryStores).ThenInclude(sc => sc.StoreCategory).ToList();
+           var stores = await  _dbSet.AsNoTracking().Include(sci => sci.storeCategoryStores).ThenInclude(sc => sc.StoreCategory).ToListAsync();
             if (!stores.Any())
                 return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
 
@@ -111,8 +133,6 @@ namespace Manzili.EF.Implementaion
         public  async Task<OperationResult<IEnumerable<GetStoreDto>>> GetLatestStoresAsync()
         {
 
-
-          
 
             var stores = await _dbSet
                 .Include(sci => sci.storeCategoryStores)
@@ -191,12 +211,12 @@ namespace Manzili.EF.Implementaion
 
             };
 
-         
+
 
             store.storeCategoryStores = storeCategories.Select(storeCategories => new StoreCategoryStore
             {
                 Store = store,
-                StoreCategoryId = storeCategories.Id
+                StoreCategory = storeCategories,
             }).ToList();
             try
             {
@@ -234,7 +254,7 @@ namespace Manzili.EF.Implementaion
             }
 
 
-            return OperationResult<CreateStoreDto>.Failure("");
+            return OperationResult<CreateStoreDto>.Failure("hi");
 
         }
         public async Task<OperationResult<UpdateStoreDto>> UpdateAsync(UpdateStoreDto newStore, int storeId)
