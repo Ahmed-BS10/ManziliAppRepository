@@ -7,12 +7,11 @@ namespace Manzili.Core.Entities
     {
        
         public string ? ImageUrl { get; set; }
-        public string Address { get; set; } 
+        public string Address { get; set; }
 
         // Navigation properties
-        //public ICollection<Favorite> Favorites { get; set; }
-
-        public ICollection<StoreRating>? RatingsGivenStore { get; set; }
+        public ICollection<Favorite> FavoritesStore { get; set; } = new List<Favorite>();
+        public ICollection<StoreRating>? RatingsGivenStore { get; set; } = new List<StoreRating>();
         //public ICollection<Order> Orders { get; set; }
         //public ICollection<ProductRating> ProductRatings { get; set; }
         //public ICollection<Like> Likes { get; set; }

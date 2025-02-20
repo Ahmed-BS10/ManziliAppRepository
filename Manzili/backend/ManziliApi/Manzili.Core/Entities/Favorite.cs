@@ -2,14 +2,14 @@
 {
     public class Favorite
     {
-        public int FavoriteId { get; set; } // PK
-        public int UserId { get; set; } // FK
-        public int StoreId { get; set; } // FK
+        public int FavoriteId { get; set; } 
+        public int UserId { get; set; } 
+        public int StoreId { get; set; } 
         public DateTime CreatedAt { get; set; }
 
-        // Navigation properties
-    //    public User User { get; set; }
-     //   public Store Store { get; set; }
+      // Navigation properties
+        public User User { get; set; }
+        public Store Store { get; set; }
     }
 
 }

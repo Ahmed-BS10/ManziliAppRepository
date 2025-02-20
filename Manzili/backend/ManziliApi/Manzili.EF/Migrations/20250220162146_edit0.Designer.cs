@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manzili.EF.Migrations
 {
     [DbContext(typeof(ManziliDbContext))]
-    [Migration("20250216203618_Update3")]
-    partial class Update3
+    [Migration("20250220162146_edit0")]
+    partial class edit0
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,6 +43,32 @@ namespace Manzili.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Manzili.Core.Entities.Favorite", b =>
+                {
+                    b.Property<int>("FavoriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavoriteId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FavoriteId");
+
+                    b.HasIndex("StoreId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Role", b =>
@@ -340,6 +366,9 @@ namespace Manzili.EF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -348,6 +377,25 @@ namespace Manzili.EF.Migrations
                         .HasColumnType("float");
 
                     b.ToTable("Stores", (string)null);
+                });
+
+            modelBuilder.Entity("Manzili.Core.Entities.Favorite", b =>
+                {
+                    b.HasOne("Manzili.Core.Entities.Store", "Store")
+                        .WithMany("Favorites")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Manzili.Core.Entities.User", "User")
+                        .WithMany("FavoritesStore")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Store");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.StoreCategoryStore", b =>
@@ -448,6 +496,8 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Manzili.Core.Entities.User", b =>
                 {
+                    b.Navigation("FavoritesStore");
+
                     b.Navigation("RatingsGivenStore");
                 });
 
@@ -458,6 +508,8 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
                 {
+                    b.Navigation("Favorites");
+
                     b.Navigation("RatingsReceived");
 
                     b.Navigation("storeCategoryStores");

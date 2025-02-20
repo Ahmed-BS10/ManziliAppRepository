@@ -27,6 +27,17 @@ namespace ManziliApi.Controllers
         //}
 
 
+        [HttpGet("StoresByCategore")]
+        public async Task<IActionResult> GetStoresWithCategory(string categoryName)
+        {
+            var result = await _storeServices.GetStoresWithCategory(categoryName);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return NotFound(result);
+
+        }
+
         [HttpGet("OrderByDescending")]
         public async Task<IActionResult> GetListOrderByDescending()
         {

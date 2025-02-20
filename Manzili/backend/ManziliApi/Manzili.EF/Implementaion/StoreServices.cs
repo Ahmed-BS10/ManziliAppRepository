@@ -90,9 +90,34 @@ namespace Manzili.EF.Implementaion
 
 
 
+        public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetStoresWithCategory(string categoryName)
+        {
+           var stores = _dbSet.Include(sci => sci.storeCategoryStores).ThenInclude(sc => sc.StoreCategory).ToList();
+            if (!stores.Any())
+                return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
+
+
+            var storeDtos = stores.Select(store => new GetStoreDto(
+                  store.Id,
+                  store.ImageUrl, 
+                  store.BusinessName,
+                  store.Rate ?? 0,
+                  store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
+                  store.Status
+                  )).ToList();
+
+            return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
+        }
         public  async Task<OperationResult<IEnumerable<GetStoreDto>>> GetLatestStoresAsync()
         {
-            var stores = await _dbSet.AsNoTracking().OrderByDescending(x => x.CreateAt).ToListAsync();
+
+
+          
+
+            var stores = await _dbSet
+                .Include(sci => sci.storeCategoryStores)
+                .ThenInclude(sc => sc.StoreCategory)
+                .AsNoTracking().OrderByDescending(x => x.CreateAt).ToListAsync();
 
             if (!stores.Any())
             {
@@ -103,7 +128,7 @@ namespace Manzili.EF.Implementaion
                   store.Id,
                   store.ImageUrl,
                   store.BusinessName,
-                  store.Rate,
+                  store.Rate ?? 0,
                   store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                   store.Status
                   )).ToList();
@@ -123,7 +148,7 @@ namespace Manzili.EF.Implementaion
                   store.Id,
                   store.ImageUrl,
                   store.BusinessName,
-                  store.Rate,
+                  store.Rate ?? 0,
                   store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                   store.Status
                   )).ToList();

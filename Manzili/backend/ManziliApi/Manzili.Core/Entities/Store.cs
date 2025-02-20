@@ -12,8 +12,10 @@ namespace Manzili.Core.Entities
         public string Status = enStoreStatus.Open.ToString();
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<StoreRating> RatingsReceived { get; set; } = new HashSet<StoreRating>();
-        public ICollection<StoreCategoryStore> storeCategoryStores { get; set; } = new HashSet<StoreCategoryStore>();
+
+        public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+        public ICollection<StoreRating> RatingsReceived { get; set; } = new List<StoreRating>();
+        public ICollection<StoreCategoryStore> storeCategoryStores { get; set; } = new List<StoreCategoryStore>();
     }
 
 }

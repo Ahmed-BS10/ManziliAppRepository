@@ -1,5 +1,6 @@
 ﻿using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Manzili.Core.Services
 {
@@ -12,6 +13,8 @@ namespace Manzili.Core.Services
         Task<OperationResult<IEnumerable<GetStoreDto>>> GetListToPageinationAsync(int page, int pageSize);
         Task<OperationResult<IEnumerable<GetStoreDto>>> GetLatestStoresAsync();
         Task<OperationResult<GetFullInfoStoreDto>> GetWithProductsAsync(int id);
+        Task<OperationResult<IEnumerable<GetStoreDto>>> GetStoresWithCategory(string categoryName);
+        
         Task<OperationResult<UpdateStoreDto>> UpdateAsync(UpdateStoreDto newStore, int storeId);
         Task<OperationResult<int>> UpdateToRateAsync(int storeId, int valueRate);
     }

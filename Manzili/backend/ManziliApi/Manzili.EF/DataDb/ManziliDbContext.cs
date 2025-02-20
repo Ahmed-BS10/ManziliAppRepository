@@ -7,7 +7,6 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
 {
     public ManziliDbContext(DbContextOptions<ManziliDbContext> dbContextOptions) : base(dbContextOptions)
     {
-        // _encryptionProvider = new GenerateEncryptionProvider("qwerertrtdfg");
     }
 
     public DbSet<User> Users { get; set; }
@@ -16,6 +15,7 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
     public DbSet<StoreCategoryStore> StoreCategoryStores { get; set; }
     public DbSet<StoreCategory> StoreCategories { get; set; }
     public DbSet<StoreRating> StoreRatings { get; set; }
+    public DbSet<Favorite> Favorites { get; set; }
 
 
 
@@ -57,6 +57,21 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
             .HasOne(r => r.Store)
             .WithMany(s => s.RatingsReceived)
             .HasForeignKey(r => r.StoreId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+
+
+        modelBuilder.Entity<Favorite>()
+            .HasOne(f => f.User)
+            .WithMany(u => u.FavoritesStore)
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+
+        modelBuilder.Entity<Favorite>()
+            .HasOne(f => f.Store)
+            .WithMany(s => s.Favorites)
+            .HasForeignKey(f => f.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
 
 

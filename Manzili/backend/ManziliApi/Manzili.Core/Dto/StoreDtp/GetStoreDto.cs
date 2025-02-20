@@ -2,7 +2,7 @@
     int Id,
     string ImageUrl,
     string BusinessName,
-    double? Rate,
+    double? Rate ,
     List<string> CategoryNames,
     string Status
 );

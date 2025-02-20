@@ -9,8 +9,7 @@ namespace Manzili.Core.Dto.StoreCategoryDto
     public sealed record GetStoreCategoryDto(
         string Name,
         string ImageUrl,
-        int ? conunt,
-        List<int> StoreIdList
+        int ? conunt
         );
     
 }

@@ -42,6 +42,32 @@ namespace Manzili.EF.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Manzili.Core.Entities.Favorite", b =>
+                {
+                    b.Property<int>("FavoriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavoriteId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FavoriteId");
+
+                    b.HasIndex("StoreId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Favorites");
+                });
+
             modelBuilder.Entity("Manzili.Core.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -350,6 +376,25 @@ namespace Manzili.EF.Migrations
                     b.ToTable("Stores", (string)null);
                 });
 
+            modelBuilder.Entity("Manzili.Core.Entities.Favorite", b =>
+                {
+                    b.HasOne("Manzili.Core.Entities.Store", "Store")
+                        .WithMany("Favorites")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Manzili.Core.Entities.User", "User")
+                        .WithMany("FavoritesStore")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Store");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Manzili.Core.Entities.StoreCategoryStore", b =>
                 {
                     b.HasOne("StoreCategory", "StoreCategory")
@@ -448,6 +493,8 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Manzili.Core.Entities.User", b =>
                 {
+                    b.Navigation("FavoritesStore");
+
                     b.Navigation("RatingsGivenStore");
                 });
 
@@ -458,6 +505,8 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
                 {
+                    b.Navigation("Favorites");
+
                     b.Navigation("RatingsReceived");
 
                     b.Navigation("storeCategoryStores");

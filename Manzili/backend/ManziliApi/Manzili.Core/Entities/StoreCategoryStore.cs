@@ -7,7 +7,7 @@
         public Store Store { get; set; }
 
         public int StoreCategoryId { get; set; }
-        public StoreCategory StoreCategory { get; set; }
+        public StoreCategory StoreCategory { get; set; } = new StoreCategory();
     }
 
 
