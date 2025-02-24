@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Manzili.EF.Migrations
 {
     /// <inheritdoc />
-    public partial class edit0 : Migration
+    public partial class edie10 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,13 +33,13 @@ namespace Manzili.EF.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
                 });
-            
+
             migrationBuilder.CreateTable(
                 name: "StoreCategories",
                 columns: table => new
@@ -196,6 +196,7 @@ namespace Manzili.EF.Migrations
                     BusinessName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BankAccount = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SocileMediaAcount = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Rate = table.Column<double>(type: "float", nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -232,6 +233,36 @@ namespace Manzili.EF.Migrations
                         name: "FK_Favorites_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Product",
+                columns: table => new
+                {
+                    ProductId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    ProductCategoryId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Discount = table.Column<double>(type: "float", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Product", x => x.ProductId);
+                    table.ForeignKey(
+                        name: "FK_Product_Categories_ProductCategoryId",
+                        column: x => x.ProductCategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Product_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
                         principalColumn: "Id");
                 });
 
@@ -325,6 +356,16 @@ namespace Manzili.EF.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Product_ProductCategoryId",
+                table: "Product",
+                column: "ProductCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_StoreId",
+                table: "Product",
+                column: "StoreId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StoreCategoryStores_StoreCategoryId",
                 table: "StoreCategoryStores",
                 column: "StoreCategoryId");
@@ -376,10 +417,10 @@ namespace Manzili.EF.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Favorites");
 
             migrationBuilder.DropTable(
-                name: "Favorites");
+                name: "Product");
 
             migrationBuilder.DropTable(
                 name: "StoreCategoryStores");
@@ -389,6 +430,9 @@ namespace Manzili.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "StoreCategories");

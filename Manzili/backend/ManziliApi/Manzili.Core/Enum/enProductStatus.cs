@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Manzili.Core.Enum
 {
-    public enum enStoreStatus
+    public enum enProductStatus
     {
-        Open = 1,
-        Close = 2,
+        Available = 1,
+        NotAvailable = 2,
     }
-
-   
 }

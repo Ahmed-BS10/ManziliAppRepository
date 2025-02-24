@@ -19,7 +19,7 @@ namespace Manzili.EF.Extension
             services.AddScoped(typeof(IStoreServices) , typeof(StoreServices));
             services.AddScoped(typeof(IAuthenticationServices) , typeof(AuthenticationServices));
             services.AddScoped(typeof(IFileService) , typeof(FileService));
-            services.AddScoped(typeof(ICategoryServices) , typeof (CategoryServices));
+            services.AddScoped(typeof(IProductCategoryServices) , typeof (ProductCategoryServices));
             services.AddScoped(typeof(IStoreCategoryServices), typeof(StoreCategoryServices));
             services.AddScoped(typeof(StoreRateServices));
             services.AddScoped(typeof(IStoreFavoriteServices) ,typeof(StoreFavoriteServices));
@@ -47,7 +47,7 @@ public static class ServiceRegistrationExtensions
         services.AddScoped(typeof(StoreServices));
         services.AddScoped(typeof(AuthenticationServices));
         services.AddScoped(typeof(FileService));
-        services.AddScoped(typeof(CategoryServices));
+        services.AddScoped(typeof(ProductCategoryServices));
 
         return services;
     }

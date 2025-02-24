@@ -11,7 +11,7 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
 
     public DbSet<User> Users { get; set; }
     public DbSet<Store> Stores { get; set; }
-    public DbSet<Category> Categories { get; set; }
+    public DbSet<ProductCategory> ProductCategories { get; set; }
     public DbSet<StoreCategoryStore> StoreCategoryStores { get; set; }
     public DbSet<StoreCategory> StoreCategories { get; set; }
     public DbSet<StoreRating> StoreRatings { get; set; }
@@ -32,6 +32,8 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
 
 
 
+        // StoreCategoriesStores With Store , StoreCategory
+
         modelBuilder.Entity<Store>()
             .HasMany(s => s.storeCategoryStores)
             .WithOne(sc => sc.Store)
@@ -45,7 +47,7 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
            .HasForeignKey(sc => sc.StoreCategoryId);
 
 
-
+        // StoreRating With User , Store
 
         modelBuilder.Entity<StoreRating>()
              .HasOne(r => r.User)
@@ -61,6 +63,8 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
 
 
 
+        // Favorite With User , Store
+
         modelBuilder.Entity<Favorite>()
             .HasOne(f => f.User)
             .WithMany(u => u.FavoritesStore)
@@ -74,6 +78,21 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
             .HasForeignKey(f => f.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
 
+
+
+        // Store With Product
+        modelBuilder.Entity<Store>()
+            .HasMany(s => s.Products)
+            .WithOne(p => p.Store)
+            .HasForeignKey(p => p.StoreId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // ProductCategory with Product
+        modelBuilder.Entity<ProductCategory>()
+            .HasMany(pc => pc.Products)
+            .WithOne(p => p.ProductCategory)
+            .HasForeignKey(p => p.ProductCategoryId)
+            .OnDelete(DeleteBehavior.NoAction);
 
     }
 

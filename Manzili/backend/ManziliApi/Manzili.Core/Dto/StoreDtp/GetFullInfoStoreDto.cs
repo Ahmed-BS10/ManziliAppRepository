@@ -9,3 +9,5 @@
     double? Rate,
     string Status
 );
+
+

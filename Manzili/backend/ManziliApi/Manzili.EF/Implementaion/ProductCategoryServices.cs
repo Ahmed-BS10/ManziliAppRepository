@@ -1,5 +1,6 @@
 ﻿using Manzili.Core.Constant;
 using Manzili.Core.Dto.CatagoryDto;
+using Manzili.Core.Dto.ProductCatagoryDto;
 using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -15,88 +16,88 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace Manzili.Core.Services
 {
-    public class CategoryServices : ICategoryServices
+    public class ProductCategoryServices : IProductCategoryServices
     {
 
         #region Fields
         readonly ManziliDbContext _db;
         readonly FileService _fileService;
-        readonly DbSet<Category> _dbSet;
+        readonly DbSet<ProductCategory> _dbSet;
         #endregion
 
         #region Constructor
-        public CategoryServices( FileService fileService, ManziliDbContext db)
+        public ProductCategoryServices( FileService fileService, ManziliDbContext db)
         {
             _fileService = fileService;
             _db = db;
-            _dbSet = _db.Set<Category>();
+            _dbSet = _db.Set<ProductCategory>();
         }
         #endregion
 
         #region Methods
 
-        public async Task<OperationResult<IEnumerable<GetCatagoryDto>>> GetList()
+        public async Task<OperationResult<IEnumerable<GetProductCatagoryDto>>> GetList()
         {
             var result = await _dbSet.AsNoTracking().ToListAsync();
 
             if (result == null || !result.Any())
-                return OperationResult<IEnumerable<GetCatagoryDto>>.Failure("No categories found.");
+                return OperationResult<IEnumerable<GetProductCatagoryDto>>.Failure("No categories found.");
 
-            var categoryDtos = result.Select(category => new GetCatagoryDto
+            var categoryDtos = result.Select(category => new GetProductCatagoryDto
             {
                 Id = category.Id,
                 Name = category.Name,
                 Image = $"{Constants.baseurl}{category.Image}"
             });
 
-            return OperationResult<IEnumerable<GetCatagoryDto>>.Success(categoryDtos);
+            return OperationResult<IEnumerable<GetProductCatagoryDto>>.Success(categoryDtos);
         }
-        public async Task<OperationResult<CreateCatagoryDto>> Create(CreateCatagoryDto catagoryCreateDto)
+        public async Task<OperationResult<CreateProductCatagoryDto>> Create(CreateProductCatagoryDto createProductCatagoryDto)
         {
-            if (catagoryCreateDto == null)
-                return OperationResult<CreateCatagoryDto>.Failure(message: "Category cannot be null.");
+            if (createProductCatagoryDto == null)
+                return OperationResult<CreateProductCatagoryDto>.Failure(message: "Category cannot be null.");
 
 
-            if (catagoryCreateDto.Image != null)
+            if (createProductCatagoryDto.Image != null)
             {
-                if (!ImageValidator.IsValidImage(catagoryCreateDto.Image, out string errorMessage))
-                    return OperationResult<CreateCatagoryDto>.Failure(message: errorMessage);
+                if (!ImageValidator.IsValidImage(createProductCatagoryDto.Image, out string errorMessage))
+                    return OperationResult<CreateProductCatagoryDto>.Failure(message: errorMessage);
 
-                string imagePath = await _fileService.UploadImageAsync("Category", catagoryCreateDto.Image);
+                string imagePath = await _fileService.UploadImageAsync("Category", createProductCatagoryDto.Image);
                 if (imagePath == "FailedToUploadImage")
-                    return OperationResult<CreateCatagoryDto>.Failure("Failed to upload image");
+                    return OperationResult<CreateProductCatagoryDto>.Failure("Failed to upload image");
 
 
-                var category = new Category
+                var category = new ProductCategory
                 {
-                    Name = catagoryCreateDto.Name,
+                    Name = createProductCatagoryDto.Name,
                     Image = imagePath
                 };
 
 
                 await _dbSet.AddAsync(category);
 
-                return OperationResult<CreateCatagoryDto>.Success(catagoryCreateDto);
+                return OperationResult<CreateProductCatagoryDto>.Success(createProductCatagoryDto);
 
 
             }
 
-            return OperationResult<CreateCatagoryDto>.Failure(message: "Image cannt be null");
+            return OperationResult<CreateProductCatagoryDto>.Failure(message: "Image cannt be null");
 
 
 
 
         }
-        public async Task<OperationResult<UpdateCatagoryDto>> Update(int id, UpdateCatagoryDto catagoryUpdateDto)
+        public async Task<OperationResult<UpdateProdcutCatagoryDto>> Update(int id, UpdateProdcutCatagoryDto catagoryUpdateDto)
         {
             if (catagoryUpdateDto == null)
-                return OperationResult<UpdateCatagoryDto>.Failure("Invalid data.");
+                return OperationResult<UpdateProdcutCatagoryDto>.Failure("Invalid data.");
 
 
 
             var existingCategory = await _dbSet.FindAsync(id);
             if (existingCategory == null)
-                return OperationResult<UpdateCatagoryDto>.Failure("Category not found.");
+                return OperationResult<UpdateProdcutCatagoryDto>.Failure("Category not found.");
 
             existingCategory.Name = catagoryUpdateDto.Name ?? existingCategory.Name;
 
@@ -106,25 +107,25 @@ namespace Manzili.Core.Services
             if (catagoryUpdateDto.Image != null)
             {
                 if (!ImageValidator.IsValidImage(catagoryUpdateDto.Image, out string errorMessage))
-                    return OperationResult<UpdateCatagoryDto>.Failure(errorMessage);
+                    return OperationResult<UpdateProdcutCatagoryDto>.Failure(errorMessage);
 
                 string imagePath = await _fileService.UploadImageAsync("Category", catagoryUpdateDto.Image);
                 if (imagePath == "FailedToUploadImage")
-                    return OperationResult<UpdateCatagoryDto>.Failure("Failed to upload image");
+                    return OperationResult<UpdateProdcutCatagoryDto>.Failure("Failed to upload image");
 
                 var deleteReslut = await _fileService.Delete(existingCategory.Image);
                 if (deleteReslut.IsSuccess)
                 {
                     existingCategory.Image = imagePath;
                     _dbSet.Update(existingCategory);
-                    return OperationResult<UpdateCatagoryDto>.Success(catagoryUpdateDto);
+                    return OperationResult<UpdateProdcutCatagoryDto>.Success(catagoryUpdateDto);
 
                 }
 
-                return OperationResult<UpdateCatagoryDto>.Failure(message: deleteReslut.Message);
+                return OperationResult<UpdateProdcutCatagoryDto>.Failure(message: deleteReslut.Message);
             }
 
-            return OperationResult<UpdateCatagoryDto>.Failure(message: "Image cannt be empty");
+            return OperationResult<UpdateProdcutCatagoryDto>.Failure(message: "Image cannt be empty");
 
         }
         public async Task<OperationResult<bool>> Delete(int id)

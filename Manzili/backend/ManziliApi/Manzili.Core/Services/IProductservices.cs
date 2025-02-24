@@ -1,0 +1,20 @@
+﻿using Manzili.Core.Dto.ProductDto;
+using Manzili.Core.Entities;
+
+namespace Manzili.Core.Services
+{
+    public interface IProductservices
+    {
+
+        Task<OperationResult<CreateProductDto>> CreateToStoreAsync(CreateProductDto createProductDto , int storeId);
+
+        //Task<Product> CreateProductAsync(Product product);
+        //Task DeleteProductAsync(int productId);
+        //Task<IEnumerable<Product>> GetAllProductsAsync();
+        //Task<Product> GetProductByIdAsync(int productId);
+        //Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId);
+        //Task<IEnumerable<Product>> GetProductsByStoreAsync(int storeId);
+        //Task<IEnumerable<Product>> SearchProductsAsync(string searchTerm);
+        //Task<Product> UpdateProductAsync(Product product);
+    }
+}

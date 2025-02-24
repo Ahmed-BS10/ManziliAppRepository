@@ -1,4 +1,5 @@
 ﻿using Manzili.Core.Dto.CatagoryDto;
+using Manzili.Core.Dto.ProductCatagoryDto;
 using Manzili.Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,12 +13,12 @@ namespace ManziliApi.Controllers
     {
         #region Fields
 
-        readonly ICategoryServices _categoryServices;
+        readonly IProductCategoryServices _categoryServices;
         #endregion
 
         #region Constructor
 
-        public CategoryController(ICategoryServices categoryServices)
+        public CategoryController(IProductCategoryServices categoryServices)
         {
             _categoryServices = categoryServices;
         }
@@ -37,9 +38,9 @@ namespace ManziliApi.Controllers
         }
 
         [HttpPost(CategoryRouting.Create)]
-        public async Task<IActionResult> Create(CreateCatagoryDto catagoryCreate)
+        public async Task<IActionResult> Create(CreateProductCatagoryDto createProductCatagoryDto)
         {
-            var result = await _categoryServices.Create(catagoryCreate);
+            var result = await _categoryServices.Create(createProductCatagoryDto);
             if(result.IsSuccess)
                 return Ok(result);
 
@@ -47,7 +48,7 @@ namespace ManziliApi.Controllers
         }
 
         [HttpPut(CategoryRouting.Update)]
-        public async Task<IActionResult> Update(int id, [FromForm] UpdateCatagoryDto catagoryUpdateDto)
+        public async Task<IActionResult> Update(int id, [FromForm] UpdateProdcutCatagoryDto catagoryUpdateDto)
         {
             var result = await _categoryServices.Update(id, catagoryUpdateDto);
             if (!result.IsSuccess)
@@ -55,10 +56,6 @@ namespace ManziliApi.Controllers
 
             return Ok(result);
         }
-
-
-
-
 
         [HttpDelete(CategoryRouting.Delete)]
         public async Task<IActionResult> Delete(int id)
@@ -70,11 +67,6 @@ namespace ManziliApi.Controllers
             return Ok(result);
 
         }
-
-
-
-
-
 
         #endregion
     }

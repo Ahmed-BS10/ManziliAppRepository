@@ -88,6 +88,7 @@ namespace Manzili.EF.Implementaion
 
 
 
+        // Get List
 
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetUserFavoriteStores(int userId)
         {
@@ -175,6 +176,28 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
         }
+
+        // Get
+
+        public async Task<OperationResult<GetFullInfoStoreDto>> GetStoreWithFullInfo(int storeId)
+        {
+            var store = await _dbSet.Include("Product").FirstOrDefaultAsync(x => x.Id == storeId);
+            if (store == null) return OperationResult<GetFullInfoStoreDto>.Failure("Store not found");
+
+            return OperationResult<GetFullInfoStoreDto>.Success(new GetFullInfoStoreDto(
+                  store.Id,
+                  store.ImageUrl,
+                  store.BusinessName,
+                  store.Description,
+                  store.Address,
+                  store.BankAccount,
+                  store.PhoneNumber,
+                  store.Rate,
+                  store.Status
+                 ));
+        }
+
+
         public async Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto , List<int> categoriesIds)
         {
 
