@@ -181,7 +181,7 @@ namespace Manzili.EF.Implementaion
 
         public async Task<OperationResult<GetFullInfoStoreDto>> GetStoreWithFullInfo(int storeId)
         {
-            var store = await _dbSet.Include("Product").FirstOrDefaultAsync(x => x.Id == storeId);
+            var store = await _dbSet.Include("Products").FirstOrDefaultAsync(x => x.Id == storeId);
             if (store == null) return OperationResult<GetFullInfoStoreDto>.Failure("Store not found");
 
             return OperationResult<GetFullInfoStoreDto>.Success(new GetFullInfoStoreDto(

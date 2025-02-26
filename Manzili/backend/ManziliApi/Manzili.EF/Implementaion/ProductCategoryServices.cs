@@ -76,6 +76,7 @@ namespace Manzili.Core.Services
 
 
                 await _dbSet.AddAsync(category);
+                await _db.SaveChangesAsync();
 
                 return OperationResult<CreateProductCatagoryDto>.Success(createProductCatagoryDto);
 

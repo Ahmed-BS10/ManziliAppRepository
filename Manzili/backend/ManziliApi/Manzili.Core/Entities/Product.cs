@@ -19,9 +19,9 @@ namespace Manzili.Core.Entities
 
 
         // Navigation properties
-        public ProductCategory ProductCategory{ get; set; } = new ProductCategory();
-        public Store Store { get; set; } = new Store();
-        public ICollection<Image> Images { get; set; } = new List<Image>();
+        public ProductCategory ProductCategory{ get; set; } 
+        public Store Store { get; set; } 
+        public ICollection<Image> Images { get; set; } 
 
 
         //public ICollection<OrderProduct> OrderProducts { get; set; }

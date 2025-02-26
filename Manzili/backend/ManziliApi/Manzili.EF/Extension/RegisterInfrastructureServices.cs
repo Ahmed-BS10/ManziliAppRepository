@@ -23,6 +23,7 @@ namespace Manzili.EF.Extension
             services.AddScoped(typeof(IStoreCategoryServices), typeof(StoreCategoryServices));
             services.AddScoped(typeof(StoreRateServices));
             services.AddScoped(typeof(IStoreFavoriteServices) ,typeof(StoreFavoriteServices));
+            services.AddScoped(typeof(IProductservices), typeof(Productservices));
 
             return services;
         }

@@ -1,4 +1,5 @@
 ﻿using Manzili.Core.Dto.ProductDto;
+using Manzili.Core.Dto.StoreCategoryDto;
 using Manzili.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,16 +15,18 @@ namespace Manzili.Core.Services
 
         readonly ManziliDbContext _db;
         readonly DbSet<Product> _dbSet;  
+        readonly FileService _fileService;
 
-        public Productservices(ManziliDbContext db)
+        public Productservices(ManziliDbContext db, FileService fileService)
         {
             _db = db;
             _dbSet = _db.Set<Product>();
+            _fileService = fileService;
         }
 
-        public async Task<OperationResult<CreateProductDto>> CreateProductAsync(CreateProductDto createProductDto , int storeId)
+        public async Task<OperationResult<CreateProductDto>> CreateToStoreAsync(CreateProductDto createProductDto, int storeId)
         {
-           
+
             var existCategory = await _db.ProductCategories.FindAsync(createProductDto.ProductCategoryId);
             if (existCategory is null)
                 return OperationResult<CreateProductDto>.Failure("Category not found");
@@ -37,22 +40,61 @@ namespace Manzili.Core.Services
             if (createProductDto.formImages is null)
                 return OperationResult<CreateProductDto>.Failure("Image URL cannot be null or empty");
 
-
-
-            Product Product = new Product
+            try
             {
-                Name = createProductDto.Name,
-                Description = createProductDto.Description,
-                ProductCategoryId = createProductDto.ProductCategoryId,
-                StoreId = storeId,
+                List<string> imagePaths = new List<string>();
 
 
-            };
+                foreach (var image in createProductDto.formImages)
+                {
 
-            await _dbSet.AddAsync()
-           
+                    if (!ImageValidator.IsValidImage(image, out string errorMessage))
+                        return OperationResult<CreateProductDto>.Failure(message: errorMessage);
 
+                    string imagePath = await _fileService.UploadImageAsync("StoreCategory", image);
+                    if (imagePath == "FailedToUploadImage")
+                        return OperationResult<CreateProductDto>.Failure("Failed to upload image");
+
+                    imagePaths.Add(imagePath);
+
+                }
+
+
+                Product Product = new Product
+                {
+                    Name = createProductDto.Name,
+                    Description = createProductDto.Description,
+                    ProductCategoryId = createProductDto.ProductCategoryId,
+                    StoreId = storeId,
+                    Price = createProductDto.Price,
+                    Images = imagePaths.Select(i =>
+                    new Image
+                    {
+                        ImageUrl = i
+                    }).ToList(),
+                    ImageUrl = imagePaths.FirstOrDefault()!,
+                    
+
+                };
+
+                await _dbSet.AddAsync(Product);
+                await _db.SaveChangesAsync();
+
+
+                return OperationResult<CreateProductDto>.Success(createProductDto);
+            }
+
+            catch (Exception ex)
+            {
+                return OperationResult<CreateProductDto>.Failure(message: ex.Message);
+            }
+
+
+
+   
         }
+
+      
 
         //public async Task<IEnumerable<Product>> GetAllProductsAsync()
         //{

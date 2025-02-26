@@ -80,6 +80,8 @@ app.UseCors("AllowAllOrigins");
 //    app.UseSwaggerUI();
 //}
 
+
+
 app.UseSwagger();
 app.UseSwaggerUI();
 

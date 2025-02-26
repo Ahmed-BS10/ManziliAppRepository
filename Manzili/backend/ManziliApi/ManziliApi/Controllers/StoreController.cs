@@ -15,16 +15,16 @@ namespace ManziliApi.Controllers
             _storeServices = storeServices;
         }
 
-        //[HttpGet(StoreRouting.List)]
-        //public async Task<IActionResult> GetList()
-        //{
-        //    var result = await _storeServices.GetListAsync();
-        //    if (result.IsSuccess)
-        //        return Ok(result);
+        [HttpGet("FullStoreInfo")]
+        public async Task<IActionResult> GetList()
+        {
+            var result = await _storeServices.GetStoreWithFullInfo(1);
+            if (result.IsSuccess)
+                return Ok(result);
 
-        //    return NotFound(result);
+            return NotFound(result);
 
-        //}
+        }
 
 
 
