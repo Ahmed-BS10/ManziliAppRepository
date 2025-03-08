@@ -19,6 +19,9 @@ namespace Manzili.Core.Entities
 
 
         // Navigation properties
+
+
+        public List<ProductSize>? Sizes { get; set; }
         public ProductCategory ProductCategory{ get; set; } 
         public Store Store { get; set; } 
         public ICollection<Image> Images { get; set; } 

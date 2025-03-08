@@ -7,4 +7,5 @@ public class StoreCategory
     public string Image { get; set; }
 
     public ICollection<StoreCategoryStore> StoreCategoriesStores { get; set; }
+    public ICollection<ProductCategory>? ProductCategories {  get; set; }
 }

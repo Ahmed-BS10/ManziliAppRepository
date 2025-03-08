@@ -10,8 +10,9 @@ namespace Manzili.Core.Dto.ProductCatagoryDto
     public class CreateProductCatagoryDto
     {
         public string Name { get; set; }
-
         public IFormFile ? Image { get; set; }
-        
+        public int StoreCategoryId { get; set; }
+
+
     }
 }

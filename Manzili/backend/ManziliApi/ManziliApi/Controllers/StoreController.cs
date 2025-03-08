@@ -18,7 +18,7 @@ namespace ManziliApi.Controllers
         [HttpGet("FullStoreInfo")]
         public async Task<IActionResult> GetList()
         {
-            var result = await _storeServices.GetStoreWithFullInfo(1);
+            var result = await _storeServices.GetInfoStore(1);
             if (result.IsSuccess)
                 return Ok(result);
 

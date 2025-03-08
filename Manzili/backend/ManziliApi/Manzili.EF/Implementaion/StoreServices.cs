@@ -1,4 +1,5 @@
 ﻿using Azure;
+using Manzili.Core.Dto.StoreDto;
 using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Entities;
 using Manzili.Core.Extension;
@@ -46,24 +47,24 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<GetStoreDto>.Success(new GetStoreDto(id ,store.ImageUrl ,store.BusinessName ,store.Rate , [""] ,store.Status ));
         }
-        public async Task<OperationResult<GetFullInfoStoreDto>> GetWithProductsAsync(int id)
-        {
-            var store = _dbSet.Include("asassa").FirstOrDefault(x => x.Id == id);
-            if (store == null) return OperationResult<GetFullInfoStoreDto>.Failure(message: "Store not found");
+        //public async Task<OperationResult<GetFullInfoStoreDto>> GetWithProductsAsync(int id)
+        //{
+        //    var store = _dbSet.Include("asassa").FirstOrDefault(x => x.Id == id);
+        //    if (store == null) return OperationResult<GetFullInfoStoreDto>.Failure(message: "Store not found");
 
-            return OperationResult<GetFullInfoStoreDto>.Success(new GetFullInfoStoreDto(
-                  store.Id,
-                  store.ImageUrl,
-                  store.BusinessName,
-                  store.Description,
-                  store.Address,
-                  store.BankAccount,
-                  store.PhoneNumber,
-                  store.Rate,
-                  store.Status
-                 ));
+        //    return OperationResult<GetFullInfoStoreDto>.Success(new GetFullInfoStoreDto(
+        //          store.Id,
+        //          store.ImageUrl,
+        //          store.BusinessName,
+        //          store.Description,
+        //          store.Address,
+        //          store.BankAccount,
+        //          store.PhoneNumber,
+        //          store.Rate,
+        //          store.Status
+        //         ));
 
-        }
+        //}
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetListAsync()
         {
             var stores = await _dbSet.AsNoTracking().ToListAsync();
@@ -93,7 +94,8 @@ namespace Manzili.EF.Implementaion
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetUserFavoriteStores(int userId)
         {
             var storesWithUserFavorite = await _dbSet
-                .Include(x => x.storeCategoryStores).ThenInclude(x => x.StoreCategory)
+                .Include(x => x.storeCategoryStores!)
+                .ThenInclude(x => x.StoreCategory)
                 .Where(x => x.Favorites.Any(f => f.UserId == userId))
                 .ToListAsync();
 
@@ -179,23 +181,30 @@ namespace Manzili.EF.Implementaion
 
         // Get
 
-        public async Task<OperationResult<GetFullInfoStoreDto>> GetStoreWithFullInfo(int storeId)
+        public async Task<OperationResult<GetInfoStoreDto>> GetInfoStore(int storeId)
         {
-            var store = await _dbSet.Include("Products").FirstOrDefaultAsync(x => x.Id == storeId);
-            if (store == null) return OperationResult<GetFullInfoStoreDto>.Failure("Store not found");
+            var store = await _dbSet
+                .Include(x => x.storeCategoryStores!)
+                .ThenInclude(s => s.StoreCategory)
+                .FirstOrDefaultAsync(x => x.Id == storeId);
+            if (store == null) return OperationResult<GetInfoStoreDto>.Failure("Store not found");
 
-            return OperationResult<GetFullInfoStoreDto>.Success(new GetFullInfoStoreDto(
+            return OperationResult<GetInfoStoreDto>.Success(new GetInfoStoreDto(
                   store.Id,
                   store.ImageUrl,
                   store.BusinessName,
                   store.Description,
+                  store.storeCategoryStores!.Select(x => x.StoreCategory.Name).ToList(),
+                  store.BookTime,
                   store.Address,
                   store.BankAccount,
                   store.PhoneNumber,
-                  store.Rate,
+                  store.SocileMediaAcount,
+                  store.Rate ?? 0,
                   store.Status
                  ));
         }
+
 
 
         public async Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto , List<int> categoriesIds)
@@ -231,6 +240,8 @@ namespace Manzili.EF.Implementaion
                 Address = storeDto.Address,
                 BankAccount = storeDto.BankAccount,
                 PhoneNumber = storeDto.PhoneNumber,
+                SocileMediaAcount = storeDto.SocileMediaAcount,
+                BookTime = "حجز قبل يومين قبل الطلب"
 
             };
 

@@ -21,3 +21,5 @@ namespace Manzili.Core.Dto.ProductDto
         
     }
 }
+
+ 

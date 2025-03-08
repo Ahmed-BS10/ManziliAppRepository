@@ -71,7 +71,8 @@ namespace Manzili.Core.Services
                 var category = new ProductCategory
                 {
                     Name = createProductCatagoryDto.Name,
-                    Image = imagePath
+                    Image = imagePath,
+                    StoreCategoryId = createProductCatagoryDto.StoreCategoryId
                 };
 
 

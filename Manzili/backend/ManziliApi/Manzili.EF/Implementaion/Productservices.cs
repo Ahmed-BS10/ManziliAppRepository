@@ -12,16 +12,58 @@ namespace Manzili.Core.Services
 {
     internal class Productservices : IProductservices
     {
-
+       
         readonly ManziliDbContext _db;
         readonly DbSet<Product> _dbSet;  
         readonly FileService _fileService;
+
+
+        public async Task<OperationResult<Product>> GetProductByIdAsync(int productId)
+        {
+            var product = await _dbSet
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == productId);
+
+            if (product == null)
+            {
+                return OperationResult<Product>.Failure($"Product with ID {productId} not found.");
+            }
+
+          
+
+            return OperationResult<Product>.Success(product);
+        }
+
 
         public Productservices(ManziliDbContext db, FileService fileService)
         {
             _db = db;
             _dbSet = _db.Set<Product>();
             _fileService = fileService;
+        }
+        public async Task<OperationResult<IEnumerable<GetStoreProductDto>>> GetStoreProduct(int storeId, string storeCategory, string productCategory)
+        {
+            var products = await _dbSet
+                .Include(p => p.ProductCategory)
+                .ThenInclude(pc => pc.StoreCategory)
+                .Where(p => p.StoreId == storeId &&
+                            p.ProductCategory.StoreCategory.Name == storeCategory &&
+                            p.ProductCategory.Name == productCategory)
+                .AsNoTracking()
+                .ToListAsync();
+
+            // تحويل المنتجات إلى DTO
+            var result = products.Select(p => new GetStoreProductDto(
+                p.Id,                         // productId
+                p.Name,                       // name
+                p.ImageUrl,                   // imageUrl
+                p.Description,                 // description
+                p.Price,                      // price
+                p.State,                      // states
+                new List<string> { p.ProductCategory.Name } // قائمة تحتوي على اسم الفئة
+            ));
+
+            return OperationResult<IEnumerable<GetStoreProductDto>>.Success(result);
         }
 
         public async Task<OperationResult<CreateProductDto>> CreateToStoreAsync(CreateProductDto createProductDto, int storeId)
@@ -93,8 +135,6 @@ namespace Manzili.Core.Services
 
    
         }
-
-      
 
         //public async Task<IEnumerable<Product>> GetAllProductsAsync()
         //{
@@ -204,4 +244,5 @@ namespace Manzili.Core.Services
 
         //#endregion
     }
+  
 }

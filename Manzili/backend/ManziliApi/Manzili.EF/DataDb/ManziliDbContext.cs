@@ -19,9 +19,6 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
 
 
 
-
-
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -87,26 +84,35 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
             .HasForeignKey(p => p.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        // ProductCategory with Product
+        // Product with ProductCategory  
         modelBuilder.Entity<ProductCategory>()
             .HasMany(pc => pc.Products)
             .WithOne(p => p.ProductCategory)
             .HasForeignKey(p => p.ProductCategoryId)
             .OnDelete(DeleteBehavior.NoAction);
 
-    }
 
 
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-
-        optionsBuilder.UseSqlServer("Server=db13966.Public.databaseasp.net; Database=db13966; User Id=db13966; Password=4Rb#X+6og2L_; Encrypt=False; MultipleActiveResultSets=True;")
-            .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
-
+        // StoreCategory with ProdctCategory
+        modelBuilder.Entity<StoreCategory>()
+            .HasMany(x => x.ProductCategories)
+            .WithOne(s => s.StoreCategory)
+            .HasForeignKey(x => x.StoreCategoryId)
+            .OnDelete(DeleteBehavior.NoAction);
 
     }
+
+
+
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //{
+    //    base.OnConfiguring(optionsBuilder);
+
+    //    optionsBuilder.UseSqlServer("Server=db13966.Public.databaseasp.net; Database=db13966; User Id=db13966; Password=4Rb#X+6og2L_; Encrypt=False; MultipleActiveResultSets=True;")
+    //        .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
+
+
+    //}
 
 
 
