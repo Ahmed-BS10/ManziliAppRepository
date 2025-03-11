@@ -79,8 +79,17 @@ namespace ManziliApi.Controllers
             return NotFound(result);
         }
 
- 
 
+        [HttpGet("GetStoreCategoryByProduct")]
+        public async Task<IActionResult> GetStoreCategoryByProduct(int productId)
+        {
+            var result = await _categoryServices.GetStoreCategoryByProductClickAsync(productId);
+
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return NotFound(result);
+        }
 
         #endregion
     }

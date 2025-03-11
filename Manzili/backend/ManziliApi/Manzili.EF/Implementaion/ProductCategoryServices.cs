@@ -175,8 +175,28 @@ namespace Manzili.Core.Services
             return OperationResult<IEnumerable<string>>.Success(productCategories, "Product categories retrieved successfully.");
         }
 
+        public async Task<OperationResult<string>> GetStoreCategoryByProductClickAsync(int productId)
+        {
+            var product = await _db.Set<Product>()
+                .Include(p => p.Store)
+                .ThenInclude(s => s.storeCategoryStores)
+                .ThenInclude(scs => scs.StoreCategory) // Include the StoreCategory
+                .FirstOrDefaultAsync(p => p.Id == productId);
 
-        
+            if (product == null || product.Store?.storeCategoryStores == null)
+            {
+                return OperationResult<string>.Failure("Product or associated store category not found.");
+            }
+
+            var storeCategory = product.Store.storeCategoryStores.FirstOrDefault()?.StoreCategory;
+            if (storeCategory == null)
+            {
+                return OperationResult<string>.Failure("Store category not found.");
+            }
+
+            return OperationResult<string>.Success(storeCategory.Name, "Store category retrieved successfully.");
+        }
+
 
 
         #endregion
