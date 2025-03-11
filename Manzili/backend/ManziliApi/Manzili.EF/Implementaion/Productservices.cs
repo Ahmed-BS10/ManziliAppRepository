@@ -117,30 +117,35 @@ namespace Manzili.Core.Services
             _dbSet = _db.Set<Product>();
             _fileService = fileService;
         }
-        public async Task<OperationResult<IEnumerable<GetStoreProductDto>>> GetStoreProduct(int storeId, string storeCategory, string productCategory)
-        {
-            var products = await _dbSet
-                .Include(p => p.ProductCategory)
-                .ThenInclude(pc => pc.StoreCategory)
-                .Where(p => p.StoreId == storeId &&
-                            p.ProductCategory.StoreCategory.Name == storeCategory &&
-                            p.ProductCategory.Name == productCategory)
-                .AsNoTracking()
-                .ToListAsync();
 
-            // Convert products to DTO
-            var result = products.Select(p => new GetStoreProductDto(
-                p.Id,                         // productId
-                p.Name,                       // name
-                p.ImageUrls.FirstOrDefault(),                  // imageUrls
-                p.Description,                // description
-                p.Price,                      // price
-                p.State,                      // states
-                new List<string> { p.ProductCategory.Name } // List containing the category name
-            ));
+        
 
-            return OperationResult<IEnumerable<GetStoreProductDto>>.Success(result);
-        }
+      
+
+        //public async Task<OperationResult<IEnumerable<GetStoreProductDto>>> GetStoreProduct(int storeId, string storeCategory, string productCategory)
+        //{
+        //    var products = await _dbSet
+        //        .Include(p => p.ProductCategory)
+        //        .ThenInclude(pc => pc.StoreCategory)
+        //        .Where(p => p.StoreId == storeId &&
+        //                    p.ProductCategory.StoreCategory.Name == storeCategory &&
+        //                    p.ProductCategory.Name == productCategory)
+        //        .AsNoTracking()
+        //        .ToListAsync();
+
+        //    // Convert products to DTO
+        //    var result = products.Select(p => new GetStoreProductDto(
+        //        p.Id,                         // productId
+        //        p.Name,                       // name
+        //        p.ImageUrls.FirstOrDefault(),                  // imageUrls
+        //        p.Description,                // description
+        //        p.Price,                      // price
+        //        p.State,                      // states
+        //        new List<string> { p.ProductCategory.Name } // List containing the category name
+        //    ));
+
+        //    return OperationResult<IEnumerable<GetStoreProductDto>>.Success(result);
+        //}
 
 
         //public async Task<IEnumerable<Product>> GetAllProductsAsync()

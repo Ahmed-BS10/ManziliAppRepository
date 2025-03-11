@@ -58,16 +58,17 @@ namespace ManziliApi.Controllers
 
 
 
+       
 
 
-        [HttpPost("GetStoreProduct")]
-        public async Task<IActionResult> GetStoreProduct(int storeId , string n1 , string n2)
-        {
-            var result = await _productservices.GetStoreProduct(storeId, n1, n2);
-            if (result.IsSuccess)
-                return Ok(result);
-            return BadRequest(result);
-        }
+        //[HttpPost("GetStoreProduct")]
+        //public async Task<IActionResult> GetStoreProduct(int storeId , string n1 , string n2)
+        //{
+        //    var result = await _productservices.GetStoreProduct(storeId, n1, n2);
+        //    if (result.IsSuccess)
+        //        return Ok(result);
+        //    return BadRequest(result);
+        //}
 
         #endregion
     }

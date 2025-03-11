@@ -158,6 +158,21 @@ namespace Manzili.Core.Services
 
 
         }
+        public async Task<OperationResult<IEnumerable<string>>> GetProductCategoriesByStoreCategoryAsync(int storeCategoryId)
+        {
+            var productCategories = await _db.ProductCategories
+                .Where(pc => pc.StoreCategoryId == storeCategoryId)
+                .Select(pc => pc.Name)
+                .Distinct()
+                .ToListAsync();
+
+            if (!productCategories.Any())
+            {
+                return OperationResult<IEnumerable<string>>.Failure("No product categories found for this store category.");
+            }
+
+            return OperationResult<IEnumerable<string>>.Success(productCategories, "Product categories retrieved successfully.");
+        }
 
         #endregion
 

@@ -68,6 +68,17 @@ namespace ManziliApi.Controllers
 
         }
 
+
+        [HttpGet("store-category/{storeCategoryId}/product-categories")]
+        public async Task<IActionResult> GetProductCategoriesByStoreCategory(int storeCategoryId)
+        {
+            var result = await _productservices.GetProductCategoriesByStoreCategoryAsync(storeCategoryId);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return NotFound(result);
+        }
+
         #endregion
     }
 }
