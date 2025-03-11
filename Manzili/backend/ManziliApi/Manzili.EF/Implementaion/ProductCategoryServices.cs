@@ -1,5 +1,6 @@
 ﻿using Manzili.Core.Constant;
 using Manzili.Core.Dto.CatagoryDto;
+using Manzili.Core.Dto.StoreCategoryDto;
 using Manzili.Core.Dto.ProductCatagoryDto;
 using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Entities;
@@ -173,6 +174,10 @@ namespace Manzili.Core.Services
 
             return OperationResult<IEnumerable<string>>.Success(productCategories, "Product categories retrieved successfully.");
         }
+
+
+        
+
 
         #endregion
 
