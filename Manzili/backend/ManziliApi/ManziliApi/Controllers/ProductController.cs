@@ -36,15 +36,16 @@ namespace ManziliApi.Controllers
         }
 
 
-
         [HttpPost("AddProductToStore")]
-        public async Task<IActionResult> AddProductToStore(CreateProductDto createProductDto, int storeId)
+        public async Task<IActionResult> AddProductToStore(int storeId, [FromForm] CreateProductDto productDto)
         {
-            var result = await _productservices.CreateToStoreAsync(createProductDto, storeId);
+            var result = await _productservices.AddProductToStoreAsync(storeId, productDto);
             if (result.IsSuccess)
                 return Ok(result);
+
             return BadRequest(result);
         }
+
 
 
 
