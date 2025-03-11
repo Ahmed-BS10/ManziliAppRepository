@@ -35,12 +35,13 @@ namespace ManziliApi.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("GetProductById")]
+        [HttpGet(ProductRouting.GetById)]
         public async Task<IActionResult> GetProductById(int productId)
         {
             var result = await _productservices.GetProductByIdAsync(productId);
             if (result.IsSuccess)
                 return Ok(result);
+
             return NotFound(result);
         }
 

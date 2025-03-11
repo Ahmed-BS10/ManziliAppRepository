@@ -94,19 +94,21 @@ namespace Manzili.Core.Services
 
         public async Task<OperationResult<Product>> GetProductByIdAsync(int productId)
         {
-            var product = await _dbSet
-                .AsNoTracking()
+            var product = await _db.Set<Product>()
+                .Include(p => p.ProductCategory) // Include category info
+                .Include(p => p.Store) // Include store details
+                .Include(p => p.Sizes) // Include product sizes
                 .FirstOrDefaultAsync(p => p.Id == productId);
 
             if (product == null)
             {
-                return OperationResult<Product>.Failure($"Product with ID {productId} not found.");
+                return OperationResult<Product>.Failure("Product not found.");
             }
 
-          
-
-            return OperationResult<Product>.Success(product);
+            return OperationResult<Product>.Success(product, "Product retrieved successfully.");
         }
+
+
 
 
         public Productservices(ManziliDbContext db, FileService fileService)
