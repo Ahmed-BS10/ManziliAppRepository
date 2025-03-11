@@ -17,16 +17,34 @@ namespace Manzili.Core.Services
         readonly DbSet<Product> _dbSet;  
         readonly FileService _fileService;
 
+
+        public async Task<OperationResult<List<Product>>> GetStoreProductsAsync(int storeId)
+        {
+            var store = await _db.Stores
+                .Include(s => s.Products)
+                .ThenInclude(p => p.ProductCategory) // Include category info if needed
+                .FirstOrDefaultAsync(s => s.Id == storeId);
+
+            if (store == null)
+            {
+                return OperationResult<List<Product>>.Failure("Store not found.");
+            }
+
+            return OperationResult<List<Product>>.Success(store.Products.ToList(), "Store products retrieved successfully.");
+        }
         public async Task<OperationResult<Product>> AddProductToStoreAsync(int storeId, CreateProductDto productDto)
         {
-            var store = await _db.Stores.Include(s => s.Products).FirstOrDefaultAsync(s => s.Id == storeId);
+            var store = await _db.Stores
+                .Include(s => s.Products)
+                .FirstOrDefaultAsync(s => s.Id == storeId);
+
             if (store == null)
             {
                 return OperationResult<Product>.Failure("Store not found.");
             }
 
             var imageUrls = new List<string>();
-            if (productDto.formImages != null)
+            if (productDto.formImages?.Any() == true)
             {
                 foreach (var image in productDto.formImages)
                 {
@@ -40,17 +58,40 @@ namespace Manzili.Core.Services
                 Name = productDto.Name,
                 Description = productDto.Description,
                 Price = productDto.Price,
-                Quantity = productDto.Quantity ?? 0,
-                ImageUrls = imageUrls,
                 ProductCategoryId = productDto.ProductCategoryId,
-                StoreId = storeId
+                StoreId = storeId,
+                Store = store,
+                ImageUrls = imageUrls
             };
+
+            // Handle size and quantity selection from the form
+            if (productDto.Sizes != null && productDto.Quantities != null && productDto.Sizes.Count == productDto.Quantities.Count)
+            {
+                product.Sizes = new List<ProductSize>();
+
+                for (int i = 0; i < productDto.Sizes.Count; i++)
+                {
+                    product.Sizes.Add(new ProductSize
+                    {
+                        Size = productDto.Sizes[i],
+                        Quantity = productDto.Quantities[i],
+                        Product = product
+                    });
+                }
+
+                product.Quantity = product.Sizes.Sum(s => s.Quantity); // Calculate total quantity
+            }
+            else
+            {
+                product.Quantity = productDto.Quantity ?? 0; // Default quantity
+            }
 
             store.Products.Add(product);
             await _db.SaveChangesAsync();
 
             return OperationResult<Product>.Success(product, "Product added successfully.");
         }
+
         public async Task<OperationResult<Product>> GetProductByIdAsync(int productId)
         {
             var product = await _dbSet

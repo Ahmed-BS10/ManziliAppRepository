@@ -69,57 +69,6 @@ namespace Manzili.EF.Migrations
                     b.ToTable("Favorites");
                 });
 
-            modelBuilder.Entity("Manzili.Core.Entities.Product", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Discount")
-                        .HasColumnType("float");
-
-                    b.Property<string>("ImageUrls")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<int>("ProductCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<double?>("Rate")
-                        .HasColumnType("float");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductCategoryId");
-
-                    b.HasIndex("StoreId");
-
-                    b.ToTable("Product");
-                });
-
             modelBuilder.Entity("Manzili.Core.Entities.ProductCategory", b =>
                 {
                     b.Property<int>("Id")
@@ -407,6 +356,57 @@ namespace Manzili.EF.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ImageUrls")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("ProductCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Rate")
+                        .HasColumnType("float");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductCategoryId");
+
+                    b.HasIndex("StoreId");
+
+                    b.ToTable("Product");
+                });
+
             modelBuilder.Entity("ProductSize", b =>
                 {
                     b.Property<int>("Id")
@@ -487,7 +487,7 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Image", b =>
                 {
-                    b.HasOne("Manzili.Core.Entities.Product", "Product")
+                    b.HasOne("Product", "Product")
                         .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -513,25 +513,6 @@ namespace Manzili.EF.Migrations
                     b.Navigation("Store");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Manzili.Core.Entities.Product", b =>
-                {
-                    b.HasOne("Manzili.Core.Entities.ProductCategory", "ProductCategory")
-                        .WithMany("Products")
-                        .HasForeignKey("ProductCategoryId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Manzili.Core.Entities.Store", "Store")
-                        .WithMany("Products")
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("ProductCategory");
-
-                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.ProductCategory", b =>
@@ -632,9 +613,28 @@ namespace Manzili.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Product", b =>
+                {
+                    b.HasOne("Manzili.Core.Entities.ProductCategory", "ProductCategory")
+                        .WithMany("Products")
+                        .HasForeignKey("ProductCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Manzili.Core.Entities.Store", "Store")
+                        .WithMany("Products")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ProductCategory");
+
+                    b.Navigation("Store");
+                });
+
             modelBuilder.Entity("ProductSize", b =>
                 {
-                    b.HasOne("Manzili.Core.Entities.Product", "Product")
+                    b.HasOne("Product", "Product")
                         .WithMany("Sizes")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -652,13 +652,6 @@ namespace Manzili.EF.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Manzili.Core.Entities.Product", b =>
-                {
-                    b.Navigation("Images");
-
-                    b.Navigation("Sizes");
-                });
-
             modelBuilder.Entity("Manzili.Core.Entities.ProductCategory", b =>
                 {
                     b.Navigation("Products");
@@ -669,6 +662,13 @@ namespace Manzili.EF.Migrations
                     b.Navigation("FavoritesStore");
 
                     b.Navigation("RatingsGivenStore");
+                });
+
+            modelBuilder.Entity("Product", b =>
+                {
+                    b.Navigation("Images");
+
+                    b.Navigation("Sizes");
                 });
 
             modelBuilder.Entity("StoreCategory", b =>

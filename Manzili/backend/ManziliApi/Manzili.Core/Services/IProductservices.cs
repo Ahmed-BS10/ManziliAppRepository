@@ -9,7 +9,7 @@ namespace Manzili.Core.Services
         Task<OperationResult<Product>> GetProductByIdAsync(int productId);
 
 
-
+        Task<OperationResult<List<Product>>> GetStoreProductsAsync(int storeId);
         Task<OperationResult<Product>> AddProductToStoreAsync(int storeId, CreateProductDto productDto);
         Task<OperationResult<IEnumerable<GetStoreProductDto>>> GetStoreProduct(int storeId, string storeCategory, string productCategory);
         //Task<Product> CreateProductAsync(Product product);

@@ -49,6 +49,16 @@
 
         }
 
+        public static class ProductRouting
+        {
+            public const string GetById = $"{"Id"}";
+            public const string GetAll = $"{"All"}";
+            public const string Create = "Create";
+            public const string Update = $"Update{"Id"}";
+            public const string Delete = $"Delete";
+
+        }
+
         public static class StoreRouting
         {
             public const string Prefix = $"Store/";
