@@ -1,0 +1,84 @@
+
+import 'package:flutter/material.dart';
+import 'package:manziliapp/core/helper/app_colors.dart';
+import 'package:manziliapp/core/helper/text_styles.dart';
+
+class FilterSection extends StatefulWidget {
+  const FilterSection({super.key});
+
+  @override
+  FilterSectionState createState() => FilterSectionState();
+}
+
+class FilterSectionState extends State<FilterSection> {
+  int _activeIndex = 3; // Default active button index (3 - "الكل")
+
+  @override
+  Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.05,
+        vertical: 30,
+      ),
+      child: Row(
+        children: List.generate(4, (index) {
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _activeIndex = index;
+                });
+              },
+              child: FilterButton(
+                title: _getTitle(index),
+                isActive: _activeIndex == index,
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  String _getTitle(int index) {
+    switch (index) {
+      case 0:
+        return "المفضلة";
+      case 1:
+        return "الجديدة";
+      case 2:
+        return "الأقرب";
+      case 3:
+        return "الكل";
+      default:
+        return "";
+    }
+  }
+}
+
+
+class FilterButton extends StatelessWidget {
+  final String title;
+  final bool isActive;
+
+  const FilterButton({super.key, required this.title, this.isActive = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
+      decoration: BoxDecoration(
+        color: isActive ? AppColors.primaryColor : AppColors.filterInactive,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: isActive ? TextStyles.sectionHeader : TextStyles.timeStyle,
+      ),
+    );
+  }
+}
