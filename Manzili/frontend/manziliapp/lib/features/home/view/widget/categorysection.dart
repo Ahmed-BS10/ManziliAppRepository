@@ -1,5 +1,6 @@
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/core/helper/image_helper.dart';
 import 'package:manziliapp/core/helper/shadows.dart';
@@ -13,7 +14,33 @@ class CategorySection extends StatefulWidget {
 }
 
 class CategorySectionState extends State<CategorySection> {
-  int _activeIndex = 2; // Default active card (index 2 - "سبالم")
+  int _activeIndex = 0; // Default active card index
+  late Future<List<Category>> _categoriesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _categoriesFuture = fetchCategories();
+  }
+
+  Future<List<Category>> fetchCategories() async {
+    const String url = "http://ali2.runasp.net/api/StoreCategory/List";
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decoded = json.decode(response.body);
+      // Check for success and existence of data
+      if (decoded["isSuccess"] == true && decoded["data"] != null) {
+        final List<dynamic> values = decoded["data"]["\$values"];
+        // Parse each json map into a Category instance.
+        return values.map((json) => Category.fromJson(json)).toList();
+      } else {
+        throw Exception("API returned an error: ${decoded["message"]}");
+      }
+    } else {
+      throw Exception("Failed to fetch categories");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,79 +49,81 @@ class CategorySectionState extends State<CategorySection> {
     return Column(
       children: [
         const SectionHeader(title: "تصفح التصنيفات", action: "عرض الكل"),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-          child: Row(
-            children: List.generate(4, (index) {
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _activeIndex = index;
-                  });
-                },
-                child: CategoryCard(
-                  title: _getTitle(index),
-                  count: _getCount(index),
-                  imageUrl: _getImageUrl(index),
-                  isActive: _activeIndex == index,
-                ),
+        FutureBuilder<List<Category>>(
+          future: _categoriesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return SizedBox(
+                height: 110,
+                child: const Center(child: CircularProgressIndicator()),
               );
-            }),
-          ),
+            } else if (snapshot.hasError) {
+              return SizedBox(
+                height: 110,
+                child: Center(child: Text("حدث خطأ: ${snapshot.error}")),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return SizedBox(
+                height: 110,
+                child: const Center(child: Text("لا توجد بيانات")),
+              );
+            }
+
+            final List<Category> categories = snapshot.data!;
+
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+              child: Row(
+                children: List.generate(categories.length, (index) {
+                  final category = categories[index];
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _activeIndex = index;
+                      });
+                    },
+                    child: CategoryCard(
+                      title: category.name,
+                      count: category.conunt.toString(),
+                      imageUrl: category.imageUrl,
+                      isActive: _activeIndex == index,
+                    ),
+                  );
+                }),
+              ),
+            );
+          },
         ),
       ],
     );
   }
-
-  String _getTitle(int index) {
-    switch (index) {
-      case 0:
-        return "مؤكلات";
-      case 1:
-        return "تالكأ";
-      case 2:
-        return "سبالم";
-      case 3:
-        return "تالكأ";
-      default:
-        return "";
-    }
-  }
-
-  String _getCount(int index) {
-    switch (index) {
-      case 0:
-        return "20";
-      case 1:
-        return "31";
-      case 2:
-        return "21";
-      case 3:
-        return "31";
-      default:
-        return "";
-    }
-  }
-
-  String _getImageUrl(int index) {
-    switch (index) {
-      case 0:
-        return "ebscxfd0.png";
-      case 1:
-        return "ovy2eeyp.png";
-      case 2:
-        return "kfwocaaa.png";
-      case 3:
-        return "u5wdh39c.png";
-      default:
-        return "";
-    }
-  }
 }
 
+class Category {
+  final String id;
+  final String name;
+  final String imageUrl;
+  final int conunt;
 
+  Category({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.conunt,
+  });
 
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+      id: json["\$id"] as String,
+      name: json["name"] as String,
+      imageUrl: json["imageUrl"] as String,
+      conunt: json["conunt"] is int
+          ? json["conunt"] as int
+          : int.parse(json["conunt"].toString()),
+    );
+  }
+}
 
 class SectionHeader extends StatelessWidget {
   final String title;
