@@ -62,7 +62,7 @@ namespace ManziliApi.Controllers
 
         }
         [HttpGet("ToPage")]
-        public async Task<IActionResult> GetListToPage(int size , int pageSize)
+        public async Task<IActionResult> GetListToPage([FromQuery] int size , [FromQuery] int pageSize)
         {
             var result = await _storeServices.GetListToPageinationAsync(size , pageSize);
             if (result.IsSuccess)
