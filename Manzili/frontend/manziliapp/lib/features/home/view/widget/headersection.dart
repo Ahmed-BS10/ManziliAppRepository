@@ -5,7 +5,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:manziliapp/core/helper/app_colors.dart';
-import 'package:manziliapp/core/helper/image_helper.dart';
 
 class HeaderSection extends StatefulWidget {
   const HeaderSection({super.key});
@@ -20,9 +19,9 @@ class HeaderSectionState extends State<HeaderSection> {
   late Timer _timer;
 
   final List<String> _imageUrls = [
-    ImageHelper.getImageUrl('w8bfd62n.png'),
-    ImageHelper.getImageUrl('w8bfd62n.png'),
-    ImageHelper.getImageUrl('w8bfd62n.png'),
+   'lib/assets/image/loginimg.jpg',
+   'lib/assets/image/loginimg.jpg',
+   'lib/assets/image/loginimg.jpg',
   ];
 
   @override
@@ -72,7 +71,7 @@ class HeaderSectionState extends State<HeaderSection> {
               });
             },
             itemBuilder: (context, index) {
-              return Image.network(
+              return Image.asset(
                 _imageUrls[index],
                 fit: BoxFit.cover,
                 width: double.infinity,

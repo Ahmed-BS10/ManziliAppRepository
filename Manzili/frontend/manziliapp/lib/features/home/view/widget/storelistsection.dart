@@ -1,82 +1,161 @@
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/core/helper/image_helper.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
 
-class StoreListSection extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+/// Model class representing a store item from the API
+class StoreItem {
+  final int id;
+  final String imageUrl;
+  final String businessName;
+  final double rate;
+  final List<String> categoryNames;
+  final String status;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-      child: Column(
-        children: const [
-          StoreListItem(
-            title: "متجر الإسر المنتجة",
-            rating: "4.6",
-            status: "مفتوح",
-            statusColor: AppColors.openStatus,
-            imageUrl: "cvx26ypx.png",
-          ),
-          StoreListItem(
-            title: "متجر الإسر المنتجة",
-            rating: "4.6",
-            status: "مغلق",
-            statusColor: AppColors.closedStatus,
-            imageUrl: "k1rwvj6p.png",
-          ),
-          StoreListItem(
-            title: "متجر الإسر المنتجة",
-            rating: "4.6",
-            status: "مفتوح",
-            statusColor: AppColors.openStatus,
-            imageUrl: "cvx26ypx.png",
-          ),
-          StoreListItem(
-            title: "متجر الإسر المنتجة",
-            rating: "4.6",
-            status: "مغلق",
-            statusColor: AppColors.closedStatus,
-            imageUrl: "k1rwvj6p.png",
-          ),
-          StoreListItem(
-            title: "متجر الإسر المنتجة",
-            rating: "4.6",
-            status: "مفتوح",
-            statusColor: AppColors.openStatus,
-            imageUrl: "cvx26ypx.png",
-          ),
-          StoreListItem(
-            title: "متجر الإسر المنتجة",
-            rating: "4.6",
-            status: "مغلق",
-            statusColor: AppColors.closedStatus,
-            imageUrl: "k1rwvj6p.png",
-          ),
-          // Add more store items as needed
-        ],
-      ),
+  StoreItem({
+    required this.id,
+    required this.imageUrl,
+    required this.businessName,
+    required this.rate,
+    required this.categoryNames,
+    required this.status,
+  });
+
+  factory StoreItem.fromJson(Map<String, dynamic> json) {
+    return StoreItem(
+      id: json['id'],
+      imageUrl:
+          "http://man.runasp.net/Profile/141b71a37e0a4c94b5f9b3ba5af9097a.png",
+      businessName: json['businessName'],
+      rate: (json['rate'] as num).toDouble(),
+      // Ensure categoryNames is a List<String>
+      categoryNames: (json['categoryNames'] as List<dynamic>)
+          .map((item) => item.toString())
+          .toList(),
+      status: json['status'],
     );
   }
 }
 
+/// The main widget which fetches store items from the API and displays them
+class StoreListSection extends StatefulWidget {
+  const StoreListSection({Key? key}) : super(key: key);
+
+  @override
+  _StoreListSectionState createState() => _StoreListSectionState();
+}
+
+class _StoreListSectionState extends State<StoreListSection> {
+  late Future<List<StoreItem>> _storesFuture;
+  final String _apiUrl =
+      "http://man.runasp.net/api/Store/ToPage?size=0&pageSize=0";
+
+  @override
+  void initState() {
+    _storesFuture = _fetchStores();
+    super.initState();
+  }
+
+  Future<List<StoreItem>> _fetchStores() async {
+    final response = await http.get(Uri.parse(_apiUrl));
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      if (jsonResponse["isSuccess"] == true) {
+        final List<dynamic> data = jsonResponse["data"];
+        return data.map((item) => StoreItem.fromJson(item)).toList();
+      } else {
+        throw Exception("API returned an error: ${jsonResponse["message"]}");
+      }
+    } else {
+      throw Exception(
+          "Failed to load stores. Status code: ${response.statusCode}");
+    }
+  }
+
+  /// Converts API status and selects the appropriate color and Arabic text.
+  Map<String, dynamic> _mapStatus(String status) {
+    if (status.toLowerCase() == "open") {
+      return {
+        "text": "مفتوح",
+        "color": AppColors.openStatus,
+      };
+    } else if (status.toLowerCase() == "closed") {
+      return {
+        "text": "مغلق",
+        "color": AppColors.closedStatus,
+      };
+    }
+    return {
+      "text": status,
+      "color": Colors.grey,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return FutureBuilder<List<StoreItem>>(
+      future: _storesFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show a loading indicator while waiting for the API
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          // Handle error gracefully
+          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("No stores available."));
+        } else {
+          final stores = snapshot.data!;
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+            child: Column(
+              children: stores.map((store) {
+                final statusMap = _mapStatus(store.status);
+                // Use the first category if available otherwise fallback to an empty string.
+                final category = store.categoryNames.isNotEmpty
+                    ? store.categoryNames.first
+                    : "";
+                return StoreListItem(
+                  title: store.businessName,
+                  rating: store.rate.toStringAsFixed(1),
+                  status: statusMap["text"],
+                  statusColor: statusMap["color"],
+                  imageUrl:
+                      "http://man.runasp.net/Profile/141b71a37e0a4c94b5f9b3ba5af9097a.png",
+                  category: category,
+                );
+              }).toList(),
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+/// Updated StoreListItem now accepts a dynamic category value.
 class StoreListItem extends StatefulWidget {
   final String title;
   final String rating;
   final String status;
   final Color statusColor;
   final String imageUrl;
+  final String category;
 
   const StoreListItem({
-    super.key,
+    Key? key,
     required this.title,
     required this.rating,
     required this.status,
     required this.statusColor,
     required this.imageUrl,
-  });
+    required this.category,
+  }) : super(key: key);
 
   @override
   StoreListItemState createState() => StoreListItemState();
@@ -119,7 +198,7 @@ class StoreListItemState extends State<StoreListItem> {
                           color: widget.statusColor,
                         ),
                         const SizedBox(height: 6),
-                        _CategoryIndicator(),
+                        _CategoryIndicator(category: widget.category),
                       ],
                     ),
                   ),
@@ -165,7 +244,8 @@ class _StatusIndicator extends StatelessWidget {
   final String status;
   final Color color;
 
-  const _StatusIndicator({required this.status, required this.color});
+  const _StatusIndicator({Key? key, required this.status, required this.color})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +264,13 @@ class _StatusIndicator extends StatelessWidget {
   }
 }
 
+/// (_CategoryIndicator) now accepts a category string to display.
 class _CategoryIndicator extends StatelessWidget {
+  final String category;
+
+  const _CategoryIndicator({Key? key, required this.category})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -193,7 +279,7 @@ class _CategoryIndicator extends StatelessWidget {
         color: AppColors.categoryBackground,
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Text("مأكولات", style: TextStyles.linkStyle),
+      child: Text(category, style: TextStyles.linkStyle),
     );
   }
 }
@@ -201,7 +287,7 @@ class _CategoryIndicator extends StatelessWidget {
 class _StoreImage extends StatelessWidget {
   final String imageUrl;
 
-  const _StoreImage({required this.imageUrl});
+  const _StoreImage({Key? key, required this.imageUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -213,8 +299,10 @@ class _StoreImage extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         image: DecorationImage(
-          image: NetworkImage(ImageHelper.getImageUrl(imageUrl)),
-          fit: BoxFit.cover,
+          image: NetworkImage(
+            ImageHelper.getImageUrl(imageUrl),
+          ),
+          fit: BoxFit.contain,
         ),
       ),
     );

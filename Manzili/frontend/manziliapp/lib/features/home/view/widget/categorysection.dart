@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:manziliapp/core/helper/app_colors.dart';
-import 'package:manziliapp/core/helper/image_helper.dart';
 import 'package:manziliapp/core/helper/shadows.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
 
@@ -24,15 +23,14 @@ class CategorySectionState extends State<CategorySection> {
   }
 
   Future<List<Category>> fetchCategories() async {
-    const String url = "http://ali2.runasp.net/api/StoreCategory/List";
+    const String url = "http://man.runasp.net/api/StoreCategory/List";
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> decoded = json.decode(response.body);
-      // Check for success and existence of data
       if (decoded["isSuccess"] == true && decoded["data"] != null) {
-        final List<dynamic> values = decoded["data"]["\$values"];
-        // Parse each json map into a Category instance.
+        // Now the data is a List of categories
+        final List<dynamic> values = decoded["data"];
         return values.map((json) => Category.fromJson(json)).toList();
       } else {
         throw Exception("API returned an error: ${decoded["message"]}");
@@ -101,23 +99,25 @@ class CategorySectionState extends State<CategorySection> {
 }
 
 class Category {
-  final String id;
   final String name;
   final String imageUrl;
   final int conunt;
 
   Category({
-    required this.id,
     required this.name,
     required this.imageUrl,
     required this.conunt,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
+    String rawImageUrl = json["imageUrl"] as String;
+    // Prefix the domain if it starts with a slash
+    if (rawImageUrl.startsWith("/")) {
+      rawImageUrl = "http://man.runasp.net" + rawImageUrl;
+    }
     return Category(
-      id: json["\$id"] as String,
       name: json["name"] as String,
-      imageUrl: json["imageUrl"] as String,
+      imageUrl: rawImageUrl,
       conunt: json["conunt"] is int
           ? json["conunt"] as int
           : int.parse(json["conunt"].toString()),
@@ -184,7 +184,7 @@ class CategoryCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 21.5,
-            backgroundImage: NetworkImage(ImageHelper.getImageUrl(imageUrl)),
+            backgroundImage: NetworkImage(imageUrl),
           ),
           const SizedBox(height: 8),
           Text(

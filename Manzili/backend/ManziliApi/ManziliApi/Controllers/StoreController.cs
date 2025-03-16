@@ -41,9 +41,9 @@ namespace ManziliApi.Controllers
         }
 
         [HttpGet("StoresByCategore")]
-        public async Task<IActionResult> GetStoresWithCategory(string categoryName)
+        public async Task<IActionResult> GetStoresWithCategory(int storecCategoryId)
         {
-            var result = await _storeServices.GetStoresWithCategory(categoryName);
+            var result = await _storeServices.GetStoresWithCategory(storecCategoryId);
             if (result.IsSuccess)
                 return Ok(result);
 
