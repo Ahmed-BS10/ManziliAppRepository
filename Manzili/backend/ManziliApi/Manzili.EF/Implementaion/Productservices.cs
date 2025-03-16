@@ -18,20 +18,23 @@ namespace Manzili.Core.Services
         readonly FileService _fileService;
 
 
-        public async Task<OperationResult<List<Product>>> GetStoreProductsAsync(int storeId)
+        public async Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId)
         {
             var store = await _db.Stores
                 .Include(s => s.Products)
-                .ThenInclude(p => p.ProductCategory) // Include category info if needed
+                .ThenInclude(p => p.ProductCategory)
                 .FirstOrDefaultAsync(s => s.Id == storeId);
 
             if (store == null)
             {
-                return OperationResult<List<Product>>.Failure("Store not found.");
+                return OperationResult<List<GetAllProduct>>.Failure("Store not found.");
             }
 
-            return OperationResult<List<Product>>.Success(store.Products.ToList(), "Store products retrieved successfully.");
+            var productsDto = store.Products.Select(p => new GetAllProduct(p)).ToList();
+
+            return OperationResult<List<GetAllProduct>>.Success(productsDto, "Store products retrieved successfully.");
         }
+
         public async Task<OperationResult<Product>> AddProductToStoreAsync(int storeId, CreateProductDto productDto)
         {
             var store = await _db.Stores
