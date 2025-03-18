@@ -28,10 +28,11 @@ public class StoreRateServices
 
     #region Methode
 
+
     public async Task<OperationResult<CreateStoreRateDto>> CreateOrUpdate(CreateStoreRateDto createRateDto)
     {
         var existRate = await _dbSet.FirstOrDefaultAsync(r => r.UserId == createRateDto.UserId && r.StoreId == createRateDto.StoreId);
-        if(existRate != null)
+        if (existRate != null)
         {
             try
             {
@@ -41,11 +42,11 @@ public class StoreRateServices
                 return OperationResult<CreateStoreRateDto>.Success(createRateDto);
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
 
             }
-           
+
         }
 
         var storeRate = new StoreRating
@@ -65,14 +66,35 @@ public class StoreRateServices
 
         }
 
-        catch (Exception e) {
+        catch (Exception e)
+        {
             return OperationResult<CreateStoreRateDto>.Failure("Failed to create rate");
         }
-       
-      
-
-
     }
+
+    public async Task<OperationResult<StoreRatingSummaryDto>> GetStoreRatingsAsync(int storeId)
+    {
+        var ratings = await _dbSet.Where(r => r.StoreId == storeId).ToListAsync();
+
+        if (!ratings.Any())
+            return OperationResult<StoreRatingSummaryDto>.Failure("No ratings found for this store");
+
+        var averageRating = ratings.Average(r => r.RatingValue);
+
+        var result = new StoreRatingSummaryDto
+        {
+            StoreId = storeId,
+            AverageRating = Math.Round(averageRating, 1),
+            TotalRatings = ratings.Count,
+            RatingsBreakdown = ratings.GroupBy(r => r.RatingValue)
+                                      .ToDictionary(g => g.Key, g => g.Count())
+        };
+
+        return OperationResult<StoreRatingSummaryDto>.Success(result);
+    }
+
+
+
 
     #endregion
 }

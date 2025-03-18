@@ -48,7 +48,8 @@ namespace Manzili.Core.Services
             {
                 Id = category.Id,
                 Name = category.Name,
-                Image = $"{Constants.baseurl}{category.Image}"
+                Image = $"{Constants.baseurl}{category.Image}",
+                StoreCategoryId = category.StoreCategoryId,
             });
 
             return OperationResult<IEnumerable<GetProductCatagoryDto>>.Success(categoryDtos);
@@ -175,26 +176,24 @@ namespace Manzili.Core.Services
             return OperationResult<IEnumerable<string>>.Success(productCategories, "Product categories retrieved successfully.");
         }
 
-        public async Task<OperationResult<string>> GetStoreCategoryByProductClickAsync(int productId)
+        public async Task<OperationResult<List<string>>> GetStoreCategoriesByStoreIdAsync(int storeId)
         {
-            var product = await _db.Set<Product>()
-                .Include(p => p.Store)
-                .ThenInclude(s => s.storeCategoryStores)
-                .ThenInclude(scs => scs.StoreCategory) // Include the StoreCategory
-                .FirstOrDefaultAsync(p => p.Id == productId);
+            var store = await _db.Set<Store>()
+                .Include(s => s.storeCategoryStores)
+                .ThenInclude(scs => scs.StoreCategory)
+                .FirstOrDefaultAsync(s => s.Id == storeId);
 
-            if (product == null || product.Store?.storeCategoryStores == null)
+            if (store == null || store.storeCategoryStores == null || !store.storeCategoryStores.Any())
             {
-                return OperationResult<string>.Failure("Product or associated store category not found.");
+                return OperationResult<List<string>>.Failure("Store or associated store categories not found.");
             }
 
-            var storeCategory = product.Store.storeCategoryStores.FirstOrDefault()?.StoreCategory;
-            if (storeCategory == null)
-            {
-                return OperationResult<string>.Failure("Store category not found.");
-            }
+            var storeCategories = store.storeCategoryStores
+                .Select(scs => scs.StoreCategory?.Name)
+                .Where(name => name != null)
+                .ToList();
 
-            return OperationResult<string>.Success(storeCategory.Name, "Store category retrieved successfully.");
+            return OperationResult<List<string>>.Success(storeCategories, "Store categories retrieved successfully.");
         }
 
 

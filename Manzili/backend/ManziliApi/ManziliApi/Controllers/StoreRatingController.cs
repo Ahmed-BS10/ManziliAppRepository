@@ -32,6 +32,15 @@ namespace ManziliApi.Controllers
                 return Ok(result);
             return BadRequest(result);
         }
+        [HttpGet("store/{storeId}/ratings")]
+        public async Task<IActionResult> GetStoreRatings(int storeId)
+        {
+            var result = await _storeRateServices.GetStoreRatingsAsync(storeId);
+            if (result.IsSuccess)
+                return Ok(result);
+            return NotFound(result);
+        }
+
         #endregion
     }
 }

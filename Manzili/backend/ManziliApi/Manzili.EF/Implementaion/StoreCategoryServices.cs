@@ -39,7 +39,7 @@ namespace Manzili.Core.Services
             var storeCategoryDtos =
                 result.Select(storeCategory => new GetStoreCategoryDto
                 (
-                      storeCategory.Name,  storeCategory.Image,conunt : storeCategory.StoreCategoriesStores?.Count() ?? 0)
+                    storeCategory.Id,storeCategory.Name,  storeCategory.Image,conunt : storeCategory.StoreCategoriesStores?.Count() ?? 0)
                 );
 
             return OperationResult<IEnumerable<GetStoreCategoryDto>>.Success(storeCategoryDtos);
