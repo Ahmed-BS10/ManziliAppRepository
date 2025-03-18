@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manzili.EF.Migrations
 {
     [DbContext(typeof(ManziliDbContext))]
-    [Migration("20250316152930_first")]
+    [Migration("20250318211429_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -44,6 +44,36 @@ namespace Manzili.EF.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("Image");
+                });
+
+            modelBuilder.Entity("Manzili.Core.Entities.Comment", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReplyComment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CommentId");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Favorite", b =>
@@ -95,6 +125,31 @@ namespace Manzili.EF.Migrations
                     b.HasIndex("StoreCategoryId");
 
                     b.ToTable("ProductCategories");
+                });
+
+            modelBuilder.Entity("Manzili.Core.Entities.ProductRating", b =>
+                {
+                    b.Property<int>("ProductRatingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductRatingId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RatingValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductRatingId");
+
+                    b.ToTable("ProductRatings");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Role", b =>

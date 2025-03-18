@@ -22,4 +22,8 @@ public class Product
     [JsonIgnore]
     public Store Store { get; set; }
     public ICollection<Image> Images { get; set; }
+
+    // New properties for store name and rate
+    public string StoreName => Store?.BusinessName;
+    public double? StoreRate => Store?.Rate;
 }

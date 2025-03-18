@@ -3,7 +3,7 @@ using Manzili.Core.Entities;
 using Manzili.Core.Services;
 using Microsoft.EntityFrameworkCore;
 
-public class StoreRateServices
+public class StoreRateServices : IStoreRateServices
 {
     #region Feilds
 

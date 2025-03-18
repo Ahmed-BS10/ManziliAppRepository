@@ -16,6 +16,9 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
     public DbSet<StoreCategory> StoreCategories { get; set; }
     public DbSet<StoreRating> StoreRatings { get; set; }
     public DbSet<Favorite> Favorites { get; set; }
+    public DbSet<Comment> Comments { get; set; } // Add this line
+    public DbSet<ProductRating> ProductRatings { get; set; } // Add this line
+
 
 
 
