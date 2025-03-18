@@ -115,25 +115,31 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
         }
-        public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetStoresWithCategory(string categoryName)
+        public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetStoresWithCategory(int storeCategoryId)
         {
-           var stores = await  _dbSet.AsNoTracking().Include(sci => sci.storeCategoryStores).ThenInclude(sc => sc.StoreCategory).ToListAsync();
+            var stores = await _dbSet
+                .Include(s => s.storeCategoryStores)
+                .ThenInclude(scs => scs.StoreCategory)
+                .AsNoTracking()
+                .Where(s => s.storeCategoryStores.Any(scs => scs.StoreCategoryId == storeCategoryId))
+                .ToListAsync();
+
             if (!stores.Any())
                 return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
 
-
             var storeDtos = stores.Select(store => new GetStoreDto(
-                  store.Id,
-                  store.ImageUrl, 
-                  store.BusinessName,
-                  store.Rate ?? 0,
-                  store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
-                  store.Status
-                  )).ToList();
+                store.Id,
+                store.ImageUrl,
+                store.BusinessName,
+                store.Rate ?? 0,
+                store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
+                store.Status
+            )).ToList();
 
             return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
         }
-        public  async Task<OperationResult<IEnumerable<GetStoreDto>>> GetLatestStoresAsync()
+
+        public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetLatestStoresAsync()
         {
 
 
@@ -204,8 +210,6 @@ namespace Manzili.EF.Implementaion
                   store.Status
                  ));
         }
-
-
 
         public async Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto , List<int> categoriesIds)
         {

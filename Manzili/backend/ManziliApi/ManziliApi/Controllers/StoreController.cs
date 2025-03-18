@@ -41,9 +41,9 @@ namespace ManziliApi.Controllers
         }
 
         [HttpGet("StoresByCategore")]
-        public async Task<IActionResult> GetStoresWithCategory(string categoryName)
+        public async Task<IActionResult> GetStoresWithCategory(int storecCategoryId)
         {
-            var result = await _storeServices.GetStoresWithCategory(categoryName);
+            var result = await _storeServices.GetStoresWithCategory(storecCategoryId);
             if (result.IsSuccess)
                 return Ok(result);
 
@@ -62,7 +62,7 @@ namespace ManziliApi.Controllers
 
         }
         [HttpGet("ToPage")]
-        public async Task<IActionResult> GetListToPage(int size , int pageSize)
+        public async Task<IActionResult> GetListToPage([FromQuery] int size , [FromQuery] int pageSize)
         {
             var result = await _storeServices.GetListToPageinationAsync(size , pageSize);
             if (result.IsSuccess)
