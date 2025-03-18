@@ -15,6 +15,8 @@ namespace Manzili.Core.Dto.ProductDto
         public string State { get; set; } // Product status (Available, Out of Stock, etc.)
         public double? Rate { get; set; }
         public string ImageUrl { get; set; } // Main image URL
+        public string StoreCategoryName { get; set; }
+        public string ProductCategoryName { get; set; } // Add this property
 
         public GetAllProduct(Product product)
         {

@@ -48,7 +48,8 @@ namespace Manzili.Core.Services
             {
                 Id = category.Id,
                 Name = category.Name,
-                Image = $"{Constants.baseurl}{category.Image}"
+                Image = $"{Constants.baseurl}{category.Image}",
+                StoreCategoryId = category.StoreCategoryId,
             });
 
             return OperationResult<IEnumerable<GetProductCatagoryDto>>.Success(categoryDtos);

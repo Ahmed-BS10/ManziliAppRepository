@@ -16,6 +16,25 @@ namespace Manzili.Core.Services
         readonly ManziliDbContext _db;
         readonly DbSet<Product> _dbSet;  
         readonly FileService _fileService;
+        public async Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndCategoriesAsync(int storeId, int storeCategoryId, int productCategoryId)
+        {
+            var products = await _db.Set<Product>()
+                .Include(p => p.Store)
+                .ThenInclude(s => s.storeCategoryStores)
+                .ThenInclude(scs => scs.StoreCategory)
+                .Include(p => p.ProductCategory)
+                .Where(p => p.StoreId == storeId && p.Store.storeCategoryStores.Any(scs => scs.StoreCategoryId == storeCategoryId) && p.ProductCategoryId == productCategoryId)
+                .ToListAsync();
+
+            if (!products.Any())
+            {
+                return OperationResult<IEnumerable<GetAllProduct>>.Failure("No products found for the specified categories.");
+            }
+
+            var productDtos = products.Select(p => new GetAllProduct(p)).ToList();
+
+            return OperationResult<IEnumerable<GetAllProduct>>.Success(productDtos, "Products retrieved successfully.");
+        }
 
 
         public async Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId)
@@ -39,11 +58,34 @@ namespace Manzili.Core.Services
         {
             var store = await _db.Stores
                 .Include(s => s.Products)
+                .Include(s => s.storeCategoryStores)
                 .FirstOrDefaultAsync(s => s.Id == storeId);
 
             if (store == null)
             {
                 return OperationResult<Product>.Failure("Store not found.");
+            }
+
+            if (productDto.ProductCategoryId <= 0)
+            {
+                return OperationResult<Product>.Failure("Product category must be chosen.");
+            }
+
+            if (productDto.StoreCategoryId <= 0)
+            {
+                return OperationResult<Product>.Failure("Store category must be chosen.");
+            }
+
+            var productCategory = await _db.ProductCategories.FindAsync(productDto.ProductCategoryId);
+            if (productCategory == null)
+            {
+                return OperationResult<Product>.Failure("Invalid product category.");
+            }
+
+            var storeCategoryStore = store.storeCategoryStores.FirstOrDefault(scs => scs.StoreCategoryId == productDto.StoreCategoryId);
+            if (storeCategoryStore == null)
+            {
+                return OperationResult<Product>.Failure("Invalid store category.");
             }
 
             var imageUrls = new List<string>();
@@ -94,6 +136,8 @@ namespace Manzili.Core.Services
 
             return OperationResult<Product>.Success(product, "Product added successfully.");
         }
+
+
 
         public async Task<OperationResult<Product>> GetProductByIdAsync(int productId)
         {

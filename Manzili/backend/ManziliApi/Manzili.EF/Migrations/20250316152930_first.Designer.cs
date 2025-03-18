@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manzili.EF.Migrations
 {
     [DbContext(typeof(ManziliDbContext))]
-    [Migration("20250311193716_first")]
+    [Migration("20250316152930_first")]
     partial class first
     {
         /// <inheritdoc />
