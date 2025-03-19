@@ -13,8 +13,8 @@ class HomeViewBody extends StatefulWidget {
 }
 
 class _HomeViewBodyState extends State<HomeViewBody> {
-  int? selectedCategory; // التصنيف المختار
-  String? selectedEndpoint; // Endpoint for the selected filter
+  int? selectedCategory;
+  String? selectedFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -23,26 +23,31 @@ class _HomeViewBodyState extends State<HomeViewBody> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const HeaderSection(),
               CategorySection(
+                activeCategory: selectedCategory,
                 onCategorySelected: (category) {
                   setState(() {
+                    // When a category is selected, clear the filter selection.
                     selectedCategory = category;
+                    selectedFilter = null;
                   });
                 },
               ),
               FilterSection(
-                onFilterSelected: (endpoint) {
+                activeFilter: selectedFilter,
+                onFilterSelected: (filter) {
                   setState(() {
-                    selectedEndpoint = endpoint;
+                    // When a filter is selected, clear the category selection.
+                    selectedFilter = filter;
+                    selectedCategory = null;
                   });
                 },
               ),
               StoreListSection(
                 category: selectedCategory,
-                endpoint: selectedEndpoint, // Pass the endpoint to StoreListSection
+                filter: selectedFilter,
               ),
             ],
           ),

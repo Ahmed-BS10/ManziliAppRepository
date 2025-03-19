@@ -24,7 +24,7 @@ namespace ManziliApi.Controllers
 
 
         [HttpPost("MakeFavoriteStore")]
-        public async Task<IActionResult> Create(CreateStoreFavoriteDto createStoreFavoriteDto)
+        public async Task<IActionResult> Create([FromQuery]CreateStoreFavoriteDto createStoreFavoriteDto)
         {
             var result = await _storeFavoriteServices.Create(createStoreFavoriteDto);
             if (!result.IsSuccess)

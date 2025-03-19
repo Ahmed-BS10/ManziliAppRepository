@@ -41,52 +41,67 @@ class StoreItem {
 
 /// قسم المتاجر مع إمكانية تمرير التصنيف المختار
 class StoreListSection extends StatefulWidget {
-  final int? category; // التصنيف المختار
-  final String? endpoint; // Endpoint for fetching stores
+  final int? category;
+  final String? filter;
 
-  const StoreListSection({Key? key, this.category, this.endpoint})
-      : super(key: key);
+  const StoreListSection({Key? key, this.category, this.filter}) : super(key: key);
 
   @override
-  StoreListSectionState createState() => StoreListSectionState();
+  _StoreListSectionState createState() => _StoreListSectionState();
 }
 
-class StoreListSectionState extends State<StoreListSection> {
-  late Future<List<StoreItem>> storesFuture;
+class _StoreListSectionState extends State<StoreListSection> {
+  late Future<List<StoreItem>> _storesFuture;
 
   @override
   void initState() {
     super.initState();
-    storesFuture = fetchStores();
+    _storesFuture = _fetchStores();
   }
 
   @override
   void didUpdateWidget(covariant StoreListSection oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.endpoint != widget.endpoint) {
-      setState(() {
-        storesFuture = fetchStores();
-      });
+    if (oldWidget.filter != widget.filter || oldWidget.category != widget.category) {
+      _storesFuture = _fetchStores();
     }
   }
 
-  Future<List<StoreItem>> fetchStores() async {
-    if (widget.endpoint == null) {
-      return [];
+  Future<List<StoreItem>> _fetchStores() async {
+    String url;
+
+    if (widget.filter != null) {
+      switch (widget.filter) {
+        case "المفضلة":
+          url = "http://man.runasp.net/api/Store/GetUserFavoriteStores?userId=1";
+          break;
+        case "الجديدة":
+          url = "http://man.runasp.net/api/Store/OrderByDescending";
+          break;
+        case "الكل":
+          url = "http://man.runasp.net/api/Store/ToPage?size=0&pageSize=0";
+          break;
+        default:
+          url = "http://man.runasp.net/api/Store/ToPage?size=0&pageSize=0";
+      }
+    } else if (widget.category != null) {
+      url = "http://man.runasp.net/api/Store/StoresByCategore?storecCategoryId=${widget.category}";
+    } else {
+      url = "http://man.runasp.net/api/Store/ToPage?size=0&pageSize=0";
     }
 
-    final response = await http.get(Uri.parse(widget.endpoint!));
+    final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       if (jsonResponse["isSuccess"] == true) {
-        final List<dynamic> data = jsonResponse["data"];
-        return data.map((item) => StoreItem.fromJson(item)).toList();
+        return (jsonResponse["data"] as List)
+            .map((item) => StoreItem.fromJson(item))
+            .toList();
       } else {
-        throw Exception("API returned an error: ${jsonResponse["message"]}");
+        throw Exception("Error: ${jsonResponse["message"]}");
       }
     } else {
-      throw Exception(
-          "Failed to load stores. Status code: ${response.statusCode}");
+      throw Exception("Failed to load: ${response.statusCode}");
     }
   }
 
@@ -104,7 +119,7 @@ class StoreListSectionState extends State<StoreListSection> {
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return FutureBuilder<List<StoreItem>>(
-      future: storesFuture,
+      future: _storesFuture, // corrected here
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -141,6 +156,7 @@ class StoreListSectionState extends State<StoreListSection> {
 
 /// عنصر عرض المتجر في القائمة
 class StoreListItem extends StatefulWidget {
+  
   final String title;
   final String rating;
   final String status;

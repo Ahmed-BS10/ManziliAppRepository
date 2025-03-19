@@ -1,4 +1,3 @@
-// categorysection.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -7,16 +6,20 @@ import 'package:manziliapp/core/helper/shadows.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
 
 class CategorySection extends StatefulWidget {
+  final int? activeCategory;
   final Function(int?) onCategorySelected;
 
-  const CategorySection({super.key, required this.onCategorySelected});
+  const CategorySection({
+    super.key,
+    required this.onCategorySelected,
+    this.activeCategory,
+  });
 
   @override
   CategorySectionState createState() => CategorySectionState();
 }
 
 class CategorySectionState extends State<CategorySection> {
-  int _activeIndex = -1; // الفهرس النشط الافتراضي
   late Future<List<Category>> _categoriesFuture;
 
   @override
@@ -33,7 +36,8 @@ class CategorySectionState extends State<CategorySection> {
       final Map<String, dynamic> decoded = json.decode(response.body);
       if (decoded["isSuccess"] == true && decoded["data"] != null) {
         final List<dynamic> values = decoded["data"];
-        List<Category> categories = values.map((json) => Category.fromJson(json)).toList();
+        List<Category> categories =
+            values.map((json) => Category.fromJson(json)).toList();
         return categories;
       } else {
         throw Exception("API returned an error: ${decoded["message"]}");
@@ -47,7 +51,7 @@ class CategorySectionState extends State<CategorySection> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    // لضمان بدء عرض البطاقات من اليمين في بيئة RTL
+    // Ensuring cards start from right in RTL environment
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Column(
@@ -81,18 +85,19 @@ class CategorySectionState extends State<CategorySection> {
                 child: Row(
                   children: List.generate(categories.length, (index) {
                     final category = categories[index];
+                    bool isActive = widget.activeCategory != null &&
+                        widget.activeCategory == category.id;
                     return GestureDetector(
                       onTap: () {
-                        setState(() {
-                          _activeIndex = index;
-                        });
+                        // When a category is tapped, send its id to the parent.
                         widget.onCategorySelected(category.id);
                       },
                       child: CategoryCard(
+                        id: category.id,
                         title: category.name,
                         count: category.conunt.toString(),
                         imageUrl: category.imageUrl,
-                        isActive: _activeIndex == index,
+                        isActive: isActive,
                       ),
                     );
                   }),
@@ -107,7 +112,7 @@ class CategorySectionState extends State<CategorySection> {
 }
 
 class Category {
-  final int? id;
+  final int id;
   final String name;
   final String imageUrl;
   final int conunt;
@@ -116,7 +121,7 @@ class Category {
     required this.name,
     required this.imageUrl,
     required this.conunt,
-    this.id,
+    required this.id,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
@@ -162,6 +167,7 @@ class SectionHeader extends StatelessWidget {
 }
 
 class CategoryCard extends StatelessWidget {
+  final int id;
   final String title;
   final String count;
   final String imageUrl;
@@ -173,6 +179,7 @@ class CategoryCard extends StatelessWidget {
     required this.count,
     required this.imageUrl,
     this.isActive = false,
+    required this.id,
   });
 
   @override
@@ -194,8 +201,11 @@ class CategoryCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 21.5,
-            backgroundImage: imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
-            child: imageUrl.isEmpty ? Icon(Icons.category, color: AppColors.primaryColor) : null,
+            backgroundImage:
+                imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+            child: imageUrl.isEmpty
+                ? Icon(Icons.category, color: AppColors.primaryColor)
+                : null,
           ),
           const SizedBox(height: 8),
           Text(
