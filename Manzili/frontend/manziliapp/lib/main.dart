@@ -8,7 +8,6 @@ import 'package:manziliapp/features/auhentication/model/user_create_model.dart';
 import 'package:manziliapp/features/auhentication/view/login_view.dart';
 import 'package:manziliapp/features/auhentication/view/register_view.dart';
 import 'package:manziliapp/features/home/view/homeview.dart';
-import 'package:manziliapp/features/start/view/start_view.dart';
 
 void main() async {
   runApp(ManziliApp());
