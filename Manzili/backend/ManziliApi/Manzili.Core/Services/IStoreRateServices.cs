@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Manzili.Core.Services
 {
-    interface IStoreRateServices
+   public interface IStoreRateServices
     {
         Task<OperationResult<CreateStoreRateDto>> CreateOrUpdate(CreateStoreRateDto createRateDto);
         Task<OperationResult<StoreRatingSummaryDto>> GetStoreRatingsAsync(int storeId);
