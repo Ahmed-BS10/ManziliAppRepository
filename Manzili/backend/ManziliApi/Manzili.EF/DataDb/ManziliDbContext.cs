@@ -16,8 +16,11 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
     public DbSet<StoreCategory> StoreCategories { get; set; }
     public DbSet<StoreRating> StoreRatings { get; set; }
     public DbSet<Favorite> Favorites { get; set; }
-    public DbSet<Comment> Comments { get; set; } // Add this line
-    public DbSet<ProductRating> ProductRatings { get; set; } // Add this line
+    public DbSet<Comment> Comments { get; set; } 
+    public DbSet<ProductRating> ProductRatings { get; set; } 
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<Order> Orders { get; set; }
+
 
 
 
@@ -103,7 +106,27 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
             .HasForeignKey(x => x.StoreCategoryId)
             .OnDelete(DeleteBehavior.NoAction);
 
+
+        modelBuilder.Entity<Cart>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Carts)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Cart>()
+            .HasOne(c => c.Store)
+            .WithOne()
+            .HasForeignKey<Cart>(c => c.StoreId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Cart)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CartId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
+
+}
 
 
 
@@ -119,7 +142,7 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
 
 
 
-}
+
 
 
 

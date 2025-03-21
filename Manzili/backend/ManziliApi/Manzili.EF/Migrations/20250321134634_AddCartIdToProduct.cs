@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Manzili.EF.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class AddCartIdToProduct : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -252,6 +252,31 @@ namespace Manzili.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Carts",
+                columns: table => new
+                {
+                    CartId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.CartId);
+                    table.ForeignKey(
+                        name: "FK_Carts_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Carts_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Favorites",
                 columns: table => new
                 {
@@ -273,38 +298,6 @@ namespace Manzili.EF.Migrations
                         name: "FK_Favorites_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Product",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
-                    ProductCategoryId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StoreId = table.Column<int>(type: "int", nullable: false),
-                    ImageUrls = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Discount = table.Column<double>(type: "float", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Rate = table.Column<double>(type: "float", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Product", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Product_ProductCategories_ProductCategoryId",
-                        column: x => x.ProductCategoryId,
-                        principalTable: "ProductCategories",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Product_Stores_StoreId",
-                        column: x => x.StoreId,
-                        principalTable: "Stores",
                         principalColumn: "Id");
                 });
 
@@ -357,6 +350,44 @@ namespace Manzili.EF.Migrations
                         name: "FK_StoreRatings_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Product",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    ProductCategoryId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
+                    ImageUrls = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Discount = table.Column<double>(type: "float", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rate = table.Column<double>(type: "float", nullable: true),
+                    CartId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Product_Carts_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Carts",
+                        principalColumn: "CartId");
+                    table.ForeignKey(
+                        name: "FK_Product_ProductCategories_ProductCategoryId",
+                        column: x => x.ProductCategoryId,
+                        principalTable: "ProductCategories",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Product_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
                         principalColumn: "Id");
                 });
 
@@ -429,6 +460,17 @@ namespace Manzili.EF.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Carts_StoreId",
+                table: "Carts",
+                column: "StoreId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_UserId",
+                table: "Carts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Favorites_StoreId",
                 table: "Favorites",
                 column: "StoreId");
@@ -442,6 +484,11 @@ namespace Manzili.EF.Migrations
                 name: "IX_Image_ProductId",
                 table: "Image",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_CartId",
+                table: "Product",
+                column: "CartId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Product_ProductCategoryId",
@@ -540,6 +587,9 @@ namespace Manzili.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "Product");
+
+            migrationBuilder.DropTable(
+                name: "Carts");
 
             migrationBuilder.DropTable(
                 name: "ProductCategories");

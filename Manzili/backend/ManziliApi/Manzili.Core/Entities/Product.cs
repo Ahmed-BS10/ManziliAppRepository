@@ -15,7 +15,8 @@ public class Product
     public int Quantity { get; set; } // Total quantity
     public string State { get; set; } = enProductStatus.Available.ToString();
     public double? Rate { get; set; }
-
+    public string Note { get; set; }
+    public int? CartId { get; set; }
     public List<ProductSize>? Sizes { get; set; } = new List<ProductSize>();
 
     public ProductCategory ProductCategory { get; set; }
@@ -26,4 +27,5 @@ public class Product
     // New properties for store name and rate
     public string StoreName => Store?.BusinessName;
     public double? StoreRate => Store?.Rate;
+    public Cart Cart { get; set; }
 }
