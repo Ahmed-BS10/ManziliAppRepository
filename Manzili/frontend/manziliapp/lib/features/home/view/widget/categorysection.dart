@@ -6,14 +6,20 @@ import 'package:manziliapp/core/helper/shadows.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
 
 class CategorySection extends StatefulWidget {
-  const CategorySection({super.key});
+  final int? activeCategory;
+  final Function(int?) onCategorySelected;
+
+  const CategorySection({
+    super.key,
+    required this.onCategorySelected,
+    this.activeCategory,
+  });
 
   @override
   CategorySectionState createState() => CategorySectionState();
 }
 
 class CategorySectionState extends State<CategorySection> {
-  int _activeIndex = 0; // Default active card index
   late Future<List<Category>> _categoriesFuture;
 
   @override
@@ -29,9 +35,10 @@ class CategorySectionState extends State<CategorySection> {
     if (response.statusCode == 200) {
       final Map<String, dynamic> decoded = json.decode(response.body);
       if (decoded["isSuccess"] == true && decoded["data"] != null) {
-        // Now the data is a List of categories
         final List<dynamic> values = decoded["data"];
-        return values.map((json) => Category.fromJson(json)).toList();
+        List<Category> categories =
+            values.map((json) => Category.fromJson(json)).toList();
+        return categories;
       } else {
         throw Exception("API returned an error: ${decoded["message"]}");
       }
@@ -44,61 +51,68 @@ class CategorySectionState extends State<CategorySection> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return Column(
-      children: [
-        const SectionHeader(title: "تصفح التصنيفات", action: "عرض الكل"),
-        FutureBuilder<List<Category>>(
-          future: _categoriesFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return SizedBox(
-                height: 110,
-                child: const Center(child: CircularProgressIndicator()),
-              );
-            } else if (snapshot.hasError) {
-              return SizedBox(
-                height: 110,
-                child: Center(child: Text("حدث خطأ: ${snapshot.error}")),
-              );
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return SizedBox(
-                height: 110,
-                child: const Center(child: Text("لا توجد بيانات")),
-              );
-            }
+    // Ensuring cards start from right in RTL environment
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Column(
+        children: [
+          const SectionHeader(title: "تصفح التصنيفات", action: "عرض الكل"),
+          FutureBuilder<List<Category>>(
+            future: _categoriesFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return SizedBox(
+                  height: 110,
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              } else if (snapshot.hasError) {
+                return SizedBox(
+                  height: 110,
+                  child: Center(child: Text("حدث خطأ: ${snapshot.error}")),
+                );
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return SizedBox(
+                  height: 110,
+                  child: const Center(child: Text("لا توجد بيانات")),
+                );
+              }
 
-            final List<Category> categories = snapshot.data!;
+              final List<Category> categories = snapshot.data!;
 
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-              child: Row(
-                children: List.generate(categories.length, (index) {
-                  final category = categories[index];
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _activeIndex = index;
-                      });
-                    },
-                    child: CategoryCard(
-                      title: category.name,
-                      count: category.conunt.toString(),
-                      imageUrl: category.imageUrl,
-                      isActive: _activeIndex == index,
-                    ),
-                  );
-                }),
-              ),
-            );
-          },
-        ),
-      ],
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                child: Row(
+                  children: List.generate(categories.length, (index) {
+                    final category = categories[index];
+                    bool isActive = widget.activeCategory != null &&
+                        widget.activeCategory == category.id;
+                    return GestureDetector(
+                      onTap: () {
+                        // When a category is tapped, send its id to the parent.
+                        widget.onCategorySelected(category.id);
+                      },
+                      child: CategoryCard(
+                        id: category.id,
+                        title: category.name,
+                        count: category.conunt.toString(),
+                        imageUrl: category.imageUrl,
+                        isActive: isActive,
+                      ),
+                    );
+                  }),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
 
 class Category {
+  final int id;
   final String name;
   final String imageUrl;
   final int conunt;
@@ -107,15 +121,16 @@ class Category {
     required this.name,
     required this.imageUrl,
     required this.conunt,
+    required this.id,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
     String rawImageUrl = json["imageUrl"] as String;
-    // Prefix the domain if it starts with a slash
     if (rawImageUrl.startsWith("/")) {
       rawImageUrl = "http://man.runasp.net" + rawImageUrl;
     }
     return Category(
+      id: json["id"] as int,
       name: json["name"] as String,
       imageUrl: rawImageUrl,
       conunt: json["conunt"] is int
@@ -152,6 +167,7 @@ class SectionHeader extends StatelessWidget {
 }
 
 class CategoryCard extends StatelessWidget {
+  final int id;
   final String title;
   final String count;
   final String imageUrl;
@@ -163,6 +179,7 @@ class CategoryCard extends StatelessWidget {
     required this.count,
     required this.imageUrl,
     this.isActive = false,
+    required this.id,
   });
 
   @override
@@ -184,7 +201,11 @@ class CategoryCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 21.5,
-            backgroundImage: NetworkImage(imageUrl),
+            backgroundImage:
+                imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+            child: imageUrl.isEmpty
+                ? Icon(Icons.category, color: AppColors.primaryColor)
+                : null,
           ),
           const SizedBox(height: 8),
           Text(

@@ -10,4 +10,5 @@ class AppColors {
   static const Color openStatus = Color(0xFF20D751);
   static const Color closedStatus = Color(0xFFB22222);
   static const Color categoryBackground = Color(0xFFECF1F6);
+  
 }
