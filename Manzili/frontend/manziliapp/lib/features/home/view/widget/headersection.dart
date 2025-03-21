@@ -1,6 +1,3 @@
-
-
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -19,9 +16,9 @@ class HeaderSectionState extends State<HeaderSection> {
   late Timer _timer;
 
   final List<String> _imageUrls = [
-   'lib/assets/image/loginimg.jpg',
-   'lib/assets/image/loginimg.jpg',
-   'lib/assets/image/loginimg.jpg',
+    'lib/assets/image/loginimg.jpg',
+    'lib/assets/image/loginimg.jpg',
+    'lib/assets/image/loginimg.jpg',
   ];
 
   @override
@@ -95,9 +92,6 @@ class HeaderSectionState extends State<HeaderSection> {
     );
   }
 }
-
-
-
 
 class PageIndicator extends StatelessWidget {
   final int currentPage;

@@ -68,12 +68,16 @@ class CategorySectionState extends State<CategorySection> {
               } else if (snapshot.hasError) {
                 return SizedBox(
                   height: 110,
-                  child: Center(child: Text("حدث خطأ: ${snapshot.error}")),
+                  child: Center(
+                      child: Text("حدث خطأ: ${snapshot.error}",
+                          style: const TextStyle(color: Colors.black))),
                 );
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return SizedBox(
                   height: 110,
-                  child: const Center(child: Text("لا توجد بيانات")),
+                  child: const Center(
+                      child: Text("لا توجد بيانات",
+                          style: TextStyle(color: Colors.black))),
                 );
               }
 
@@ -158,8 +162,10 @@ class SectionHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(action, style: TextStyles.linkStyle),
-          Text(title, style: TextStyles.sectionHeader),
+          Text(action,
+              style: TextStyles.linkStyle.copyWith(color: Colors.black)),
+          Text(title,
+              style: TextStyles.sectionHeader.copyWith(color: Colors.black)),
         ],
       ),
     );
@@ -210,11 +216,15 @@ class CategoryCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             title,
-            style: isActive ? TextStyles.linkStyle : TextStyles.sectionHeader,
+            style: isActive
+                ? TextStyles.linkStyle.copyWith(color: Colors.black)
+                : TextStyles.sectionHeader.copyWith(color: Colors.black),
           ),
           Text(
-            "$count",
-            style: isActive ? TextStyles.sectionHeader : TextStyles.timeStyle,
+            count,
+            style: isActive
+                ? TextStyles.sectionHeader.copyWith(color: Colors.black)
+                : TextStyles.timeStyle.copyWith(color: Colors.black),
           ),
         ],
       ),

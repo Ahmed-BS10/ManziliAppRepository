@@ -18,22 +18,24 @@ class FilterSection extends StatelessWidget {
     final List<String> filters = ["المفضلة", "الجديدة", "الكل"];
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: MediaQuery.of(context).size.width * 0.05,
-        vertical: 30,
+      padding: EdgeInsets.only(
+        right: MediaQuery.of(context).size.width * 0.05,
+        left: MediaQuery.of(context).size.width * 0.05,
+        top: 30,
       ),
       child: Row(
         children: List.generate(filters.length, (index) {
           String filter = filters[index];
           bool isActive = activeFilter != null && activeFilter == filter;
           return Expanded(
-            child: GestureDetector(
-              onTap: () {
-                onFilterSelected(filter);
-              },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: FilterButton(
                 title: filter,
                 isActive: isActive,
+                onTap: () {
+                  onFilterSelected(filter);
+                },
               ),
             ),
           );
@@ -46,26 +48,38 @@ class FilterSection extends StatelessWidget {
 class FilterButton extends StatelessWidget {
   final String title;
   final bool isActive;
+  final VoidCallback onTap;
 
   const FilterButton({
     super.key,
     required this.title,
     this.isActive = false,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      decoration: BoxDecoration(
-        color: isActive ? AppColors.primaryColor : AppColors.filterInactive,
+    return Material(
+      borderRadius: BorderRadius.circular(4),
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(4),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Text(
-        title,
-        textAlign: TextAlign.center,
-        style: isActive ? TextStyles.sectionHeader : TextStyles.timeStyle,
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isActive ? AppColors.primaryColor : AppColors.filterInactive,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Center(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: isActive ? TextStyles.sectionHeader : TextStyles.timeStyle,
+            ),
+          ),
+        ),
       ),
     );
   }

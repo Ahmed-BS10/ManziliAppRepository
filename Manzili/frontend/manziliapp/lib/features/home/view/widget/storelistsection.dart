@@ -5,7 +5,6 @@ import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/core/helper/image_helper.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
 
-/// نموذج بيانات المتجر
 class StoreItem {
   final int id;
   final String imageUrl;
@@ -39,12 +38,12 @@ class StoreItem {
   }
 }
 
-/// قسم المتاجر مع إمكانية تمرير التصنيف المختار
 class StoreListSection extends StatefulWidget {
   final int? category;
   final String? filter;
 
-  const StoreListSection({Key? key, this.category, this.filter}) : super(key: key);
+  const StoreListSection({Key? key, this.category, this.filter})
+      : super(key: key);
 
   @override
   _StoreListSectionState createState() => _StoreListSectionState();
@@ -62,7 +61,8 @@ class _StoreListSectionState extends State<StoreListSection> {
   @override
   void didUpdateWidget(covariant StoreListSection oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.filter != widget.filter || oldWidget.category != widget.category) {
+    if (oldWidget.filter != widget.filter ||
+        oldWidget.category != widget.category) {
       _storesFuture = _fetchStores();
     }
   }
@@ -73,7 +73,8 @@ class _StoreListSectionState extends State<StoreListSection> {
     if (widget.filter != null) {
       switch (widget.filter) {
         case "المفضلة":
-          url = "http://man.runasp.net/api/Store/GetUserFavoriteStores?userId=1";
+          url =
+              "http://man.runasp.net/api/Store/GetUserFavoriteStores?userId=3";
           break;
         case "الجديدة":
           url = "http://man.runasp.net/api/Store/OrderByDescending";
@@ -85,7 +86,8 @@ class _StoreListSectionState extends State<StoreListSection> {
           url = "http://man.runasp.net/api/Store/ToPage?size=0&pageSize=0";
       }
     } else if (widget.category != null) {
-      url = "http://man.runasp.net/api/Store/StoresByCategore?storecCategoryId=${widget.category}";
+      url =
+          "http://man.runasp.net/api/Store/StoresByCategore?storecCategoryId=${widget.category}";
     } else {
       url = "http://man.runasp.net/api/Store/ToPage?size=0&pageSize=0";
     }
@@ -119,7 +121,7 @@ class _StoreListSectionState extends State<StoreListSection> {
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return FutureBuilder<List<StoreItem>>(
-      future: _storesFuture, // corrected here
+      future: _storesFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -134,16 +136,14 @@ class _StoreListSectionState extends State<StoreListSection> {
             child: Column(
               children: stores.map((store) {
                 final statusMap = mapStatus(store.status);
-                final category = store.categoryNames.isNotEmpty
-                    ? store.categoryNames.first
-                    : "";
                 return StoreListItem(
+                  storeId: store.id,
                   title: store.businessName,
                   rating: store.rate.toStringAsFixed(1),
                   status: statusMap["text"],
                   statusColor: statusMap["color"],
                   imageUrl: store.imageUrl,
-                  category: category,
+                  categoryNames: store.categoryNames,
                 );
               }).toList(),
             ),
@@ -154,24 +154,24 @@ class _StoreListSectionState extends State<StoreListSection> {
   }
 }
 
-/// عنصر عرض المتجر في القائمة
 class StoreListItem extends StatefulWidget {
-  
+  final int storeId;
   final String title;
   final String rating;
   final String status;
   final Color statusColor;
   final String imageUrl;
-  final String category;
+  final List<String> categoryNames;
 
   const StoreListItem({
     Key? key,
+    required this.storeId,
     required this.title,
     required this.rating,
     required this.status,
     required this.statusColor,
     required this.imageUrl,
-    required this.category,
+    required this.categoryNames,
   }) : super(key: key);
 
   @override
@@ -179,8 +179,34 @@ class StoreListItem extends StatefulWidget {
 }
 
 class StoreListItemState extends State<StoreListItem> {
-  bool isFavorite = false; // تتبع حالة المفضلة
-  bool isHovered = false; // تتبع حالة الـ hover
+  bool isFavorite = false;
+  bool isHovered = false;
+
+  Future<void> _toggleFavorite() async {
+    final bool newFavoriteState = !isFavorite;
+    setState(() {
+      isFavorite = newFavoriteState;
+    });
+
+    String url =
+        "http://man.runasp.net/api/StoreFavorite/ToggleFavorite?userId=3&storeId=${widget.storeId}";
+
+    try {
+      final response = await http.post(Uri.parse(url));
+      final Map<String, dynamic> result = json.decode(response.body);
+
+      if (result["isSuccess"] == true) {
+        // Optional success handling
+      } else {
+        // Optional error handling
+      }
+    } catch (error) {
+      setState(() {
+        isFavorite = !newFavoriteState;
+      });
+      debugPrint("Error calling endpoint: $error");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,73 +217,86 @@ class StoreListItemState extends State<StoreListItem> {
       onExit: (_) => setState(() => isHovered = false),
       child: Directionality(
         textDirection: TextDirection.rtl,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           margin: const EdgeInsets.only(bottom: 9),
           decoration: BoxDecoration(
             color: isHovered ? Colors.grey[200] : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _StoreImage(imageUrl: widget.imageUrl),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // بيانات المتجر: الاسم، الحالة، والتصنيف
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.title,
-                            style: TextStyles.linkStyle,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 6),
-                          _StatusIndicator(
-                            status: widget.status,
-                            color: widget.statusColor,
-                          ),
-                          const SizedBox(height: 6),
-                          _CategoryIndicator(category: widget.category),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // أيقونة المفضلة والتقييم
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
+          child: Card(
+            elevation: isHovered ? 4 : 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _StoreImage(imageUrl: widget.imageUrl),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isFavorite = !isFavorite;
-                            });
-                          },
-                          child: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.red : Colors.grey,
-                            size: 20,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.title,
+                                style: TextStyles.linkStyle,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 6),
+                              _StatusIndicator(
+                                status: widget.status,
+                                color: widget.statusColor,
+                              ),
+                              const SizedBox(height: 6),
+                              _CategoryIndicators(
+                                  categories: widget.categoryNames),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        Row(
+                        const SizedBox(width: 12),
+                        Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.star, size: 16, color: Colors.amber),
-                            const SizedBox(width: 4),
-                            Text(widget.rating, style: TextStyles.timeStyle),
+                            InkWell(
+                              onTap: _toggleFavorite,
+                              borderRadius: BorderRadius.circular(20),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Icon(
+                                  isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isFavorite ? Colors.red : Colors.grey,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.star, size: 16, color: Colors.amber),
+                                const SizedBox(width: 4),
+                                Text(widget.rating,
+                                    style: TextStyles.timeStyle),
+                              ],
+                            ),
                           ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -280,7 +319,10 @@ class _StatusIndicator extends StatelessWidget {
         Container(
           width: 8,
           height: 8,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: color,
+          ),
         ),
         const SizedBox(width: 6),
         Text(status, style: TextStyles.linkStyle),
@@ -289,21 +331,32 @@ class _StatusIndicator extends StatelessWidget {
   }
 }
 
-class _CategoryIndicator extends StatelessWidget {
-  final String category;
+class _CategoryIndicators extends StatelessWidget {
+  final List<String> categories;
 
-  const _CategoryIndicator({Key? key, required this.category})
+  const _CategoryIndicators({Key? key, required this.categories})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
-      decoration: BoxDecoration(
-        color: AppColors.categoryBackground,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(category, style: TextStyles.linkStyle),
+    return Wrap(
+      spacing: 4.0,
+      runSpacing: 4.0,
+      children: categories
+          .map(
+            (category) => Container(
+              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 174, 202, 231),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                category,
+                style: TextStyles.linkStyle,
+              ),
+            ),
+          )
+          .toList(),
     );
   }
 }
@@ -328,5 +381,24 @@ class _StoreImage extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class FavoriteProvider with ChangeNotifier {
+  final Set<int> _favoriteStoreIds = {};
+
+  Set<int> get favoriteStoreIds => _favoriteStoreIds;
+
+  void toggleFavorite(int storeId) {
+    if (_favoriteStoreIds.contains(storeId)) {
+      _favoriteStoreIds.remove(storeId);
+    } else {
+      _favoriteStoreIds.add(storeId);
+    }
+    notifyListeners();
+  }
+
+  bool isFavorite(int storeId) {
+    return _favoriteStoreIds.contains(storeId);
   }
 }
