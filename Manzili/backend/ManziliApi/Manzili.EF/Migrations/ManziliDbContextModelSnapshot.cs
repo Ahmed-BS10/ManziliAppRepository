@@ -43,6 +43,33 @@ namespace Manzili.EF.Migrations
                     b.ToTable("Image");
                 });
 
+            modelBuilder.Entity("Manzili.Core.Entities.Cart", b =>
+                {
+                    b.Property<int>("CartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CartId");
+
+                    b.HasIndex("StoreId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Carts");
+                });
+
             modelBuilder.Entity("Manzili.Core.Entities.Comment", b =>
                 {
                     b.Property<int>("CommentId")
@@ -419,6 +446,9 @@ namespace Manzili.EF.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CartId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -454,6 +484,8 @@ namespace Manzili.EF.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartId");
 
                     b.HasIndex("ProductCategoryId");
 
@@ -549,6 +581,25 @@ namespace Manzili.EF.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Manzili.Core.Entities.Cart", b =>
+                {
+                    b.HasOne("Manzili.Core.Entities.Store", "Store")
+                        .WithOne()
+                        .HasForeignKey("Manzili.Core.Entities.Cart", "StoreId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Manzili.Core.Entities.User", "User")
+                        .WithMany("Carts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Store");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Favorite", b =>
@@ -670,6 +721,11 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Product", b =>
                 {
+                    b.HasOne("Manzili.Core.Entities.Cart", "Cart")
+                        .WithMany("Products")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Manzili.Core.Entities.ProductCategory", "ProductCategory")
                         .WithMany("Products")
                         .HasForeignKey("ProductCategoryId")
@@ -681,6 +737,8 @@ namespace Manzili.EF.Migrations
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Cart");
 
                     b.Navigation("ProductCategory");
 
@@ -707,6 +765,11 @@ namespace Manzili.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Manzili.Core.Entities.Cart", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("Manzili.Core.Entities.ProductCategory", b =>
                 {
                     b.Navigation("Products");
@@ -714,6 +777,8 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Manzili.Core.Entities.User", b =>
                 {
+                    b.Navigation("Carts");
+
                     b.Navigation("FavoritesStore");
 
                     b.Navigation("RatingsGivenStore");
