@@ -33,6 +33,18 @@ namespace ManziliApi.Controllers
             return Ok(result);
         }
 
+
+        [HttpPost("ToggleFavorite")]
+        public async Task<IActionResult> Create2(int userId , int storeId)
+        {
+            var result = await _storeFavoriteServices.ToggleFavorite(userId , storeId);
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+
         [HttpDelete("DeletFavoriteStore")]
         public async Task<IActionResult> Delete(int id)
         {

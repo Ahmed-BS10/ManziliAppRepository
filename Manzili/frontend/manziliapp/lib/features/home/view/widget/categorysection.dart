@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/instance_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/core/helper/shadows.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
+import 'package:manziliapp/features/home/view/widget/storelistsection.dart';
 
 class CategorySection extends StatefulWidget {
   final int? activeCategory;
@@ -68,12 +71,16 @@ class CategorySectionState extends State<CategorySection> {
               } else if (snapshot.hasError) {
                 return SizedBox(
                   height: 110,
-                  child: Center(child: Text("حدث خطأ: ${snapshot.error}")),
+                  child: Center(
+                      child: Text("حدث خطأ: ${snapshot.error}",
+                          style: const TextStyle(color: Colors.black))),
                 );
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return SizedBox(
                   height: 110,
-                  child: const Center(child: Text("لا توجد بيانات")),
+                  child: const Center(
+                      child: Text("لا توجد بيانات",
+                          style: TextStyle(color: Colors.black))),
                 );
               }
 
@@ -158,8 +165,15 @@ class SectionHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(action, style: TextStyles.linkStyle),
-          Text(title, style: TextStyles.sectionHeader),
+          InkWell(
+            onTap: (){
+              Get.to( StoreListSection());
+               },
+            child: Text(action,
+                style: TextStyles.linkStyle.copyWith(color: Colors.black)),
+          ),
+          Text(title,
+              style: TextStyles.sectionHeader.copyWith(color: Colors.black)),
         ],
       ),
     );
@@ -210,11 +224,15 @@ class CategoryCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             title,
-            style: isActive ? TextStyles.linkStyle : TextStyles.sectionHeader,
+            style: isActive
+                ? TextStyles.linkStyle.copyWith(color: Colors.black)
+                : TextStyles.sectionHeader.copyWith(color: Colors.black),
           ),
           Text(
-            "$count",
-            style: isActive ? TextStyles.sectionHeader : TextStyles.timeStyle,
+            count,
+            style: isActive
+                ? TextStyles.sectionHeader.copyWith(color: Colors.black)
+                : TextStyles.timeStyle.copyWith(color: Colors.black),
           ),
         ],
       ),

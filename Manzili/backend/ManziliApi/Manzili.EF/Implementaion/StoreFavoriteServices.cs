@@ -45,6 +45,52 @@ namespace Manzili.EF.Implementaion
             await _db.SaveChangesAsync();
             return OperationResult<CreateStoreFavoriteDto>.Success(createStoreFavoriteDto);
         }
+
+
+
+
+        public async Task<OperationResult<int>> ToggleFavorite(int userId, int storeId)
+        {
+            // البحث إذا كان العنصر موجودًا بالفعل في المفضلة
+            var favorite = await _dbSet.FirstOrDefaultAsync(x => x.UserId == userId && x.StoreId == storeId);
+
+            if (favorite != null)
+            {
+                // إذا كان موجوداً، نقوم بحذفه
+                _dbSet.Remove(favorite);
+                await _db.SaveChangesAsync();
+                return OperationResult<int>.Success(userId, "تم حذف المفضلة");
+            }
+            else
+            {
+                // إذا لم يكن موجوداً، نقوم بإضافته
+                favorite = new Favorite
+                {
+                    UserId = userId,
+                    StoreId = storeId
+                };
+                await _dbSet.AddAsync(favorite);
+                await _db.SaveChangesAsync();
+                return OperationResult<int>.Success(userId, "تم إضافة المفضلة");
+            }
+        }
+
+
+        public async Task<OperationResult<int>> Create(int userId , int storeId)
+        {
+           
+
+            var favorite = new Favorite
+            {
+                UserId =  userId,
+                StoreId = storeId
+            };
+
+            await _dbSet.AddAsync(favorite);
+            await _db.SaveChangesAsync();
+            return OperationResult<int>.Success(userId);
+        }
+
         public async Task<OperationResult<bool>> Delete(int id)
         {
             if (id <= 0)
