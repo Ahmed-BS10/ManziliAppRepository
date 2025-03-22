@@ -4,39 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/core/helper/image_helper.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
-
-class StoreItem {
-  final int id;
-  final String imageUrl;
-  final String businessName;
-  final double rate;
-  final List<String> categoryNames;
-  final String status;
-
-  StoreItem({
-    required this.id,
-    required this.imageUrl,
-    required this.businessName,
-    required this.rate,
-    required this.categoryNames,
-    required this.status,
-  });
-
-  factory StoreItem.fromJson(Map<String, dynamic> json) {
-    return StoreItem(
-      id: json['id'],
-      imageUrl: json['imageUrl'].toString().startsWith('/')
-          ? "http://man.runasp.net" + json['imageUrl']
-          : json['imageUrl'],
-      businessName: json['businessName'],
-      rate: (json['rate'] as num).toDouble(),
-      categoryNames: (json['categoryNames'] as List<dynamic>)
-          .map((item) => item.toString())
-          .toList(),
-      status: json['status'],
-    );
-  }
-}
+import 'package:manziliapp/features/home/view/widget/favorite_provider.dart';
+import 'package:manziliapp/features/home/view/widget/store_item.dart';
+import 'package:provider/provider.dart';
 
 class StoreListSection extends StatefulWidget {
   final int? category;
@@ -178,40 +148,22 @@ class StoreListItem extends StatefulWidget {
   StoreListItemState createState() => StoreListItemState();
 }
 
+
 class StoreListItemState extends State<StoreListItem> {
-  bool isFavorite = false;
   bool isHovered = false;
 
   Future<void> _toggleFavorite() async {
-    final bool newFavoriteState = !isFavorite;
-    setState(() {
-      isFavorite = newFavoriteState;
-    });
-
-    String url =
-        "http://man.runasp.net/api/StoreFavorite/ToggleFavorite?userId=3&storeId=${widget.storeId}";
-
-    try {
-      final response = await http.post(Uri.parse(url));
-      final Map<String, dynamic> result = json.decode(response.body);
-
-      if (result["isSuccess"] == true) {
-        // Optional success handling
-      } else {
-        // Optional error handling
-      }
-    } catch (error) {
-      setState(() {
-        isFavorite = !newFavoriteState;
-      });
-      debugPrint("Error calling endpoint: $error");
-    }
+    // Use the provider to toggle the favorite state
+    final favoriteProvider = Provider.of<FavoriteProvider>(context, listen: false);
+    await favoriteProvider.toggleFavorite(widget.storeId);
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final favoriteProvider = Provider.of<FavoriteProvider>(context);
+    final bool isFavorite = favoriteProvider.isFavorite(widget.storeId);
 
+    // ... rest of your build method remains the same
     return MouseRegion(
       onEnter: (_) => setState(() => isHovered = true),
       onExit: (_) => setState(() => isHovered = false),
@@ -283,7 +235,8 @@ class StoreListItemState extends State<StoreListItem> {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.star, size: 16, color: Colors.amber),
+                                Icon(Icons.star,
+                                    size: 16, color: Colors.amber),
                                 const SizedBox(width: 4),
                                 Text(widget.rating,
                                     style: TextStyles.timeStyle),
@@ -303,6 +256,48 @@ class StoreListItemState extends State<StoreListItem> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class _StatusIndicator extends StatelessWidget {
   final String status;
@@ -381,24 +376,5 @@ class _StoreImage extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class FavoriteProvider with ChangeNotifier {
-  final Set<int> _favoriteStoreIds = {};
-
-  Set<int> get favoriteStoreIds => _favoriteStoreIds;
-
-  void toggleFavorite(int storeId) {
-    if (_favoriteStoreIds.contains(storeId)) {
-      _favoriteStoreIds.remove(storeId);
-    } else {
-      _favoriteStoreIds.add(storeId);
-    }
-    notifyListeners();
-  }
-
-  bool isFavorite(int storeId) {
-    return _favoriteStoreIds.contains(storeId);
   }
 }

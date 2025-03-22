@@ -22,7 +22,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
     const ProfilePage(),
     const NotificationPage(),
     const OrderPage(),
-    const HomePage(),
+    const StartPage(),
   ];
 
   @override
@@ -65,14 +65,14 @@ class _HomeViewBodyState extends State<HomeViewBody> {
 }
 
 /// HomePage contains your original UI elements.
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class StartPage extends StatefulWidget {
+  const StartPage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _StartPageState createState() => _StartPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _StartPageState extends State<StartPage> {
   int? selectedCategory;
   String? selectedFilter;
 
