@@ -12,6 +12,10 @@ namespace Manzili.Core.Entities
         public DateTime CreatedAt { get; set; }
         public double Total { get; set; }
 
+
+        public string? Note { get; set; }
+
+
         public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
         public Store Store { get; set; }
 

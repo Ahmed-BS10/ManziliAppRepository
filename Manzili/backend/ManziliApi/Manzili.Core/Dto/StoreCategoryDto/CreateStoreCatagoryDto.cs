@@ -2,7 +2,7 @@
 
 namespace Manzili.Core.Dto.StoreCategoryDto
 {
-    public record CreateStoreCatagoryDto(string Name , IFormFile Image);
+    public record CreateStoreCatagoryDto(string Name , IFormFile? Image);
 
 
 
