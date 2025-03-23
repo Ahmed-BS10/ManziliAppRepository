@@ -6,6 +6,7 @@ namespace Manzili.Core.Entities
         public int UserId { get; set; }
         public int StoreId { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string Note { get; set; }
 
         // Navigation properties
         public User User { get; set; }
