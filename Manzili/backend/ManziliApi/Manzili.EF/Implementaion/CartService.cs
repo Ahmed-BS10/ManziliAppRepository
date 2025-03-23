@@ -152,10 +152,9 @@ namespace Manzili.Services
 
             return OperationResult<bool>.Success(true, "Cart item removed successfully.");
         }
-        public async Task<OperationResult<bool>> AddOrUpdateNoteAsync(int userId, int productId, string note)
+        public async Task<OperationResult<bool>> AddOrUpdateNoteAsync(int userId, string note)
         {
             var cart = await _context.Carts
-                .Include(c => c.Products)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart == null)
@@ -163,13 +162,7 @@ namespace Manzili.Services
                 return OperationResult<bool>.Failure("Cart not found.");
             }
 
-            var cartItem = cart.Products.FirstOrDefault(item => item.Id == productId);
-            if (cartItem == null)
-            {
-                return OperationResult<bool>.Failure("Product not found in cart.");
-            }
-
-            cartItem.Note = note;
+            cart.Note = note;
             _context.Carts.Update(cart);
             await _context.SaveChangesAsync();
 

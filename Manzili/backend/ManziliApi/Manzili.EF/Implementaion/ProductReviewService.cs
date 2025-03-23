@@ -31,6 +31,7 @@ namespace Manzili.Core.Services
                           ProductId = c.ProductId,
                           UserId = c.UserId,
                           UserName = _db.Users.FirstOrDefault(u => u.Id == c.UserId).UserName,
+                          UserImage = _db.Users.FirstOrDefault(u => u.Id == c.UserId).ImageUrl, 
                           ReplyComment = c.ReplyComment,
                           Rating = r.RatingValue,
                           CreatedAt = c.CreatedAt

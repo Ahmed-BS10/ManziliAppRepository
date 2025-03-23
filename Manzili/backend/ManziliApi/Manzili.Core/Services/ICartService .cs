@@ -15,7 +15,7 @@ namespace Manzili.Core.Services
         Task<OperationResult<bool>> IsCartEmptyAsync(int userId);
         Task<OperationResult<bool>> EditCartItemAsync(int userId, int productId, int quantity);
         Task<OperationResult<bool>> DeleteCartItemAsync(int userId, int productId);
-        Task<OperationResult<bool>> AddOrUpdateNoteAsync(int userId, int productId, string note);
+        Task<OperationResult<bool>> AddOrUpdateNoteAsync(int userId, string note);
         Task<OperationResult<bool>> AddOrUpdateShippingAddressAsync(int userId, string address);
         Task<OperationResult<string>> UploadPaymentReceiptAsync(int userId, IFormFile receipt);
         Task<OperationResult<decimal>> CalculateTotalCostAsync(int userId, decimal shippingCost);
