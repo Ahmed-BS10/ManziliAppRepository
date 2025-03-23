@@ -15,7 +15,6 @@ public class Product
     public int Quantity { get; set; } // Total quantity
     public string State { get; set; } = enProductStatus.Available.ToString();
     public double? Rate { get; set; }
-    public string Note { get; set; }
     public int? CartId { get; set; }
     public List<ProductSize>? Sizes { get; set; } = new List<ProductSize>();
 

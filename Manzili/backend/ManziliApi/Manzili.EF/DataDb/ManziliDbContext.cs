@@ -124,6 +124,26 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
             .WithMany(c => c.Products)
             .HasForeignKey(p => p.CartId)
             .OnDelete(DeleteBehavior.NoAction);
+
+
+
+        modelBuilder.Entity<StoreCategory>().HasData(
+                   new StoreCategory { Id = 1, Name = "الإلكترونيات" },
+                   new StoreCategory { Id = 2, Name = "الملابس" },
+                   new StoreCategory { Id = 3, Name = "الأثاث المنزلي" }
+               );
+
+        // بيانات فئات المنتجات
+        modelBuilder.Entity<ProductCategory>().HasData(
+            new ProductCategory { Id = 1, Name = "هواتف ذكية", Image = "smartphones.jpg", StoreCategoryId = 1 },
+            new ProductCategory { Id = 2, Name = "لابتوبات", Image = "laptops.jpg", StoreCategoryId = 1 },
+            new ProductCategory { Id = 3, Name = "ملابس رجالية", Image = "mens-clothing.jpg", StoreCategoryId = 2 },
+            new ProductCategory { Id = 4, Name = "ملابس نسائية", Image = "womens-clothing.jpg", StoreCategoryId = 2 },
+            new ProductCategory { Id = 5, Name = "أرائك", Image = "sofas.jpg", StoreCategoryId = 3 },
+            new ProductCategory { Id = 6, Name = "طاولات", Image = "tables.jpg", StoreCategoryId = 3 }
+
+
+        );
     }
 
 }

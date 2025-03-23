@@ -169,7 +169,6 @@ namespace Manzili.Services
                 return OperationResult<bool>.Failure("Product not found in cart.");
             }
 
-            cartItem.Note = note;
             _context.Carts.Update(cart);
             await _context.SaveChangesAsync();
 
