@@ -21,7 +21,10 @@ namespace Manzili.Services
 
         public async Task<OperationResult<bool>> AddToCartAsync(int userId, int productId, int quantity)
         {
-            var product = await _context.Set<Product>().FindAsync(productId);
+            var product = await _context.Set<Product>()
+                .Include(p => p.Sizes)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+
             if (product == null)
             {
                 return OperationResult<bool>.Failure("Product not found");
@@ -29,6 +32,7 @@ namespace Manzili.Services
 
             var cart = await _context.Carts
                 .Include(c => c.Products)
+                .ThenInclude(p => p.Sizes)
                 .FirstOrDefaultAsync(c => c.UserId == userId && c.StoreId == product.StoreId);
 
             if (cart == null)
@@ -43,24 +47,36 @@ namespace Manzili.Services
                 _context.Carts.Add(cart);
             }
 
-            var cartItem = cart.Products.FirstOrDefault(p => p.Id == productId);
-            if (cartItem != null)
+            foreach (var productSize in product.Sizes)
             {
-                cartItem.Quantity += quantity;
-            }
-            else
-            {
-                cartItem = new Product
+                var cartItem = cart.Products.FirstOrDefault(p => p.Id == productId && p.Sizes.Any(s => s.Size == productSize.Size));
+                if (cartItem != null)
                 {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Description = product.Description,
-                    Price = product.Price,
-                    Quantity = quantity,
-                    Sizes = product.Sizes,
-                    ImageUrls = product.ImageUrls
-                };
-                cart.Products.Add(cartItem);
+                    var cartItemSize = cartItem.Sizes.First(s => s.Size == productSize.Size);
+                    cartItemSize.Quantity += quantity;
+                }
+                else
+                {
+                    cartItem = new Product
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = (double)productSize.Price,
+                        Quantity = quantity,
+                        Sizes = new List<ProductSize>
+                {
+                    new ProductSize
+                    {
+                        Size = productSize.Size,
+                        Quantity = quantity,
+                        Price = productSize.Price
+                    }
+                },
+                        ImageUrls = product.ImageUrls
+                    };
+                    cart.Products.Add(cartItem);
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -68,10 +84,12 @@ namespace Manzili.Services
             return OperationResult<bool>.Success(true, "Product added to cart successfully");
         }
 
+
         public async Task<OperationResult<IEnumerable<CartProductDto>>> GetCartProductsAsync(int userId)
         {
             var cart = await _context.Carts
                 .Include(c => c.Products)
+                .ThenInclude(p => p.Sizes)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart == null)
@@ -82,16 +100,18 @@ namespace Manzili.Services
             var products = cart.Products.Select(p => new CartProductDto(
                 p.Id,
                 p.Name,
-                p.ImageUrls.FirstOrDefault(), 
+                p.ImageUrls.FirstOrDefault(),
                 p.Description,
                 p.Sizes.FirstOrDefault(),
-                p.Price,
+                (double)(p.Sizes.FirstOrDefault()?.Price ?? 0), // Convert the price to double
                 p.State,
                 p.Quantity
             )).ToList();
 
             return OperationResult<IEnumerable<CartProductDto>>.Success(products, "Products retrieved successfully");
         }
+
+
         public async Task<OperationResult<bool>> IsCartEmptyAsync(int userId)
         {
             var cart = await _context.Carts

@@ -14,4 +14,5 @@ public class CreateProductDto
     // Accept sizes and quantities as form-data fields
     public List<string>? Sizes { get; set; } // e.g., ["Small", "Large"]
     public List<int>? Quantities { get; set; } // e.g., [10, 5]
+    public List<decimal> Prices { get; set; }
 }
