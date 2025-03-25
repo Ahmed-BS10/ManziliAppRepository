@@ -19,7 +19,48 @@ namespace Manzili.Services
             _context = context;
         }
 
-        public async Task<OperationResult<bool>> AddToCartAsync(int userId, int productId, int quantity)
+
+        public async Task<GetCardDto> GetCartByUserAndStoreAsync(int userId, int storeId)
+        {
+            // استعلام لإيجاد السلة الخاصة بالمستخدم من المتجر المحدد مع تحميل المنتجات المرتبطة بها
+            var cart = await _context.Carts
+                .Include(c => c.Products)
+                .ThenInclude(p => p.Sizes)
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.StoreId == storeId);
+
+            if (cart == null)
+            {
+                // يمكن التعامل مع حالة عدم وجود السلة كما ترغب، هنا نقوم بإرجاع null
+                return null;
+            }
+
+            // عمل Mapping للبيانات من Cart إلى GetCardDto
+            var getCardDto = new GetCardDto
+            {
+                UserId = cart.UserId,
+                StoreId = cart.StoreId,
+                TotalPrice = cart.TotalPrice,
+                CreatedAt = cart.CreatedAt,
+                Note = cart.Note,
+                // تحويل قائمة المنتجات إلى قائمة من GetProductCardDto
+                getProductCardDtos = cart.Products.Select(product => new GetProductCardDto
+                {
+
+                    ProductId = product.Id,
+                    Description = product.Description,
+                    Name = product.Name,
+                    Size = product.Sizes.Select(s => s.Size).FirstOrDefault() ?? "Hi",
+                    Price = product.Price,
+                    ImageUrl = product.ImageUrls.Any() ? product.ImageUrls.First() : string.Empty,
+                    Quantity = product.Quantity
+                }).ToList()
+            };
+
+            return getCardDto;
+        }
+
+
+        public async Task<OperationResult<bool>> AddToCartAsync(int userId, int productId, int quantity = 1)
         {
             var product = await _context.Set<Product>().FindAsync(productId);
             if (product == null)
@@ -40,28 +81,11 @@ namespace Manzili.Services
                     CreatedAt = DateTime.UtcNow,
                     Products = new List<Product>()
                 };
-                _context.Carts.Add(cart);
+               await _context.Carts.AddAsync(cart);
             }
 
             var cartItem = cart.Products.FirstOrDefault(p => p.Id == productId);
-            if (cartItem != null)
-            {
-                cartItem.Quantity += quantity;
-            }
-            else
-            {
-                cartItem = new Product
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Description = product.Description,
-                    Price = product.Price,
-                    Quantity = quantity,
-                    Sizes = product.Sizes,
-                    ImageUrls = product.ImageUrls
-                };
-                cart.Products.Add(cartItem);
-            }
+
 
             await _context.SaveChangesAsync();
 

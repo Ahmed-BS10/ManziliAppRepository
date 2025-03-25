@@ -1,5 +1,7 @@
 ﻿using Manzili.Core.Dto.ProductDto;
+using Manzili.Core.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,10 @@ namespace Manzili.Core.Services
 {
     public interface ICartService
     {
-        Task<OperationResult<bool>> AddToCartAsync(int userId, int productId, int quantity);
+
+        Task<GetCardDto> GetCartByUserAndStoreAsync(int userId, int storeId);
+
+        Task<OperationResult<bool>> AddToCartAsync(int userId, int productId, int quantity = 1);
         Task<OperationResult<IEnumerable<CartProductDto>>> GetCartProductsAsync(int userId);
         Task<OperationResult<bool>> IsCartEmptyAsync(int userId);
         Task<OperationResult<bool>> EditCartItemAsync(int userId, int productId, int quantity);

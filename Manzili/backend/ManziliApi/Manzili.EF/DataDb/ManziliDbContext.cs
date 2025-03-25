@@ -126,6 +126,21 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
             .OnDelete(DeleteBehavior.NoAction);
 
 
+        modelBuilder.Entity<User>()
+            .HasMany(c => c.Carts)
+            .WithOne(u => u.User)
+            .HasForeignKey(fk => fk.UserId);
+
+
+
+        modelBuilder.Entity<Store>()
+         .HasMany(c => c.StoreCarts)
+         .WithOne(u => u.Store)
+         .HasForeignKey(fk => fk.StoreId);
+
+
+
+
 
         modelBuilder.Entity<StoreCategory>().HasData(
                    new StoreCategory { Id = 1, Name = "الإلكترونيات" },

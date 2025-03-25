@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:manziliapp/Services/api_service%20.dart';
 import 'package:manziliapp/core/helper/OperationResult.dart';
-import 'package:manziliapp/features/auhentication/model/store_create_model.dart';
-import 'package:manziliapp/features/auhentication/model/user_create_model.dart';
+import 'package:manziliapp/model/store_create_model.dart';
+import 'package:manziliapp/model/user_create_model.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {

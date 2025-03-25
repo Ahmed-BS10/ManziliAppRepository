@@ -1,24 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:manziliapp/features/home/view/homeview.dart';
-import 'package:manziliapp/features/auhentication/view/login_view.dart';
-import 'package:manziliapp/features/auhentication/view/register_view.dart';
-import 'package:manziliapp/features/home/view/widget/favorite_provider.dart';
+import 'package:manziliapp/view/cart_view.dart';
 
-import 'package:provider/provider.dart';
 
-// In your main.dart or wherever you set up your providers:
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => FavoriteProvider()),
-        // other providers...
-      ],
-      child: MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -26,31 +12,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeView(),
-    );
-  }
-}
-
-
-
-
-
-
-
-
-
-
-class ManziliApp extends StatelessWidget {
-  const ManziliApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => HomeView(),
-        'login': (context) => LoginView(),
-        'register': (context) => RegisterView(),
+        '/': (context) => CartView(),
       },
       debugShowCheckedModeBanner: false,
     );
@@ -59,6 +23,46 @@ class ManziliApp extends StatelessWidget {
 
 
 
+// // In your main.dart or wherever you set up your providers:
+// void main() {
+//   runApp(
+//     MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
+//         // other providers...
+//       ],
+//       child: MyApp(),
+//     ),
+//   );
+// }
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: HomeView(),
+//     );
+//   }
+// }
+
+// class ManziliApp extends StatelessWidget {
+//   const ManziliApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       initialRoute: '/',
+//       routes: {
+//         '/': (context) => HomeView(),
+//         'login': (context) => LoginView(),
+//         'register': (context) => RegisterView(),
+//       },
+//       debugShowCheckedModeBanner: false,
+//     );
+//   }
+// }
 
 // class MyWidget extends StatefulWidget {
 //   const MyWidget({super.key});

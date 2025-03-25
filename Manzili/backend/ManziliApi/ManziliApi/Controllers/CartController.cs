@@ -1,4 +1,5 @@
 ﻿using Manzili.Core.Dto.ProductDto;
+using Manzili.Core.Entities;
 using Manzili.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -17,8 +18,25 @@ namespace Manzili.API.Controllers
             _cartService = cartService;
         }
 
+
+       
+
+
+        [HttpGet("GetCartByUserAndStoreAsync")]
+        public async Task<ActionResult> GetCartByUserAndStoreAsync(int userId , int storeId)
+        {
+            var result = await _cartService.GetCartByUserAndStoreAsync(userId , storeId);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+
+
+
         [HttpPost("add")]
-        public async Task<IActionResult> AddToCart(int userId, int productId, int quantity)
+        public async Task<IActionResult> AddToCart(int userId, int productId, int quantity = 1)
         {
             var result = await _cartService.AddToCartAsync(userId, productId, quantity);
             if (result.IsSuccess)
@@ -28,15 +46,15 @@ namespace Manzili.API.Controllers
             return BadRequest(result.Message);
         }
         [HttpPost("addOrUpdateNote")]
-        public async Task<IActionResult> AddOrUpdateNoteAsync(int userId, int productId, string note)
-        {
-            var result = await _cartService.AddOrUpdateNoteAsync(userId, productId, note);
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
+        //public async Task<IActionResult> AddOrUpdateNoteAsync(int userId, int productId, string note)
+        //{
+        //    var result = await _cartService.AddOrUpdateNoteAsync(userId, productId, note);
+        //    if (result.IsSuccess)
+        //    {
+        //        return Ok(result);
+        //    }
+        //    return BadRequest(result);
+        //}
 
         [HttpGet("{userId}/products")]
         public async Task<ActionResult<IEnumerable<CartProductDto>>> GetCartProducts(int userId)

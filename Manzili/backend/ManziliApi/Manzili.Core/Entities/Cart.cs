@@ -5,8 +5,13 @@ namespace Manzili.Core.Entities
         public int CartId { get; set; }
         public int UserId { get; set; }
         public int StoreId { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public string Note { get; set; }
+
+
+        public double TotalPrice { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? Note { get; set; }
+
+
 
         // Navigation properties
         public User User { get; set; }
@@ -14,3 +19,5 @@ namespace Manzili.Core.Entities
         public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }
+
+

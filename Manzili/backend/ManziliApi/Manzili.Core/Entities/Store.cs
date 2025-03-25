@@ -16,6 +16,8 @@ namespace Manzili.Core.Entities
 
 
 
+
+        public ICollection<Cart> StoreCarts { get; set; } = new List<Cart>();
         public ICollection<Product>? Products { get; set; } = new List<Product>(); 
         public ICollection<Favorite>? Favorites { get; set; } = new List<Favorite>();
         public ICollection<StoreRating>? RatingsReceived { get; set; } = new List<StoreRating>();
