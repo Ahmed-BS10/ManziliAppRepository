@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Manzili.Core.Services
 {
@@ -16,9 +17,21 @@ namespace Manzili.Core.Services
         readonly ManziliDbContext _db;
         readonly DbSet<Product> _dbSet;  
         readonly FileService _fileService;
+
+
+
+        public Productservices(ManziliDbContext db, FileService fileService)
+        {
+            _db = db;
+            _dbSet = _db.Set<Product>();
+            _fileService = fileService;
+        }
+
+
         public async Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndCategoriesAsync(int storeId, int storeCategoryId, int productCategoryId)
         {
             var products = await _db.Set<Product>()
+                .Include(im => im.Images)
                 .Include(p => p.Store)
                 .ThenInclude(s => s.storeCategoryStores)
                 .ThenInclude(scs => scs.StoreCategory)
@@ -31,17 +44,28 @@ namespace Manzili.Core.Services
                 return OperationResult<IEnumerable<GetAllProduct>>.Failure("No products found for the specified categories.");
             }
 
-            var productDtos = products.Select(p => new GetAllProduct(p)).ToList();
+            var productDto = products.Select(x => new GetAllProduct
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description,
+                Price = x.Price,
+                State = x.State,
+                Rate = x.Rate,
+                ImageUrl = x.Images.First().ImageUrl,
 
-            return OperationResult<IEnumerable<GetAllProduct>>.Success(productDtos, "Products retrieved successfully.");
+            }).ToList();
+                
+                
+ 
+
+            return OperationResult<IEnumerable<GetAllProduct>>.Success(productDto, "Products retrieved successfully.");
         }
-
-
         public async Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId)
         {
             var store = await _db.Stores
                 .Include(s => s.Products)
-                .ThenInclude(p => p.ProductCategory)
+                .ThenInclude(p => p.Images)
                 .FirstOrDefaultAsync(s => s.Id == storeId);
 
             if (store == null)
@@ -49,125 +73,122 @@ namespace Manzili.Core.Services
                 return OperationResult<List<GetAllProduct>>.Failure("Store not found.");
             }
 
-            var productsDto = store.Products.Select(p => new GetAllProduct(p)).ToList();
+            var productsDto = store.Products.Select(x => new GetAllProduct
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description,
+                Price = x.Price,
+                State = x.State,
+                Rate = 45,
+                ImageUrl = x.Images.First().ImageUrl,
+            }).ToList();
+
 
             return OperationResult<List<GetAllProduct>>.Success(productsDto, "Store products retrieved successfully.");
         }
-
-        public async Task<OperationResult<Product>> AddProductToStoreAsync(int storeId, CreateProductDto productDto)
+        public async Task<OperationResult<string>> AddProductToStoreAsync(int storeId, CreateProductDto productDto)
         {
             var store = await _db.Stores
-                .Include(s => s.Products)
-                .Include(s => s.storeCategoryStores)
                 .FirstOrDefaultAsync(s => s.Id == storeId);
 
             if (store == null)
             {
-                return OperationResult<Product>.Failure("Store not found.");
+                return OperationResult<string>.Failure("Store not found");
             }
 
             if (productDto.ProductCategoryId <= 0)
             {
-                return OperationResult<Product>.Failure("Product category must be chosen.");
+                return OperationResult<string>.Failure("Product category must be chosen.");
+
             }
 
-            if (productDto.StoreCategoryId <= 0)
-            {
-                return OperationResult<Product>.Failure("Store category must be chosen.");
-            }
 
-            var productCategory = await _db.ProductCategories.FindAsync(productDto.ProductCategoryId);
-            if (productCategory == null)
+            if (productDto.formImages != null)
             {
-                return OperationResult<Product>.Failure("Invalid product category.");
-            }
-
-            var storeCategoryStore = store.storeCategoryStores.FirstOrDefault(scs => scs.StoreCategoryId == productDto.StoreCategoryId);
-            if (storeCategoryStore == null)
-            {
-                return OperationResult<Product>.Failure("Invalid store category.");
-            }
-
-            var imageUrls = new List<string>();
-            if (productDto.formImages?.Any() == true)
-            {
-                foreach (var image in productDto.formImages)
+                foreach (var imageFrom in productDto.formImages)
                 {
-                    var imageUrl = await _fileService.UploadImageAsync("product-images", image);
-                    imageUrls.Add(imageUrl);
-                }
-            }
+                    if (!ImageValidator.IsValidImage(imageFrom, out string errorMessage))
+                        return OperationResult<string>.Failure(message: errorMessage);
 
-            var product = new Product
-            {
-                Name = productDto.Name,
-                Description = productDto.Description,
-                Price = productDto.Price,
-                ProductCategoryId = productDto.ProductCategoryId,
-                StoreId = storeId,
-                Store = store,
-                ImageUrls = imageUrls
-            };
 
-            // Handle size, quantity, and price selection from the form
-            if (productDto.Sizes != null && productDto.Quantities != null && productDto.Prices != null &&
-                productDto.Sizes.Count == productDto.Quantities.Count && productDto.Sizes.Count == productDto.Prices.Count)
-            {
-                product.Sizes = new List<ProductSize>();
-
-                for (int i = 0; i < productDto.Sizes.Count; i++)
-                {
-                    product.Sizes.Add(new ProductSize
+                    try
                     {
-                        Size = productDto.Sizes[i],
-                        Quantity = productDto.Quantities[i],
-                        Price = productDto.Prices[i], // Set the price for each size
-                        Product = product
-                    });
+                        string imagePath = await _fileService.UploadImageAsync("Product", imageFrom);
+                        if (imagePath == "FailedToUploadImage")
+                            return OperationResult<string>.Failure("Failed to upload image");
+
+
+                        var product1 = new Product
+                        {
+                            Name = productDto.Name,
+                            Description = productDto.Description,
+                            Price = productDto.Price,
+                            Quantity = productDto.Quantity,
+
+
+                            ProductCategoryId = productDto.ProductCategoryId,
+                            StoreId = storeId,
+
+                            Images = new List<Image>
+                            {
+                                new Image
+                                {
+                                    ImageUrl = imagePath
+                                }
+                            }
+
+                        };
+
+
+                        await _dbSet.AddAsync(product1);
+                        await _db.SaveChangesAsync();
+                        return OperationResult<string>.Success("Add Successed");
+                    }
+
+                    catch (Exception ex)
+                    {
+                        return OperationResult<string>.Failure(message: ex.Message);
+                    }
+
+
+
+
                 }
 
-                product.Quantity = product.Sizes.Sum(s => s.Quantity); // Calculate total quantity
-            }
-            else
-            {
-                product.Quantity = productDto.Quantity ?? 0; // Default quantity
+
             }
 
-            store.Products.Add(product);
-            await _db.SaveChangesAsync();
 
-            return OperationResult<Product>.Success(product, "Product added successfully.");
+            return OperationResult<string>.Failure("Product not added successfully");
         }
-
-
-
-
-
-        public async Task<OperationResult<Product>> GetProductByIdAsync(int productId)
+        public async Task<OperationResult<GteFullInfoProdcut>> GetProductByIdAsync(int productId)
         {
             var product = await _db.Set<Product>()
-                .Include(p => p.ProductCategory) // Include category info
-                .Include(p => p.Store) // Include store details
-                .Include(p => p.Sizes) // Include product sizes
+                .Include(p => p.Store)
                 .FirstOrDefaultAsync(p => p.Id == productId);
 
             if (product == null)
             {
-                return OperationResult<Product>.Failure("Product not found.");
+                return OperationResult<GteFullInfoProdcut>.Failure("Product not found.");
             }
 
-            return OperationResult<Product>.Success(product, "Product retrieved successfully.");
+            var productDto = new GteFullInfoProdcut
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                State = product.State,
+                Quantity = product.Quantity,
+                StoreName = product.Store.BusinessName,
+                images = product.Images.Select(i => i.ImageUrl).ToList()
+            };
+
+            return OperationResult<GteFullInfoProdcut>.Success(productDto, "Product retrieved successfully.");
         }
 
-
-
-
-        public Productservices(ManziliDbContext db, FileService fileService)
-        {
-            _db = db;
-            _dbSet = _db.Set<Product>();
-            _fileService = fileService;
-        }
+     
 
         
 

@@ -561,15 +561,10 @@ namespace Manzili.EF.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Discount")
+                    b.Property<double?>("Discount")
                         .HasColumnType("float");
-
-                    b.Property<string>("ImageUrls")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -581,7 +576,7 @@ namespace Manzili.EF.Migrations
                     b.Property<int>("ProductCategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<double?>("Rate")
@@ -603,31 +598,6 @@ namespace Manzili.EF.Migrations
                     b.HasIndex("StoreId");
 
                     b.ToTable("Product");
-                });
-
-            modelBuilder.Entity("ProductSize", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductSize");
                 });
 
             modelBuilder.Entity("StoreCategory", b =>
@@ -902,17 +872,6 @@ namespace Manzili.EF.Migrations
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("ProductSize", b =>
-                {
-                    b.HasOne("Product", "Product")
-                        .WithMany("Sizes")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
                 {
                     b.HasOne("Manzili.Core.Entities.User", null)
@@ -949,8 +908,6 @@ namespace Manzili.EF.Migrations
             modelBuilder.Entity("Product", b =>
                 {
                     b.Navigation("Images");
-
-                    b.Navigation("Sizes");
                 });
 
             modelBuilder.Entity("StoreCategory", b =>

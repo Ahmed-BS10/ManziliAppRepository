@@ -11,7 +11,6 @@ namespace Manzili.Core.Dto.ProductDto
        string Name,
        string ImageUrl,
        string Description,
-       ProductSize? ProductSize,
        double Price,
        string State,
        int Quantity);

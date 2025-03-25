@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Manzili.EF.Migrations
 {
     /// <inheritdoc />
-    public partial class inital : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -261,6 +261,7 @@ namespace Manzili.EF.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     StoreId = table.Column<int>(type: "int", nullable: false),
+                    TotalPrice = table.Column<double>(type: "float", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -388,14 +389,13 @@ namespace Manzili.EF.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
-                    ProductCategoryId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StoreId = table.Column<int>(type: "int", nullable: false),
-                    ImageUrls = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Discount = table.Column<double>(type: "float", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     State = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: true),
+                    Discount = table.Column<double>(type: "float", nullable: true),
                     Rate = table.Column<double>(type: "float", nullable: true),
+                    ProductCategoryId = table.Column<int>(type: "int", nullable: false),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
                     CartId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -460,27 +460,6 @@ namespace Manzili.EF.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrderProduct_Product_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Product",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProductSize",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Size = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductSize", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProductSize_Product_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Product",
                         principalColumn: "Id",
@@ -598,11 +577,6 @@ namespace Manzili.EF.Migrations
                 column: "StoreCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductSize_ProductId",
-                table: "ProductSize",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_StoreCategoryStores_StoreCategoryId",
                 table: "StoreCategoryStores",
                 column: "StoreCategoryId");
@@ -667,9 +641,6 @@ namespace Manzili.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductRatings");
-
-            migrationBuilder.DropTable(
-                name: "ProductSize");
 
             migrationBuilder.DropTable(
                 name: "StoreCategoryStores");
