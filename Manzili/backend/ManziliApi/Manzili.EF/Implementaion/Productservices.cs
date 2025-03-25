@@ -109,8 +109,9 @@ namespace Manzili.Core.Services
                 ImageUrls = imageUrls
             };
 
-            // Handle size and quantity selection from the form
-            if (productDto.Sizes != null && productDto.Quantities != null && productDto.Sizes.Count == productDto.Quantities.Count)
+            // Handle size, quantity, and price selection from the form
+            if (productDto.Sizes != null && productDto.Quantities != null && productDto.Prices != null &&
+                productDto.Sizes.Count == productDto.Quantities.Count && productDto.Sizes.Count == productDto.Prices.Count)
             {
                 product.Sizes = new List<ProductSize>();
 
@@ -120,6 +121,7 @@ namespace Manzili.Core.Services
                     {
                         Size = productDto.Sizes[i],
                         Quantity = productDto.Quantities[i],
+                        Price = productDto.Prices[i], // Set the price for each size
                         Product = product
                     });
                 }
@@ -136,6 +138,8 @@ namespace Manzili.Core.Services
 
             return OperationResult<Product>.Success(product, "Product added successfully.");
         }
+
+
 
 
 
