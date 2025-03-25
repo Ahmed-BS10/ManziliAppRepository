@@ -30,7 +30,7 @@ class AuthService {
 
   Future<ApiResponse> Userregister(UserCreateModel user) async {
     final url =
-        Uri.parse('http://man9.runasp.net/api/Auhencation/RegsiterUser');
+        Uri.parse('http://man.runasp.net/api/User/Create');
 
     try {
       var request = http.MultipartRequest('POST', url);

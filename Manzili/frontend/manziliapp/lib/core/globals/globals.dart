@@ -1,1 +1,1 @@
-String? userType;
+String? userType = "customer";

@@ -1,25 +1,22 @@
 import 'dart:io';
 
 class UserCreateModel {
-  String firstName;
-  String lastName;
+  String userName;
   String email;
-  String phone;
+  String phonenumber;
   String city;
   String address;
-  String userName;
   String password;
   String confirmPassword;
   File? image;
 
   UserCreateModel({
-    required this.firstName,
-    required this.lastName,
+   
+    required this.userName,
     required this.email,
-    required this.phone,
+    required this.phonenumber,
     required this.city,
     required this.address,
-    required this.userName,
     required this.password,
     required this.confirmPassword,
     this.image,
@@ -27,11 +24,9 @@ class UserCreateModel {
 
   Map<String, dynamic> toMap() {
     return {
-      "FirstName": firstName,
-      "LastName": lastName,
       "UserName": userName,
       "Email": email,
-      "PhoneNumber": phone,
+      "PhoneNumber": phonenumber,
       "City": city,
       "Address": address,
       "Password": password,

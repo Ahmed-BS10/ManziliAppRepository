@@ -27,7 +27,7 @@ namespace ManziliApi.Controllers
 
 
         [HttpPost(AuthenticationRouting.RegsiterUser)]
-        public async Task<IActionResult> RegisterUser(CreateUserDto userCreate)
+        public async Task<IActionResult> RegisterUser( [FromForm] CreateUserDto userCreate)
         {
             var reslut = await _authenticationServices.RegisterAsUser(userCreate);
             if (reslut.IsSuccess)

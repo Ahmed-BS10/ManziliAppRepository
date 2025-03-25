@@ -10,7 +10,7 @@ class HeaderImage extends StatelessWidget {
       width: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('lib/assets/image/loginimg.jpg'),
+          image: AssetImage('assets/image/loginimg.jpg'),
           fit: BoxFit.cover,
         ),
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),

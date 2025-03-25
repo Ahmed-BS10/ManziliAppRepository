@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:manziliapp/core/helper/OperationResult.dart';
 
 class ApiService {
-  final String baseUrl = "http://man9.runasp.net";
+  final String baseUrl = "http://man.runasp.net/api";
 
   Future<dynamic> get(String endpoint) async {
     final url = Uri.parse('$baseUrl/$endpoint');
