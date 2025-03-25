@@ -32,11 +32,14 @@ namespace Manzili.Core.Services
         {
             var products = await _db.Set<Product>()
                 .Include(im => im.Images)
-                .Include(p => p.Store)
-                .ThenInclude(s => s.storeCategoryStores)
-                .ThenInclude(scs => scs.StoreCategory)
                 .Include(p => p.ProductCategory)
-                .Where(p => p.StoreId == storeId && p.Store.storeCategoryStores.Any(scs => scs.StoreCategoryId == storeCategoryId) && p.ProductCategoryId == productCategoryId)
+                .ThenInclude(scs => scs.StoreCategory)
+                .Include(p => p.Store)
+
+
+
+               .Where(p => p.StoreId == storeId && p.ProductCategoryId == productCategoryId && p.ProductCategory.StoreCategoryId == storeCategoryId)
+
                 .ToListAsync();
 
             if (!products.Any())
