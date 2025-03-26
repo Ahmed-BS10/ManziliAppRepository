@@ -18,48 +18,31 @@ namespace Manzili.API.Controllers
             _cartService = cartService;
         }
 
-
-       
-
-
-        [HttpGet("GetCartByUserAndStoreAsync")]
-        public async Task<ActionResult> GetCartByUserAndStoreAsync(int userId , int storeId)
+        [HttpPost("add")]
+        public async Task<IActionResult> AddProductToCart(int userId, int storeId, int productId)
         {
-            var result = await _cartService.GetCartByUserAndStoreAsync(userId , storeId);
-            if (result != null)
+            var result = await _cartService.AddProductToCartAsync(userId, storeId, productId);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result.Data);
+        }
+        [HttpPost("addOrUpdateNote")]
+        public async Task<IActionResult> AddOrUpdateNoteAsync(int userId, string note)
+        {
+            var result = await _cartService.AddOrUpdateNoteAsync(userId, note);
+            if (result.IsSuccess)
             {
                 return Ok(result);
             }
-            return NotFound(result);
+            return BadRequest(result);
         }
-
-
-
-        [HttpPost("add")]
-        public async Task<IActionResult> AddToCart(int userId, int productId, int quantity = 1)
+        [HttpGet("GetCartByUserAndStoreAsync")]
+        public async Task<ActionResult> GetCartByUserAndStoreAsync(int userId, int storeId)
         {
-            var result = await _cartService.AddToCartAsync(userId, productId, quantity);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Message);
-            }
-            return BadRequest(result.Message);
-        }
-        [HttpPost("addOrUpdateNote")]
-        //public async Task<IActionResult> AddOrUpdateNoteAsync(int userId, int productId, string note)
-        //{
-        //    var result = await _cartService.AddOrUpdateNoteAsync(userId, productId, note);
-        //    if (result.IsSuccess)
-        //    {
-        //        return Ok(result);
-        //    }
-        //    return BadRequest(result);
-        //}
-
-        [HttpGet("{userId}/products")]
-        public async Task<ActionResult<IEnumerable<CartProductDto>>> GetCartProducts(int userId)
-        {
-            var result = await _cartService.GetCartProductsAsync(userId);
+            var result = await _cartService.GetCartByUserAndStoreAsync(userId, storeId);
             if (result.IsSuccess)
             {
                 return Ok(result.Data);
@@ -76,6 +59,7 @@ namespace Manzili.API.Controllers
             }
             return BadRequest(result.Message);
         }
+
         [HttpPut("edit")]
         public async Task<IActionResult> EditCartItem(int userId, int productId, int quantity)
         {
@@ -97,6 +81,19 @@ namespace Manzili.API.Controllers
             }
             return BadRequest(result.Message);
         }
+
+        [HttpGet("{userId}/products")]
+        public async Task<ActionResult<IEnumerable<CartProductDto>>> GetCartProducts(int userId)
+        {
+            var result = await _cartService.GetCartProductsAsync(userId);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            return NotFound(result.Message);
+        }
+
+
         [HttpPost("addOrUpdateShippingAddress")]
         public async Task<IActionResult> AddOrUpdateShippingAddress(int userId, string address)
         {
@@ -129,17 +126,17 @@ namespace Manzili.API.Controllers
             }
             return BadRequest(result.Message);
         }
-
-        [HttpPost("completeOrder")]
-        public async Task<IActionResult> CompleteOrder(int userId, decimal shippingCost, string receiptPath)
-        {
-            var result = await _cartService.CompleteOrderAsync(userId, shippingCost, receiptPath);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Message);
-            }
-            return BadRequest(result.Message);
-        }
+     
+        //[HttpPost("completeOrder")]
+        //public async Task<IActionResult> CompleteOrder(int userId, decimal shippingCost, string receiptPath)
+        //{
+        //    var result = await _cartService.CompleteOrderAsync(userId, shippingCost, receiptPath);
+        //    if (result.IsSuccess)
+        //    {
+        //        return Ok(result.Message);
+        //    }
+        //    return BadRequest(result.Message);
+        //}
 
     }
 }
