@@ -4,12 +4,10 @@ import 'package:manziliapp/controller/login_controller.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
 import 'package:manziliapp/model/login_model.dart';
-import 'package:manziliapp/widget/auhentication/custom_divider.dart';
 import 'package:manziliapp/widget/auhentication/custom_password_text.dart';
 import 'package:manziliapp/widget/auhentication/email_text_filed.dart';
 import 'package:manziliapp/widget/auhentication/header_image.dart';
 import 'package:manziliapp/widget/auhentication/register_text.dart';
-import 'package:manziliapp/widget/auhentication/social_login_buttons.dart';
 import 'package:manziliapp/widget/auhentication/welcome_text.dart';
 
 class ForgotPasswordText extends StatelessWidget {
@@ -101,10 +99,10 @@ class _LoginViewBodyState extends State<LoginViewBody> {
               return const SizedBox.shrink();
             }),
             const SizedBox(height: 20),
-            const CustomDivider(),
-            const SizedBox(height: 15),
-            const SocialLoginButtons(),
-            const SizedBox(height: 10),
+            // const CustomDivider(),
+            //const SizedBox(height: 15),
+            // const SocialLoginButtons(),
+            //const SizedBox(height: 10),
             RegisterText(),
           ],
         ),
@@ -117,6 +115,4 @@ class _LoginViewBodyState extends State<LoginViewBody> {
       loginController.login(_loginModel);
     }
   }
-
- 
 }

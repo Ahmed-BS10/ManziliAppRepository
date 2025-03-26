@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:manziliapp/core/globals/globals.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
+import 'package:manziliapp/view/login_view.dart';
+import 'package:manziliapp/view/register_view.dart';
 
 class StartViewBody extends StatelessWidget {
   const StartViewBody({super.key});
@@ -36,7 +40,7 @@ class StartViewBody extends StatelessWidget {
           CustomTextButton(
             onPressed: () {
               userType = 'customer';
-              Navigator.pushNamed(context, 'login');
+              Get.to(() => LoginView());
             },
             name: 'عميل ',
             fontColor: const Color(0xFFFFFFFF),
@@ -46,7 +50,7 @@ class StartViewBody extends StatelessWidget {
           CustomTextButton(
             onPressed: () {
               userType = 'producer';
-              Navigator.pushNamed(context, 'login');
+            Get.to(() => RegisterView());
             },
             name: 'أسرة منتجة',
             fontColor: const Color(0xFFFFFFFF),

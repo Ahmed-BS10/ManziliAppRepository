@@ -45,18 +45,17 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
                 },
               )
             else
-            Text('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-              // ProducerRegistrationForm(
-              //   pageController: _pageController,
-              //   formKey: _formKey,
-              //   isAgreed: isAgreed,
-              //   onAgreementChanged: (value) {
-              //     setState(() {
-              //       isAgreed = value;
-              //     });
-              //   },
-              //   currentIndex: currentIndex,
-              // ),
+              ProducerRegistrationForm(
+                pageController: _pageController,
+                formKey: _formKey,
+                isAgreed: isAgreed,
+                onAgreementChanged: (value) {
+                  setState(() {
+                    isAgreed = value;
+                  });
+                },
+                currentIndex: currentIndex,
+              ),
           ],
         ),
       ),

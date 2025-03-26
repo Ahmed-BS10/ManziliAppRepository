@@ -1,52 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custome_text_filed.dart';
-import 'package:manziliapp/widget/auhentication/custom_password_text.dart';
-
-// class BusinessInfoPage extends StatelessWidget {
-//   const BusinessInfoPage({super.key, required this.pageController});
-
-//   final PageController pageController;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         Align(
-//             alignment: Alignment.topLeft,
-//             child: IconButton(
-//               onPressed: () {
-//                 pageController.previousPage(
-//                   duration: const Duration(milliseconds: 300),
-//                   curve: Curves.easeInOut,
-//                 );
-//               },
-//               icon: Icon(
-//                 Icons.arrow_back_ios_rounded,
-//                 color: pColor,
-//               ),
-//             )),
-//         SizedBox(height: 10),
-//         CustomeTextFiled(hintText: 'Business Name'),
-//         SizedBox(height: 10),
-//         CustomeTextFiled(hintText: 'Category Of Work'),
-//         SizedBox(height: 10),
-//         CustomeTextFiled(hintText: 'Business Address'),
-//         SizedBox(height: 10),
-//         CustomeTextFiled(hintText: 'Short Description About Your Work'),
-//         SizedBox(height: 10),
-//         CustomeTextFiled(hintText: 'Upload Your Business Image'),
-//         SizedBox(height: 10),
-//         PasswordTextField(hintText: ' '),
-//         SizedBox(height: 10),
-//         PasswordTextField(hintText: 'تاكيد كلمة السر'),
-//       ],
-//     );
-//   }
-// }
 
 class BusinessInfoPage extends StatelessWidget {
   final PageController pageController;
@@ -64,6 +18,15 @@ class BusinessInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // List of dropdown options
+    final List<String> categories = [
+      'Construction',
+      'IT Services',
+      'Retail',
+      'Manufacturing',
+      'Healthcare',
+    ];
+
     return Column(
       children: [
         Align(
@@ -87,30 +50,32 @@ class BusinessInfoPage extends StatelessWidget {
           hintText: 'Business Name',
         ),
         const SizedBox(height: 10),
-        CustomeTextFiled(
-          controller: categoryOfWorkController,
-          hintText: 'Category Of Work',
+        DropdownButtonFormField<String>(
+          value: null, // Initial value
+          decoration: InputDecoration(
+            hintText: 'Category Of Work',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          items: categories.map((String category) {
+            return DropdownMenuItem<String>(
+              value: category,
+              child: Text(category),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              categoryOfWorkController.text = newValue; // Update the controller
+            }
+          },
         ),
-
         const SizedBox(height: 10),
-
         CustomeTextFiled(
           controller: bankAccountController,
-          hintText: 'bank',
+          hintText: 'Bank',
         ),
         const SizedBox(height: 10),
-        // GestureDetector(
-        //   onTap: () async {
-        //     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-        //     if (pickedFile != null) {
-        //       onImagePicked(File(pickedFile.path));
-        //     }
-        //   },
-        //   child: CustomeTextFiled(
-        //     hintText: 'Upload Your Business Image',
-
-        //   ),
-        // ),
       ],
     );
   }

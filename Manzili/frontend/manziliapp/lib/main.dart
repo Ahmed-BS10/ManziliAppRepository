@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:manziliapp/view/store_details_view.dart';
-import 'theme/app_theme.dart';
+import 'package:get/get.dart';
+import 'package:manziliapp/bindings/login_binding.dart';
+import 'package:manziliapp/bindings/register_binding.dart';
+import 'package:manziliapp/view/register_view.dart';
+import 'package:manziliapp/view/start_view.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Store App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Cairo', // Arabic-friendly font
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          iconTheme: IconThemeData(color: Colors.black),
+    return GetMaterialApp(
+      initialRoute: '/login',
+      getPages: [
+        GetPage(
+          name: '/login',
+          page: () => const StartView(),
+          binding: LoginBinding(),
         ),
-      ),
-      home: const StoreDetailsView(),
+        GetPage(
+          name: '/register',
+          page: () => const RegisterView(),
+          binding: RegisterBinding(),
+        ),
+      ],
     );
   }
 }
