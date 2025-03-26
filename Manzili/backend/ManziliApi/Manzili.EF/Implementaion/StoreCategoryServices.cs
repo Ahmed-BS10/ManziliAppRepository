@@ -170,6 +170,23 @@ namespace Manzili.Core.Services
 
         }
 
+        public async Task<OperationResult<IEnumerable<GetStoreCategoryIdAndName>>> GetLists()
+        {
+            var result = await _dbSet.Include("StoreCategoriesStores").AsNoTracking().ToListAsync();
+
+            if (result == null || !result.Any())
+                return OperationResult<IEnumerable<GetStoreCategoryIdAndName>>.Failure("No store categories found.");
+
+            var storeCategoryDtos =
+                result.Select(storeCategory => new GetStoreCategoryIdAndName
+                (
+                    storeCategory.Id, storeCategory.Name
+                    )
+                );
+
+            return OperationResult<IEnumerable<GetStoreCategoryIdAndName>>.Success(storeCategoryDtos);
+        }
+
         #endregion
     }
 
