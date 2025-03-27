@@ -258,7 +258,7 @@ namespace Manzili.EF.Implementaion
             }).ToList();
             try
             {
-              
+
 
                 if (storeDto.Image != null)
                 {
@@ -283,6 +283,15 @@ namespace Manzili.EF.Implementaion
 
 
 
+                }
+
+                else if(storeDto.Image == null)
+                {
+                    var result = await _userManager.CreateAsync(store, storeDto.Password);
+                    if (!result.Succeeded)
+                        return OperationResult<CreateStoreDto>.Failure(string.Join("; ", result.Errors.Select(e => e.Description)));
+
+                    return OperationResult<CreateStoreDto>.Success(data: storeDto);
                 }
             }
 

@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:manziliapp/controller/store_controller.dart';
+import 'package:manziliapp/model/store_create_model.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
-import 'package:manziliapp/model/store_create_model.dart';
 import 'package:manziliapp/widget/auhentication/custom_indicator.dart';
 import 'package:manziliapp/widget/auhentication/custom_page_view.dart';
 import 'package:manziliapp/widget/auhentication/terms_and_privacy_checbok.dart';
@@ -29,7 +31,7 @@ class ProducerRegistrationForm extends StatefulWidget {
 }
 
 class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
-  // Controllers لحقول الصفحة الأولى (المعلومات الشخصية)
+  // Controllers for form fields
   TextEditingController usernameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -37,19 +39,17 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
   TextEditingController addressController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-
-  // Controllers لحقول الصفحة الثانية (معلومات العمل)
   TextEditingController businessNameController = TextEditingController();
   TextEditingController bankAccountController = TextEditingController();
-  TextEditingController categoryOfWorkController = TextEditingController();
   TextEditingController businessDescriptionController = TextEditingController();
 
-  File? userImage; // لتخزين صورة المستخدم
-  File? businessImage; // لتخزين صورة العمل
+  File? userImage; // User image
+
+  final StoreController storeController = Get.put(StoreController());
 
   @override
   void dispose() {
-    // تنظيف الـ Controllers عند إغلاق الصفحة
+    // Dispose controllers
     usernameController.dispose();
     phoneController.dispose();
     emailController.dispose();
@@ -59,31 +59,28 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
     confirmPasswordController.dispose();
     businessNameController.dispose();
     bankAccountController.dispose();
-    categoryOfWorkController.dispose();
     businessDescriptionController.dispose();
     super.dispose();
   }
 
   void _submitForm() {
-    // إنشاء نموذج البيانات
+    // Create store data model
     StoreCreateModel storeData = StoreCreateModel(
-      firstName: "as",
-      lastName: "as",
       userName: usernameController.text,
       phone: phoneController.text,
       email: emailController.text,
-      city: cityController.text,
       address: addressController.text,
       password: passwordController.text,
       confirmPassword: confirmPasswordController.text,
       businessName: businessNameController.text,
-      bankAccount: "sjnasfkj",
-      status: "active",
+      bankAccount: bankAccountController.text,
+      description: businessDescriptionController.text,
       image: userImage,
+      socileMediaAcount: '',
     );
 
-    // تنفيذ عملية التسجيل هنا بدون Cubit
-    print("تم تسجيل المتجر: ${storeData.userName}");
+    // Call the registerStore method
+    storeController.registerStore(storeData);
   }
 
   @override
@@ -103,7 +100,7 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
             confirmPasswordController: confirmPasswordController,
             businessNameController: businessNameController,
             bankAccountController: bankAccountController,
-            categoryOfWorkController: categoryOfWorkController,
+            categoryOfWorkController: businessDescriptionController,
             onUserImagePicked: (image) {
               setState(() {
                 userImage = image;
@@ -118,32 +115,37 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
         ),
         const SizedBox(height: 10),
         CustomIndicator(dotIndex: widget.currentIndex),
-        CustomTextButton(
-          onPressed: () {
-            if (widget.formKey.currentState!.validate()) {
-              if (widget.isAgreed) {
-                if (widget.currentIndex == 1) {
-                  _submitForm();
+        Obx(() {
+          if (storeController.isLoading.value) {
+            return const CircularProgressIndicator();
+          }
+          return CustomTextButton(
+            onPressed: () {
+              if (widget.formKey.currentState!.validate()) {
+                if (widget.isAgreed) {
+                  if (widget.currentIndex == 1) {
+                    _submitForm();
+                  } else {
+                    widget.pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
                 } else {
-                  widget.pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'يجب الموافقة على الشروط وسياسة الخصوصية للمتابعة'),
+                    ),
                   );
                 }
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content:
-                        Text('يجب الموافقة على الشروط وسياسة الخصوصية للمتابعة'),
-                  ),
-                );
               }
-            }
-          },
-          name: widget.currentIndex == 1 ? 'التسجيل' : 'التالي',
-          fontColor: Colors.white,
-          backColor: pColor,
-        ),
+            },
+            name: widget.currentIndex == 1 ? 'التسجيل' : 'التالي',
+            fontColor: Colors.white,
+            backColor: pColor,
+          );
+        }),
       ],
     );
   }

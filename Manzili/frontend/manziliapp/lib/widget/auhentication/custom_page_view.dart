@@ -74,8 +74,7 @@ class CustomPageView extends StatelessWidget {
           pageController: pageController,
           businessNameController: businessNameController,
           bankAccountController: bankAccountController,
-          categoryOfWorkController: categoryOfWorkController,
-        ),
+            ),
       ],
     );
   }
