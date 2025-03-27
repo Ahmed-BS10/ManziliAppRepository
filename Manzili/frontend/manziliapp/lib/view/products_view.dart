@@ -3,7 +3,6 @@ import 'package:manziliapp/model/product.dart';
 import 'package:manziliapp/widget/store/category_tabs.dart';
 import 'package:manziliapp/widget/store/product_card.dart';
 
-import '../theme/app_theme.dart';
 
 class ProductsView extends StatefulWidget {
   const ProductsView({Key? key}) : super(key: key);

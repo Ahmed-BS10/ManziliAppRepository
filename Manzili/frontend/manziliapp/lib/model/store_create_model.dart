@@ -1,50 +1,46 @@
 import 'dart:io';
 
 class StoreCreateModel {
-  String firstName;
-  String lastName;
-  String email;
-  String phone;
-  String city;
-  String address;
   String userName;
-  String password;
-  String confirmPassword;
   String businessName;
-  String bankAccount;
-  String status;
+  String description;
   File? image;
 
+  String email;
+  String phone;
+
+  String address;
+  String password;
+  String confirmPassword;
+
+  String socileMediaAcount;
+  String bankAccount;
+
   StoreCreateModel({
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.phone,
-    required this.city,
-    required this.address,
-    required this.userName,
-    required this.password,
-    required this.confirmPassword,
-    required this.businessName,
-    required this.bankAccount,
-    required this.status,
+     required this.socileMediaAcount,
+     required this.email,
+     required this.phone,
+     required this.address,
+     required this.userName,
+     required this.password,
+     required this.confirmPassword,
+     required this.businessName,
+     required this.bankAccount,
+     required this.description,
     this.image,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      "FirstName": firstName,
-      "LastName": lastName,
       "UserName": userName,
       "Email": email,
       "PhoneNumber": phone,
-      "City": city,
       "Address": address,
       "BusinessName": businessName,
       "BankAccount": bankAccount,
-      "Status": status,
       "Password": password,
-      "ConfirmPassword": confirmPassword,
+      "ConfirmPassword12": confirmPassword,
+      "SocileMediaAcount" : socileMediaAcount,
     };
   }
 }

@@ -35,6 +35,16 @@ namespace ManziliApi.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetStoreNamesAndId")]
+        public async Task<IActionResult> GetStoreNamesAndId()
+        {
+            var result = await _storeCategoryServices.GetLists();
+            if (!result.IsSuccess)
+                return NotFound(result);
+
+            return Ok(result);
+        }
+
         [HttpPost(StoreCategoryRouting.Create)]
         public async Task<IActionResult> Create([FromForm] CreateStoreCatagoryDto createStoreCategoryDto)
         {
