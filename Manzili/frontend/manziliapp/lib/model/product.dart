@@ -23,7 +23,7 @@ class Product {
   static List<Product> sampleProducts() {
     return List.generate(
       4,
-          (index) => Product(
+      (index) => Product(
         id: 'p${index + 1}',
         name: 'برجر لحم',
         description: 'برجر لحم مصنوع من أجود أنواع اللحوم ومعد بالفلفل ',
@@ -36,4 +36,3 @@ class Product {
     );
   }
 }
-
