@@ -16,9 +16,9 @@ class HeaderSectionState extends State<HeaderSection> {
   late Timer _timer;
 
   final List<String> _imageUrls = [
-    'lib/assets/image/loginimg.jpg',
-    'lib/assets/image/loginimg.jpg',
-    'lib/assets/image/loginimg.jpg',
+    'assets/image/ad1.jpeg',
+    'assets/image/ad1.jpeg',
+    'assets/image/ad1.jpeg',
   ];
 
   @override

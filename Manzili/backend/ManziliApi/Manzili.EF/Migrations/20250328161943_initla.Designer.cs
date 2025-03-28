@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manzili.EF.Migrations
 {
     [DbContext(typeof(ManziliDbContext))]
-    [Migration("20250325023104_initial")]
-    partial class initial
+    [Migration("20250328161943_initla")]
+    partial class initla
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -219,50 +219,6 @@ namespace Manzili.EF.Migrations
                     b.HasIndex("StoreCategoryId");
 
                     b.ToTable("ProductCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Image = "smartphones.jpg",
-                            Name = "هواتف ذكية",
-                            StoreCategoryId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Image = "laptops.jpg",
-                            Name = "لابتوبات",
-                            StoreCategoryId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Image = "mens-clothing.jpg",
-                            Name = "ملابس رجالية",
-                            StoreCategoryId = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Image = "womens-clothing.jpg",
-                            Name = "ملابس نسائية",
-                            StoreCategoryId = 2
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Image = "sofas.jpg",
-                            Name = "أرائك",
-                            StoreCategoryId = 3
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Image = "tables.jpg",
-                            Name = "طاولات",
-                            StoreCategoryId = 3
-                        });
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.ProductRating", b =>
@@ -600,7 +556,7 @@ namespace Manzili.EF.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("StoreCategory", b =>
@@ -621,23 +577,6 @@ namespace Manzili.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StoreCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "الإلكترونيات"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "الملابس"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "الأثاث المنزلي"
-                        });
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>

@@ -77,6 +77,9 @@ flutter:
     - assets/image/im_three.png
     - assets/image/im_one.png
     - assets/image/im_tow.png
+    - assets/image/ad1.jpeg
+    - assets/image/ad2.jpg
+    - assets/image/ad3.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

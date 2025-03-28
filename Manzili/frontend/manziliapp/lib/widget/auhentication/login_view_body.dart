@@ -4,6 +4,7 @@ import 'package:manziliapp/controller/login_controller.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
 import 'package:manziliapp/model/login_model.dart';
+import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/widget/auhentication/custom_password_text.dart';
 import 'package:manziliapp/widget/auhentication/email_text_filed.dart';
 import 'package:manziliapp/widget/auhentication/header_image.dart';
@@ -72,7 +73,9 @@ class _LoginViewBodyState extends State<LoginViewBody> {
               }
               return CustomTextButton(
                 onPressed: () {
-                  _validateForm();
+                  Get.to(() => HomeView());
+
+                  //_validateForm();
                 },
                 name: 'تسجيل الدخول',
                 radius: 23,

@@ -5,11 +5,16 @@ import 'package:manziliapp/bindings/register_binding.dart';
 import 'package:manziliapp/view/register_view.dart';
 import 'package:manziliapp/view/splash_view.dart';
 import 'package:manziliapp/view/start_view.dart';
+import 'package:manziliapp/widget/home/favorite_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(
-    const MyApp2(),
-  );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => FavoriteProvider()),
+    ],
+    child: const MyApp2(),
+  ));
 }
 
 class MyApp2 extends StatelessWidget {

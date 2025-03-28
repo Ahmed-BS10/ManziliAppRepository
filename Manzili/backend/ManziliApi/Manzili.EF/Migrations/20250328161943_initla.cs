@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Manzili.EF.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class initla : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -382,7 +380,7 @@ namespace Manzili.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Product",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -400,19 +398,19 @@ namespace Manzili.EF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Product_Carts_CartId",
+                        name: "FK_Products_Carts_CartId",
                         column: x => x.CartId,
                         principalTable: "Carts",
                         principalColumn: "CartId");
                     table.ForeignKey(
-                        name: "FK_Product_ProductCategories_ProductCategoryId",
+                        name: "FK_Products_ProductCategories_ProductCategoryId",
                         column: x => x.ProductCategoryId,
                         principalTable: "ProductCategories",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Product_Stores_StoreId",
+                        name: "FK_Products_Stores_StoreId",
                         column: x => x.StoreId,
                         principalTable: "Stores",
                         principalColumn: "Id");
@@ -431,9 +429,9 @@ namespace Manzili.EF.Migrations
                 {
                     table.PrimaryKey("PK_Image", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Image_Product_ProductId",
+                        name: "FK_Image_Products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -459,34 +457,11 @@ namespace Manzili.EF.Migrations
                         principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OrderProduct_Product_ProductId",
+                        name: "FK_OrderProduct_Products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "StoreCategories",
-                columns: new[] { "Id", "Image", "Name" },
-                values: new object[,]
-                {
-                    { 1, null, "الإلكترونيات" },
-                    { 2, null, "الملابس" },
-                    { 3, null, "الأثاث المنزلي" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ProductCategories",
-                columns: new[] { "Id", "Image", "Name", "StoreCategoryId" },
-                values: new object[,]
-                {
-                    { 1, "smartphones.jpg", "هواتف ذكية", 1 },
-                    { 2, "laptops.jpg", "لابتوبات", 1 },
-                    { 3, "mens-clothing.jpg", "ملابس رجالية", 2 },
-                    { 4, "womens-clothing.jpg", "ملابس نسائية", 2 },
-                    { 5, "sofas.jpg", "أرائك", 3 },
-                    { 6, "tables.jpg", "طاولات", 3 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -557,24 +532,24 @@ namespace Manzili.EF.Migrations
                 column: "StoreId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_CartId",
-                table: "Product",
-                column: "CartId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Product_ProductCategoryId",
-                table: "Product",
-                column: "ProductCategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Product_StoreId",
-                table: "Product",
-                column: "StoreId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProductCategories_StoreCategoryId",
                 table: "ProductCategories",
                 column: "StoreCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CartId",
+                table: "Products",
+                column: "CartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_ProductCategoryId",
+                table: "Products",
+                column: "ProductCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_StoreId",
+                table: "Products",
+                column: "StoreId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StoreCategoryStores_StoreCategoryId",
@@ -655,7 +630,7 @@ namespace Manzili.EF.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Carts");
