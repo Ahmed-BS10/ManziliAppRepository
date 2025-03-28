@@ -13,8 +13,8 @@ class StartViewBody extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          SizedBox(height: 100),
-          Image.asset('lib/assets/image/startimg.jpg'),
+          SizedBox(height: 10),
+          Image.asset('assets/image/startimg.jpg'),
           SizedBox(height: 50),
           Text(
             'اكتشف الكنوز المصنوعة منزليًا \n     ودعم إبداع العائلة مع \n           أعمال العائلة',
@@ -49,7 +49,7 @@ class StartViewBody extends StatelessWidget {
           CustomTextButton(
             onPressed: () {
               userType = 'producer';
-            Get.to(() => RegisterView());
+              Get.to(() => LoginView());
             },
             name: 'أسرة منتجة',
             fontColor: const Color(0xFFFFFFFF),

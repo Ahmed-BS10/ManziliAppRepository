@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:manziliapp/view/start_view.dart';
-import 'package:manziliapp/widget/home/home_view_body.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnBoradingView extends StatefulWidget {
@@ -29,7 +28,7 @@ class _OnBoradingViewState extends State<OnBoradingView> {
           vertical: MediaQuery.of(context).size.height * .02,
           horizontal: MediaQuery.of(context).size.height * .01),
       child: GestureDetector(
-        onTap: () => Navigator.of(context).pushNamed("HomeIontro"),
+        onTap: () => Get.to(() => StartView()),
         child: Text(
           "تخطي",
           style: TextStyle(
@@ -211,7 +210,7 @@ class IntroPageItem extends StatelessWidget {
 
   Widget _buildImage() {
     return Center(
-      child: Container(
+      child: SizedBox(
         height: 300,
         child: Image.asset(
           imagePath,
