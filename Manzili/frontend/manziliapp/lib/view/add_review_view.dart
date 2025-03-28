@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class AddReviewScreen extends StatefulWidget {
-  const AddReviewScreen({Key? key}) : super(key: key);
+class AddReviewView extends StatefulWidget {
+  const AddReviewView({Key? key}) : super(key: key);
 
   @override
-  State<AddReviewScreen> createState() => _AddReviewScreenState();
+  State<AddReviewView> createState() => _AddReviewViewState();
 }
 
-class _AddReviewScreenState extends State<AddReviewScreen> {
+class _AddReviewViewState extends State<AddReviewView> {
   int _rating = 4; // Default rating
   final TextEditingController _commentController = TextEditingController();
 
@@ -25,7 +25,8 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black54, size: 20),
+          icon:
+              const Icon(Icons.arrow_back_ios, color: Colors.black54, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
@@ -50,10 +51,9 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                 'يرجى التقييم عن مستوى الرضا العام عن خدمة الشحن/التسليم او المنتجات الخاصة بنا',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Color(0xFF223263),
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold
-                ),
+                    color: Color(0xFF223263),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
               ),
             ),
 
@@ -98,7 +98,6 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
 
             // Comment input
 
-
             const Spacer(),
 
             // Submit button
@@ -132,4 +131,3 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
     );
   }
 }
-

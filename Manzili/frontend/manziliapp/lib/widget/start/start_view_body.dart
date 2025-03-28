@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:manziliapp/core/globals/globals.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
 import 'package:manziliapp/view/login_view.dart';

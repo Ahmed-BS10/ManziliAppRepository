@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/model/review.dart';
-import 'add_review_screen.dart';
+import 'add_review_view.dart';
 
 class ReviewsView extends StatelessWidget {
   const ReviewsView({Key? key}) : super(key: key);
@@ -25,7 +25,7 @@ class ReviewsView extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const AddReviewScreen(),
+                  builder: (context) => const AddReviewView(),
                 ),
               );
             },
