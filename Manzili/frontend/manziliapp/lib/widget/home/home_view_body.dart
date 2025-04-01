@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/core/helper/app_colors.dart';
+import 'package:manziliapp/main.dart';
 import 'package:manziliapp/widget/home/categorysection.dart';
 import 'package:manziliapp/widget/home/filtersection.dart';
 import 'package:manziliapp/widget/home/headersection.dart';
@@ -34,6 +35,8 @@ class _HomeViewBodyState extends State<HomeViewBody> {
         currentIndex: _currentIndex,
         onTap: (int index) {
           setState(() {
+             sharedPreferences!.clear();
+            
             _currentIndex = index;
           });
         },
@@ -43,6 +46,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
+            
             icon: Icon(Icons.person),
             label: 'الحساب ',
           ),

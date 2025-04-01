@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:manziliapp/controller/login_controller.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
+import 'package:manziliapp/main.dart';
 import 'package:manziliapp/model/login_model.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/widget/auhentication/custom_password_text.dart';
@@ -10,6 +11,7 @@ import 'package:manziliapp/widget/auhentication/email_text_filed.dart';
 import 'package:manziliapp/widget/auhentication/header_image.dart';
 import 'package:manziliapp/widget/auhentication/register_text.dart';
 import 'package:manziliapp/widget/auhentication/welcome_text.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ForgotPasswordText extends StatelessWidget {
   const ForgotPasswordText();
@@ -72,10 +74,8 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                 return const CircularProgressIndicator();
               }
               return CustomTextButton(
-                onPressed: () {
-                  Get.to(() => HomeView());
-
-                  //_validateForm();
+                onPressed: () async {
+                  await _validateForm();
                 },
                 name: 'تسجيل الدخول',
                 radius: 23,
@@ -102,10 +102,6 @@ class _LoginViewBodyState extends State<LoginViewBody> {
               return const SizedBox.shrink();
             }),
             const SizedBox(height: 20),
-            // const CustomDivider(),
-            //const SizedBox(height: 15),
-            // const SocialLoginButtons(),
-            //const SizedBox(height: 10),
             RegisterText(),
           ],
         ),
@@ -113,9 +109,18 @@ class _LoginViewBodyState extends State<LoginViewBody> {
     );
   }
 
-  void _validateForm() {
+  Future<void> _validateForm() async {
     if (_formKey.currentState!.validate()) {
-      loginController.login(_loginModel);
+      await loginController.login(_loginModel);
+
+      // Save the success message to SharedPreferences
+      if (loginController.successMessage.isNotEmpty) {
+        await sharedPreferences!.setString(
+            'loginMessage', loginController.successMessage.value);
+
+        // Navigate to the HomeView
+        Get.to(() => HomeView());
+      }
     }
   }
 }

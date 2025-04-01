@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:manziliapp/bindings/login_binding.dart';
 import 'package:manziliapp/bindings/register_binding.dart';
+import 'package:manziliapp/middleware/auth_middelware.dart';
+import 'package:manziliapp/view/home_view.dart';
+import 'package:manziliapp/view/login_view.dart';
 import 'package:manziliapp/view/register_view.dart';
 import 'package:manziliapp/view/splash_view.dart';
 import 'package:manziliapp/view/start_view.dart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+ SharedPreferences? sharedPreferences;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  sharedPreferences = await SharedPreferences.getInstance();
+
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => FavoriteProvider()),
@@ -29,11 +38,22 @@ class MyApp2 extends StatelessWidget {
           name: '/',
           page: () => const SplashsView(),
           binding: LoginBinding(),
+           middlewares: [AuthMiddelware()]
+        ),
+         GetPage(
+          name: '/login',
+          page: () => const LoginView(),
+         
         ),
         GetPage(
           name: '/register',
           page: () => const RegisterView(),
           binding: RegisterBinding(),
+        ),
+         GetPage(
+          name: '/home',
+          page: () => const HomeView(),
+         
         ),
       ],
     );
