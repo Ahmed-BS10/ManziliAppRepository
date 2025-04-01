@@ -135,13 +135,20 @@ namespace Manzili.Core.Services
 
 
         }
-        public async Task<OperationResult<string>> Login(LoginUserDto userLogin)
+        public async Task<OperationResult<AuthModel>> Login(LoginUserDto userLogin)
         {
             var user = await _userManager.FindByEmailAsync(userLogin.Email);
             if (user == null || !await _userManager.CheckPasswordAsync(user, userLogin.Password))
-                return OperationResult<string>.Failure("Invalid email or password");
+                return OperationResult<AuthModel>.Failure("Invalid email or password");
 
-            return OperationResult<string>.Success(await GenerateJwtToken(user));
+
+            var authModel = new AuthModel
+            {
+                id = user.Id,
+                token = await GenerateJwtToken(user)
+            };
+
+            return OperationResult<AuthModel>.Success(authModel);
 
         }
         #endregion  
