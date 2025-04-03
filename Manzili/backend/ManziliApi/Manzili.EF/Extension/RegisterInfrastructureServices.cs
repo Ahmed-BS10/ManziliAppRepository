@@ -2,6 +2,7 @@
 using Manzili.Core.Services;
 using Manzili.EF.Implementaion;
 using Manzili.EF.Implementation;
+using Manzili.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace Manzili.EF.Extension
             services.AddScoped(typeof(IProductservices), typeof(Productservices));
             services.AddScoped(typeof(IProductReview), typeof(ProductReviewService));
             services.AddScoped(typeof(IOrdersService), typeof(OrderService));
-           // services.AddScoped(typeof(ICartService), typeof(CartService));
+            services.AddScoped(typeof(ICartService), typeof(CartService));
 
             return services;
         }
