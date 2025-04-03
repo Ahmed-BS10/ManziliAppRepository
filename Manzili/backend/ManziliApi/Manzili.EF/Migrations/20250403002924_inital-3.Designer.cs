@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manzili.EF.Migrations
 {
     [DbContext(typeof(ManziliDbContext))]
-    [Migration("20250328161943_initla")]
-    partial class initla
+    [Migration("20250403002924_inital-3")]
+    partial class inital3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,32 @@ namespace Manzili.EF.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CartProduct", b =>
+                {
+                    b.Property<int>("CartProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartProductId"));
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("CartProductId");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CartProducts");
+                });
 
             modelBuilder.Entity("Image", b =>
                 {
@@ -43,7 +69,7 @@ namespace Manzili.EF.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Cart", b =>
@@ -550,13 +576,127 @@ namespace Manzili.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CartId");
-
                     b.HasIndex("ProductCategoryId");
 
                     b.HasIndex("StoreId");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "قميص قطني عالي الجودة",
+                            Discount = 10.0,
+                            Name = "قميص رجالي",
+                            Price = 199.99000000000001,
+                            ProductCategoryId = 1,
+                            Quantity = 50,
+                            State = "Available",
+                            StoreId = 6
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "أحدث هاتف ذكي بمواصفات عالية",
+                            Name = "هاتف ذكي",
+                            Price = 5999.9899999999998,
+                            ProductCategoryId = 3,
+                            Quantity = 20,
+                            State = "Available",
+                            StoreId = 7
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "كنبة فخمة من الجلد الطبيعي",
+                            Discount = 15.0,
+                            Name = "كنبة",
+                            Price = 3499.9899999999998,
+                            ProductCategoryId = 5,
+                            Quantity = 10,
+                            State = "Available",
+                            StoreId = 8
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Description = "أحدث الروايات العربية",
+                            Name = "رواية",
+                            Price = 99.989999999999995,
+                            ProductCategoryId = 5,
+                            Quantity = 100,
+                            State = "Available",
+                            StoreId = 9
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "عسل نحل طبيعي 100%",
+                            Discount = 5.0,
+                            Name = "عسل طبيعي",
+                            Price = 149.99000000000001,
+                            ProductCategoryId = 5,
+                            Quantity = 30,
+                            State = "Available",
+                            StoreId = 10
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "بنطال جينز رجالي مقاوم للتجاعيد",
+                            Name = "بنطال جينز",
+                            Price = 299.99000000000001,
+                            ProductCategoryId = 1,
+                            Quantity = 40,
+                            State = "Available",
+                            StoreId = 6
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "لابتوب بمواصفات عالية للألعاب",
+                            Discount = 20.0,
+                            Name = "لابتوب",
+                            Price = 12999.99,
+                            ProductCategoryId = 4,
+                            Quantity = 15,
+                            State = "Available",
+                            StoreId = 7
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "طاولة طعام خشبية لـ 6 أشخاص",
+                            Name = "طاولة طعام",
+                            Price = 2499.9899999999998,
+                            ProductCategoryId = 5,
+                            Quantity = 8,
+                            State = "Available",
+                            StoreId = 8
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Description = "كتاب يحتوي على وصفات من المطبخ العربي",
+                            Name = "كتاب طبخ",
+                            Price = 149.99000000000001,
+                            ProductCategoryId = 5,
+                            Quantity = 25,
+                            State = "Available",
+                            StoreId = 9
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Description = "تمر مجدول عالي الجودة",
+                            Name = "تمر",
+                            Price = 89.989999999999995,
+                            ProductCategoryId = 5,
+                            Quantity = 60,
+                            State = "Available",
+                            StoreId = 10
+                        });
                 });
 
             modelBuilder.Entity("StoreCategory", b =>
@@ -577,6 +717,23 @@ namespace Manzili.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StoreCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "الإلكترونيات"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "الملابس"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "الأثاث المنزلي"
+                        });
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Store", b =>
@@ -609,6 +766,25 @@ namespace Manzili.EF.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Stores", (string)null);
+                });
+
+            modelBuilder.Entity("CartProduct", b =>
+                {
+                    b.HasOne("Manzili.Core.Entities.Cart", "Cart")
+                        .WithMany("CartProducts")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Product", "Product")
+                        .WithMany("CartProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Image", b =>
@@ -790,11 +966,6 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Product", b =>
                 {
-                    b.HasOne("Manzili.Core.Entities.Cart", "Cart")
-                        .WithMany("Products")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("Manzili.Core.Entities.ProductCategory", "ProductCategory")
                         .WithMany("Products")
                         .HasForeignKey("ProductCategoryId")
@@ -806,8 +977,6 @@ namespace Manzili.EF.Migrations
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Cart");
 
                     b.Navigation("ProductCategory");
 
@@ -825,7 +994,7 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Manzili.Core.Entities.Cart", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("CartProducts");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Order", b =>
@@ -849,6 +1018,8 @@ namespace Manzili.EF.Migrations
 
             modelBuilder.Entity("Product", b =>
                 {
+                    b.Navigation("CartProducts");
+
                     b.Navigation("Images");
                 });
 

@@ -34,12 +34,20 @@ class MyApp2 extends StatelessWidget {
     return GetMaterialApp(
       initialRoute: '/',
       getPages: [
+
         GetPage(
           name: '/',
-          page: () => const SplashsView(),
+          page: () => const CartView(),
           binding: LoginBinding(),
-           middlewares: [AuthMiddelware()]
+          middlewares: [AuthMiddelware()],
         ),
+        
+        // GetPage(
+        //   name: '/',
+        //   page: () => const SplashsView(),
+        //   binding: LoginBinding(),
+        //    middlewares: [AuthMiddelware()]
+        // ),
          GetPage(
           name: '/login',
           page: () => const LoginView(),
