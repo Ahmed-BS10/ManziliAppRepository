@@ -106,11 +106,36 @@ namespace Manzili.Services
             return OperationResult<bool>.Success(true, "تمت إضافة المنتج إلى السلة بنجاح");
 
         }
-
-        public async Task<OperationResult<bool>> AddOrUpdateNoteAsync(int userId, string note)
+        public async Task<OperationResult<bool>> EditCartItemAsync(int userId, int productId, int quantity)
         {
             var cart = await _context.Carts
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+                .Include(c => c.CartProducts)
+                .ThenInclude(cp => cp.Product)
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.CartProducts.Any(cp => cp.ProductId == productId));
+
+            if (cart == null)
+            {
+                return OperationResult<bool>.Failure("Cart not found.");
+            }
+
+            var cartProduct = cart.CartProducts.FirstOrDefault(cp => cp.ProductId == productId);
+            if (cartProduct == null)
+            {
+                return OperationResult<bool>.Failure("Product not found in cart.");
+            }
+
+            cartProduct.Quantity = quantity;
+
+            cart.TotalPrice = cart.CartProducts.Sum(cp => cp.Quantity * cp.Product.Price);
+
+            await _context.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true, "Cart item updated successfully.");
+        }
+        public async Task<OperationResult<bool>> AddNoteAsync(int cartId, string note)
+        {
+            var cart = await _context.Carts
+                .FirstOrDefaultAsync(c => c.CartId == cartId);
 
             if (cart == null)
             {
@@ -121,7 +146,7 @@ namespace Manzili.Services
             _context.Carts.Update(cart);
             await _context.SaveChangesAsync();
 
-            return OperationResult<bool>.Success(true, "Note added/updated successfully.");
+            return OperationResult<bool>.Success(true, "Note added successfully.");
         }
 
       
@@ -135,10 +160,6 @@ namespace Manzili.Services
             throw new NotImplementedException();
         }
 
-        public Task<OperationResult<bool>> EditCartItemAsync(int userId, int productId, int quantity)
-        {
-            throw new NotImplementedException();
-        }
 
         public Task<OperationResult<bool>> DeleteCartItemAsync(int userId, int productId)
         {

@@ -29,16 +29,20 @@ namespace Manzili.API.Controllers
 
             return Ok(result.Data);
         }
-        [HttpPost("addOrUpdateNote")]
-        public async Task<IActionResult> AddOrUpdateNoteAsync(int userId, string note)
+        [HttpPut("AddNote")]
+        public async Task<IActionResult> AddONoteAsync(int cartId, string note)
         {
-            var result = await _cartService.AddOrUpdateNoteAsync(userId, note);
+            var result = await _cartService.AddNoteAsync(cartId, note);
             if (result.IsSuccess)
             {
                 return Ok(result);
             }
             return BadRequest(result);
         }
+
+
+
+
         [HttpGet("GetCartByUserAndStoreAsync")]
         public async Task<ActionResult> GetCartByUserAndStoreAsync(int userId, int storeId)
         {
