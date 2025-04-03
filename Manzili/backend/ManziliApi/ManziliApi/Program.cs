@@ -74,6 +74,30 @@ var app = builder.Build();
 //  „ﬂÌ‰ CORS
 app.UseCors(CorsPolicy);
 
+
+
+
+
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ManziliDbContext>();
+        SeedData.Initialize(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
+
+
+
+
 //  „ﬂÌ‰ Swagger ›Ì Ê÷⁄ «· ÿÊÌ— ›ﬁÿ
 if (app.Environment.IsDevelopment())
 {

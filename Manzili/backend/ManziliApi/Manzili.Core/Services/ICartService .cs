@@ -14,7 +14,7 @@ namespace Manzili.Core.Services
     {
 
         Task<OperationResult<GetCardDto>> GetCartByUserAndStoreAsync(int userId, int storeId);
-        Task<OperationResult<CartProductDto>> AddProductToCartAsync(int userId, int storeId, int productId);
+        Task<OperationResult<bool>> AddProductToCartAsync(int userId, int storeId, int productId);
         Task<OperationResult<bool>> AddOrUpdateNoteAsync(int userId, string note);
         Task<OperationResult<IEnumerable<CartProductDto>>> GetCartProductsAsync(int userId);
         Task<OperationResult<bool>> IsCartEmptyAsync(int userId);

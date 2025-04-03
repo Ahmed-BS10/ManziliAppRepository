@@ -26,21 +26,16 @@ public class Product
 
     public ProductCategory ProductCategory { get; set; }
     public Store Store { get; set; }
-    public ICollection<Image> Images { get; set; }
-    public Cart? Cart { get; set; }
+    public ICollection<Image>? Images { get; set; }
+    public ICollection<CartProduct>? CartProducts { get; set; }
 
 
 
 
 
 
-    // New properties for store name and rate
-    //public string StoreName => Store?.BusinessName;
-    //public string StoreImage => Store?.ImageUrl;
-    //public double? StoreRate => Store?.Rate;
 
 
-   
 }
 
 
