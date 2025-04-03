@@ -19,6 +19,8 @@ class Product {
     required this.subCategory,
   });
 
+  get basePrice => null;
+
   // Factory method to create sample products
   static List<Product> sampleProducts() {
     return List.generate(
