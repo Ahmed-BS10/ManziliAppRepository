@@ -152,8 +152,34 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
 
 
 
+        modelBuilder.Entity<Order>()
+            .HasMany(op => op.OrderProducts)
+            .WithOne(o => o.Order)
+            .HasForeignKey(fk => fk.OrderId)
+            .OnDelete(DeleteBehavior.NoAction);
 
 
+
+        modelBuilder.Entity<Product>()
+          .HasMany(op => op.OrderProducts)
+          .WithOne(o => o.Product)
+          .HasForeignKey(fk => fk.ProductId)
+          .OnDelete(DeleteBehavior.NoAction);
+
+
+        modelBuilder.Entity<Store>()
+            .HasMany(o => o.StoreOrders)
+            .WithOne(s => s.Store)
+            .HasForeignKey(fk => fk.StoreId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+
+
+        modelBuilder.Entity<User>()
+           .HasMany(o => o.Orders)
+           .WithOne(s => s.User)
+           .HasForeignKey(fk => fk.UserId)
+           .OnDelete(DeleteBehavior.NoAction);
 
 
 
