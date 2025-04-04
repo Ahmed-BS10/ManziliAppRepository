@@ -97,13 +97,9 @@ using (var scope = app.Services.CreateScope())
 
 
 
+ app.UseSwagger();
+ app.UseSwaggerUI();
 
-//  „ﬂÌ‰ Swagger ›Ì Ê÷⁄ «· ÿÊÌ— ›ﬁÿ
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
