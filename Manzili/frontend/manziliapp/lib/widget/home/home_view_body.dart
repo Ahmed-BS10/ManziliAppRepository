@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/main.dart';
+import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/widget/home/categorysection.dart';
 import 'package:manziliapp/widget/home/filtersection.dart';
 import 'package:manziliapp/widget/home/headersection.dart';
 import 'package:manziliapp/widget/home/storelistsection.dart';
 import 'package:manziliapp/widget/home/text_fileld_search.dart';
+import 'package:provider/provider.dart';
 
 class HomeViewBody extends StatefulWidget {
   const HomeViewBody({super.key});
@@ -20,7 +22,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
 
   // List of pages to navigate.
   final List<Widget> _pages = [
-    const ProfilePage(),
+    const ProfileScreen(),
     const NotificationPage(),
     const OrderPage(),
     const StartPage(),
@@ -44,25 +46,24 @@ class _HomeViewBodyState extends State<HomeViewBody> {
         selectedItemColor: const Color(0xFF1548C7), // Active color
         unselectedItemColor: const Color(0xFF949494), // Inactive color
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            
-            icon: Icon(Icons.person),
-            label: 'الحساب ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'الإشعارات',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt),
-            label: 'الطلبات',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'الرئيسة',
-          ),
-        ],
+    items: [
+      BottomNavigationBarItem(
+        icon: Icon(Icons.person),
+        label: 'الحساب ',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.notifications),
+        label: 'الإشعارات',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.receipt),
+        label: 'الطلبات',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        label: 'الرئيسة',
+      ),
+    ],
       ),
     );
   }

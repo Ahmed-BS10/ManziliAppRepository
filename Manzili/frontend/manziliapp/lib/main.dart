@@ -5,6 +5,7 @@ import 'package:manziliapp/bindings/register_binding.dart';
 import 'package:manziliapp/middleware/auth_middelware.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
+import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/view/register_view.dart';
 import 'package:manziliapp/view/splash_view.dart';
 import 'package:manziliapp/view/start_view.dart';
@@ -21,10 +22,12 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => FavoriteProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
     ],
     child: const MyApp2(),
   ));
 }
+
 
 class MyApp2 extends StatelessWidget {
   const MyApp2({super.key});
@@ -37,7 +40,7 @@ class MyApp2 extends StatelessWidget {
 
         GetPage(
           name: '/',
-          page: () => const CartView(),
+          page: () => const StartView(),
           binding: LoginBinding(),
           middlewares: [AuthMiddelware()],
         ),

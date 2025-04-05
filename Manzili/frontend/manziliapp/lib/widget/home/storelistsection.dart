@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/core/helper/image_helper.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
+import 'package:manziliapp/view/store_details_view.dart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
-import 'package:manziliapp/widget/home/store_item.dart';
+import 'package:manziliapp/model/store_modle.dart';
 import 'package:provider/provider.dart';
 
 class StoreListSection extends StatefulWidget {
@@ -20,7 +23,7 @@ class StoreListSection extends StatefulWidget {
 }
 
 class _StoreListSectionState extends State<StoreListSection> {
-  late Future<List<StoreItem>> _storesFuture;
+  late Future<List<StoreModle>> _storesFuture;
 
   @override
   void initState() {
@@ -37,7 +40,7 @@ class _StoreListSectionState extends State<StoreListSection> {
     }
   }
 
-  Future<List<StoreItem>> _fetchStores() async {
+  Future<List<StoreModle>> _fetchStores() async {
     String url;
 
     if (widget.filter != null) {
@@ -67,7 +70,7 @@ class _StoreListSectionState extends State<StoreListSection> {
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       if (jsonResponse["isSuccess"] == true) {
         return (jsonResponse["data"] as List)
-            .map((item) => StoreItem.fromJson(item))
+            .map((item) => StoreModle.fromJson(item))
             .toList();
       } else {
         throw Exception("Error: ${jsonResponse["message"]}");
@@ -90,7 +93,7 @@ class _StoreListSectionState extends State<StoreListSection> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return FutureBuilder<List<StoreItem>>(
+    return FutureBuilder<List<StoreModle>>(
       future: _storesFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -106,14 +109,17 @@ class _StoreListSectionState extends State<StoreListSection> {
             child: Column(
               children: stores.map((store) {
                 final statusMap = mapStatus(store.status);
-                return StoreListItem(
-                  storeId: store.id,
-                  title: store.businessName,
-                  rating: store.rate.toStringAsFixed(1),
-                  status: statusMap["text"],
-                  statusColor: statusMap["color"],
-                  imageUrl: store.imageUrl,
-                  categoryNames: store.categoryNames,
+                return InkWell(
+                  onTap: () => Get.to(() => StoreDetailsView()),
+                  child: StoreListItem(
+                    storeId: store.id,
+                    title: store.businessName,
+                    rating: store.rate.toStringAsFixed(1),
+                    status: statusMap["text"],
+                    statusColor: statusMap["color"],
+                    imageUrl: store.imageUrl,
+                    categoryNames: store.categoryNames,
+                  ),
                 );
               }).toList(),
             ),
@@ -130,7 +136,7 @@ class StoreListItem extends StatefulWidget {
   final String rating;
   final String status;
   final Color statusColor;
-  final String imageUrl;
+  final String? imageUrl;
   final List<String> categoryNames;
 
   const StoreListItem({
@@ -148,13 +154,13 @@ class StoreListItem extends StatefulWidget {
   StoreListItemState createState() => StoreListItemState();
 }
 
-
 class StoreListItemState extends State<StoreListItem> {
   bool isHovered = false;
 
   Future<void> _toggleFavorite() async {
     // Use the provider to toggle the favorite state
-    final favoriteProvider = Provider.of<FavoriteProvider>(context, listen: false);
+    final favoriteProvider =
+        Provider.of<FavoriteProvider>(context, listen: false);
     await favoriteProvider.toggleFavorite(widget.storeId);
   }
 
@@ -187,7 +193,8 @@ class StoreListItemState extends State<StoreListItem> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _StoreImage(imageUrl: widget.imageUrl),
+                  _StoreImage(
+                      imageUrl: widget.imageUrl ?? 'assets/image/ad1.jpeg'),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Row(
@@ -235,8 +242,7 @@ class StoreListItemState extends State<StoreListItem> {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.star,
-                                    size: 16, color: Colors.amber),
+                                Icon(Icons.star, size: 16, color: Colors.amber),
                                 const SizedBox(width: 4),
                                 Text(widget.rating,
                                     style: TextStyles.timeStyle),
@@ -256,48 +262,6 @@ class StoreListItemState extends State<StoreListItem> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class _StatusIndicator extends StatelessWidget {
   final String status;

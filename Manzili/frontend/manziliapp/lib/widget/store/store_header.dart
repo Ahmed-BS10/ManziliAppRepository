@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:manziliapp/view/cart_view.dart';
 
 class StoreHeader extends StatelessWidget {
   const StoreHeader({Key? key}) : super(key: key);
@@ -42,7 +45,8 @@ class StoreHeader extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) {
                     return const CircleAvatar(
                       backgroundColor: Colors.white,
-                      child: Icon(Icons.restaurant, color: Colors.amber, size: 35),
+                      child:
+                          Icon(Icons.restaurant, color: Colors.amber, size: 35),
                     );
                   },
                 ),
@@ -59,7 +63,9 @@ class StoreHeader extends StatelessWidget {
                 color: Color(0xFF1548C7),
                 size: 38,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Get.to(() => CartView());
+              },
             ),
           ),
         ],

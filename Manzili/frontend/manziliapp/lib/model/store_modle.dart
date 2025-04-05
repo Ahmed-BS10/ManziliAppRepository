@@ -1,12 +1,12 @@
-class StoreItem {
+class StoreModle {
   final int id;
-  final String imageUrl;
+  final String? imageUrl;
   final String businessName;
   final double rate;
   final List<String> categoryNames;
   final String status;
 
-  StoreItem({
+  StoreModle({
     required this.id,
     required this.imageUrl,
     required this.businessName,
@@ -15,12 +15,12 @@ class StoreItem {
     required this.status,
   });
 
-  factory StoreItem.fromJson(Map<String, dynamic> json) {
-    return StoreItem(
+  factory StoreModle.fromJson(Map<String, dynamic> json) {
+    return StoreModle(
       id: json['id'],
       imageUrl: json['imageUrl'].toString().startsWith('/')
           ? "http://man.runasp.net" + json['imageUrl']
-          : json['imageUrl'],
+          : 'assets/image/ad1.jpeg',
       businessName: json['businessName'],
       rate: (json['rate'] as num).toDouble(),
       categoryNames: (json['categoryNames'] as List<dynamic>)
