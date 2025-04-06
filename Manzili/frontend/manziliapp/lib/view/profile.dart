@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/model/profile.dart';
 import 'package:manziliapp/view/edit_profile.dart';
 import 'package:provider/provider.dart';
+
 // ================ USER PROVIDER ================
 class UserProvider with ChangeNotifier {
   UserModel _user = UserModel.defaultUser();
@@ -108,7 +112,8 @@ class ProfileScreen extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const EditProfileScreen(),
+                                        builder: (context) =>
+                                            const EditProfileScreen(),
                                       ),
                                     );
                                   },
@@ -120,16 +125,15 @@ class ProfileScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                               
                               ],
                             ),
-                             Text(
-                                  user.name,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                            Text(
+                              user.name,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               user.email,
@@ -177,7 +181,10 @@ class ProfileScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.find<UserController>().clearUserData();
+                            Get.offAllNamed('/');
+                          },
                           child: const Text(
                             'تسجيل الخروج',
                             style: TextStyle(
@@ -199,4 +206,3 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
-

@@ -22,4 +22,16 @@ class UserController extends GetxController {
     userId.value = prefs.getInt('userId') ?? 0;
     userToken.value = prefs.getString('userToken') ?? '';
   }
+
+
+  // مسح بيانات المستخدم من SharedPreferences وتحديث الحالة
+  Future<void> clearUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('userId');
+    await prefs.remove('userToken');
+
+    // إعادة تعيين الحالة
+    userId.value = 0;
+    userToken.value = '';
+  }
 }
