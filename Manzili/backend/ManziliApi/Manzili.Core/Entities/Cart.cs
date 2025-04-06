@@ -16,7 +16,7 @@ namespace Manzili.Core.Entities
         // Navigation properties
         public User User { get; set; }
         public Store Store { get; set; }
-        public ICollection<CartProduct> CartProducts { get; set; } = new List<CartProduct>();
+        public ICollection<CartProduct>? CartProducts { get; set; } = new List<CartProduct>();
 
     }
 }

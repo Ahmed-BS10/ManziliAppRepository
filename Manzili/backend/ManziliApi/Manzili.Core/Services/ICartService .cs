@@ -14,17 +14,13 @@ namespace Manzili.Core.Services
     {
 
         Task<OperationResult<bool>> AddProductToCartAsync(int userId, int storeId, int productId);
-      //  Task<OperationResult<bool>> EditCartItemAsync(int userId, int productId, int quantity);
         Task<OperationResult<bool>> AddNoteAsync(int userId, string note);
-
-
-        Task<OperationResult<GetCardDto>> GetCartByUserAndStoreAsync(int userId, int storeId);
-       
-      
-        Task<OperationResult<IEnumerable<CartProductDto>>> GetCartProductsAsync(int userId);
+        Task<OperationResult<GetCartDto>> GetCartByUserAndStoreAsync(int userId, int storeId);
+        Task<OperationResult<bool>> DeleteCartItemAsync(int cartId, int productId);
         Task<OperationResult<bool>> IsCartEmptyAsync(int userId);
       
-        Task<OperationResult<bool>> DeleteCartItemAsync(int userId, int productId);
+
+
 
         Task<OperationResult<bool>> AddOrUpdateShippingAddressAsync(int userId, string address);
         Task<OperationResult<string>> UploadPaymentReceiptAsync(int userId, IFormFile receipt);

@@ -18,37 +18,47 @@ namespace Manzili.Services
         {
             _context = context;
         }
-        //public async Task<OperationResult<GetCardDto>> GetCartByUserAndStoreAsync(int userId, int storeId)
-        //{
-        //    var cart = await _context.Carts
-        //        .Include(c => c.Products)
-        //        .FirstOrDefaultAsync(c => c.UserId == userId && c.StoreId == storeId);
 
-        //    if (cart == null)
-        //    {
-        //        return OperationResult<GetCardDto>.Failure("Cart not found");
-        //    }
+        public async Task<OperationResult<GetCartDto>> GetCartByUserAndStoreAsync(int userId, int storeId)
+        {
+            var cart = await _context.Carts
+                 .Include(c => c.CartProducts)
+                 .ThenInclude(cp => cp.Product)
+                 .ThenInclude(im => im.Images)
+                 .FirstOrDefaultAsync(c => c.UserId == userId && c.StoreId == storeId);
+            if (cart == null)
+            {
+                return OperationResult<GetCartDto>.Failure("Cart not found");
+            }
+            var getCardDto = new GetCartDto
+            {
+                CartId = cart.CartId,
+                UserId = cart.UserId,
+                StoreId = cart.StoreId,
+                Note = cart.Note,
+                getProductCardDtos = cart.CartProducts.Select(product => new GetProductCartDto
+                {
+                    ProductId = product.Product.Id,
+                    Name = product.Product.Name,
+                    Price = product.Product.Price,
+                    ImageUrl = product.Product.Images.FirstOrDefault()?.ImageUrl ?? string.Empty,
+                }).ToList()
+            };
+            return OperationResult<GetCartDto>.Success(getCardDto, "Cart retrieved successfully");
+        }
+        public async Task<OperationResult<bool>> DeleteCartItemAsync(int cartId, int productId)
+        {
+            var cart = _context.Carts
+                 .Include(c => c.CartProducts)
+                 .FirstOrDefault(c => c.CartId == cartId);
 
-        //    var getCardDto = new GetCardDto
-        //    {
-        //        UserId = cart.UserId,
-        //        StoreId = cart.StoreId,
-        //        TotalPrice = cart.TotalPrice,
-        //        CreatedAt = cart.CreatedAt,
-        //        Note = cart.Note,
-        //        getProductCardDtos = cart.Products.Select(product => new GetProductCardDto
-        //        {
-        //            ProductId = product.Id,
-        //            Description = product.Description,
-        //            Name = product.Name,
-        //            Price = product.Price,
-        //            ImageUrl = product.Images.FirstOrDefault()?.ImageUrl ?? string.Empty,
-        //            Quantity = product.Quantity ?? 1 // Provide a default value if Quantity is null
-        //        }).ToList()
-        //    };
+            var cartProduct = cart.CartProducts.FirstOrDefault(cp => cp.ProductId == productId);
 
-        //    return OperationResult<GetCardDto>.Success(getCardDto, "Cart retrieved successfully");
-        //}
+            cart.CartProducts.Remove(cartProduct);
+            _context.Carts.Update(cart);
+            _context.SaveChanges();
+            return OperationResult<bool>.Success(true, "Product removed from cart successfully.");
+        }
         public async Task<OperationResult<bool>> AddProductToCartAsync(int userId, int storeId, int productId)
         {
            
@@ -103,33 +113,7 @@ namespace Manzili.Services
 
             return OperationResult<bool>.Success(true, "تمت إضافة المنتج إلى السلة بنجاح");
 
-        }
-        //public async Task<OperationResult<bool>> EditCartItemAsync(int userId, int productId, int quantity)
-        //{
-        //    var cart = await _context.Carts
-        //        .Include(c => c.CartProducts)
-        //        .ThenInclude(cp => cp.Product)
-        //        .FirstOrDefaultAsync(c => c.UserId == userId && c.CartProducts.Any(cp => cp.ProductId == productId));
-
-        //    if (cart == null)
-        //    {
-        //        return OperationResult<bool>.Failure("Cart not found.");
-        //    }
-
-        //    var cartProduct = cart.CartProducts.FirstOrDefault(cp => cp.ProductId == productId);
-        //    if (cartProduct == null)
-        //    {
-        //        return OperationResult<bool>.Failure("Product not found in cart.");
-        //    }
-
-        //    cartProduct.Quantity = quantity;
-
-        //    cart.TotalPrice = cart.CartProducts.Sum(cp => cp.Quantity * cp.Product.Price);
-
-        //    await _context.SaveChangesAsync();
-
-        //    return OperationResult<bool>.Success(true, "Cart item updated successfully.");
-        //}
+        }       
         public async Task<OperationResult<bool>> AddNoteAsync(int cartId, string note)
         {
             var cart = await _context.Carts
@@ -146,12 +130,7 @@ namespace Manzili.Services
 
             return OperationResult<bool>.Success(true, "Note added successfully.");
         }
-
-      
-        public Task<OperationResult<IEnumerable<CartProductDto>>> GetCartProductsAsync(int userId)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public Task<OperationResult<bool>> IsCartEmptyAsync(int userId)
         {
@@ -159,10 +138,6 @@ namespace Manzili.Services
         }
 
 
-        public Task<OperationResult<bool>> DeleteCartItemAsync(int userId, int productId)
-        {
-            throw new NotImplementedException();
-        }
 
         public Task<OperationResult<bool>> AddOrUpdateShippingAddressAsync(int userId, string address)
         {
@@ -179,10 +154,6 @@ namespace Manzili.Services
             throw new NotImplementedException();
         }
 
-        public Task<OperationResult<GetCardDto>> GetCartByUserAndStoreAsync(int userId, int storeId)
-        {
-            throw new NotImplementedException();
-        }
 
         //public async Task<OperationResult<bool>> IsCartEmptyAsync(int userId)
         //{
