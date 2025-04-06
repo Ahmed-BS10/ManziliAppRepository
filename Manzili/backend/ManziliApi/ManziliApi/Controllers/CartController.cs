@@ -64,16 +64,16 @@ namespace Manzili.API.Controllers
             return BadRequest(result.Message);
         }
 
-        [HttpPut("edit")]
-        public async Task<IActionResult> EditCartItem(int userId, int productId, int quantity)
-        {
-            var result = await _cartService.EditCartItemAsync(userId, productId, quantity);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Message);
-            }
-            return BadRequest(result.Message);
-        }
+        //[HttpPut("edit")]
+        //public async Task<IActionResult> EditCartItem(int userId, int productId, int quantity)
+        //{
+        //    var result = await _cartService.EditCartItemAsync(userId, productId, quantity);
+        //    if (result.IsSuccess)
+        //    {
+        //        return Ok(result.Message);
+        //    }
+        //    return BadRequest(result.Message);
+        //}
 
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteCartItem(int userId, int productId)

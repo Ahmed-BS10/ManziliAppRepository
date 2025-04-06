@@ -87,18 +87,16 @@ namespace Manzili.Services
                 {
                     CartId = cart.CartId,
                     ProductId = productId,
-                    Quantity = 1
+                  
                 };
                 cart.CartProducts.Add(cartProduct);
             }
             else
             {
-                // المنتج موجود بالفعل، نقوم بتحديث الكمية
-                cartProduct.Quantity += 1;
+                
             }
 
             // تحديث السعر الإجمالي للسلة
-            cart.TotalPrice = cart.CartProducts.Sum(cp => cp.Quantity * _context.Products.Where(p => p.Id == cp.ProductId).Select(p => p.Price).FirstOrDefault());
 
             // حفظ التغييرات
             await _context.SaveChangesAsync();
@@ -106,32 +104,32 @@ namespace Manzili.Services
             return OperationResult<bool>.Success(true, "تمت إضافة المنتج إلى السلة بنجاح");
 
         }
-        public async Task<OperationResult<bool>> EditCartItemAsync(int userId, int productId, int quantity)
-        {
-            var cart = await _context.Carts
-                .Include(c => c.CartProducts)
-                .ThenInclude(cp => cp.Product)
-                .FirstOrDefaultAsync(c => c.UserId == userId && c.CartProducts.Any(cp => cp.ProductId == productId));
+        //public async Task<OperationResult<bool>> EditCartItemAsync(int userId, int productId, int quantity)
+        //{
+        //    var cart = await _context.Carts
+        //        .Include(c => c.CartProducts)
+        //        .ThenInclude(cp => cp.Product)
+        //        .FirstOrDefaultAsync(c => c.UserId == userId && c.CartProducts.Any(cp => cp.ProductId == productId));
 
-            if (cart == null)
-            {
-                return OperationResult<bool>.Failure("Cart not found.");
-            }
+        //    if (cart == null)
+        //    {
+        //        return OperationResult<bool>.Failure("Cart not found.");
+        //    }
 
-            var cartProduct = cart.CartProducts.FirstOrDefault(cp => cp.ProductId == productId);
-            if (cartProduct == null)
-            {
-                return OperationResult<bool>.Failure("Product not found in cart.");
-            }
+        //    var cartProduct = cart.CartProducts.FirstOrDefault(cp => cp.ProductId == productId);
+        //    if (cartProduct == null)
+        //    {
+        //        return OperationResult<bool>.Failure("Product not found in cart.");
+        //    }
 
-            cartProduct.Quantity = quantity;
+        //    cartProduct.Quantity = quantity;
 
-            cart.TotalPrice = cart.CartProducts.Sum(cp => cp.Quantity * cp.Product.Price);
+        //    cart.TotalPrice = cart.CartProducts.Sum(cp => cp.Quantity * cp.Product.Price);
 
-            await _context.SaveChangesAsync();
+        //    await _context.SaveChangesAsync();
 
-            return OperationResult<bool>.Success(true, "Cart item updated successfully.");
-        }
+        //    return OperationResult<bool>.Success(true, "Cart item updated successfully.");
+        //}
         public async Task<OperationResult<bool>> AddNoteAsync(int cartId, string note)
         {
             var cart = await _context.Carts

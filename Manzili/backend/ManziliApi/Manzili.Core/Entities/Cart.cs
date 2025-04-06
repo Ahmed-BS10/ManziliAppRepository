@@ -7,7 +7,7 @@ namespace Manzili.Core.Entities
         public int StoreId { get; set; }
 
 
-        public double TotalPrice { get; set; } = 0;
+      
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? Note { get; set; }
 
