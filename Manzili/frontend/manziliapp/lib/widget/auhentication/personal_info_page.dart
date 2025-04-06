@@ -1,89 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/core/widget/custome_text_filed.dart';
-import 'package:manziliapp/model/user_create_model.dart';
 import 'package:manziliapp/widget/auhentication/custom_password_text.dart';
 import 'package:manziliapp/widget/auhentication/email_text_filed.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-
-// class PersonalInfoPage extends StatefulWidget {
-//   const PersonalInfoPage({
-//     super.key,
-//   });
-
-//   @override
-//   _PersonalInfoPageState createState() => _PersonalInfoPageState();
-// }
-
-// class _PersonalInfoPageState extends State<PersonalInfoPage> {
-//   late File image;
-//   Future<void> _pickImage() async {
-//     final pickedFile =
-//         await ImagePicker().pickImage(source: ImageSource.gallery);
-
-//     if (pickedFile != null) {
-//       setState(() {
-//         image = File(pickedFile.path);
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SingleChildScrollView(
-//       child: Column(
-//         children: [
-//           GestureDetector(
-//             onTap: _pickImage,
-//             child: CircleAvatar(
-//               radius: 50,
-//               backgroundColor: Colors.grey[300],
-//               backgroundImage: image != null ? FileImage(image!) : null,
-//               child: image == null
-//                   ? const Icon(Icons.camera_alt, size: 40, color: Colors.grey)
-//                   : null,
-//             ),
-//           ),
-//           const SizedBox(height: 15),
-//           const SizedBox(height: 10),
-//           CustomeTextFiled(
-//             onChanged: (value) {},
-//             hintText: 'اسم المستخدم',
-//           ),
-//           const SizedBox(height: 10),
-//           CustomeTextFiled(
-//             onChanged: (value) {},
-//             hintText: 'رقمك',
-//           ),
-//           const SizedBox(height: 10),
-//           EmailTextFiled(
-//             onChanged: (value) {},
-//           ),
-//           const SizedBox(height: 10),
-//           CustomeTextFiled(
-//             onChanged: (value) {},
-//             hintText: 'المدينة',
-//           ),
-//           const SizedBox(height: 10),
-//           CustomeTextFiled(
-//             onChanged: (value) {},
-//             hintText: 'عنوانك : مثل الديس - الدائرة ',
-//           ),
-//           const SizedBox(height: 10),
-//           PasswordTextField(
-//             onChanged: (value) {},
-//             hintText: 'كلمة السر',
-//           ),
-//           const SizedBox(height: 10),
-//           PasswordTextField(
-//             onChanged: (value) {},
-//             hintText: 'تاكيد كلمة السر',
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class PersonalInfoPage extends StatefulWidget {
   final TextEditingController usernameController;

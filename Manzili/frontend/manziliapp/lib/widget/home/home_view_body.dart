@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/core/helper/app_colors.dart';
-import 'package:manziliapp/main.dart';
 import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/widget/home/categorysection.dart';
 import 'package:manziliapp/widget/home/filtersection.dart';
 import 'package:manziliapp/widget/home/headersection.dart';
 import 'package:manziliapp/widget/home/storelistsection.dart';
 import 'package:manziliapp/widget/home/text_fileld_search.dart';
-import 'package:provider/provider.dart';
 
 class HomeViewBody extends StatefulWidget {
   const HomeViewBody({super.key});
@@ -41,8 +38,6 @@ class _HomeViewBodyState extends State<HomeViewBody> {
         currentIndex: _currentIndex,
         onTap: (int index) {
           setState(() {
-          
-
             _currentIndex = index;
           });
         },
@@ -124,6 +119,7 @@ class _StartPageState extends State<StartPage> {
     );
   }
 }
+
 class OrderPage extends StatelessWidget {
   const OrderPage({Key? key}) : super(key: key);
 
@@ -146,7 +142,6 @@ class OrderPage extends StatelessWidget {
     });
   }
 }
-
 
 /// Placeholder for Notification Page.
 class NotificationPage extends StatelessWidget {
@@ -171,13 +166,3 @@ class ProfilePage extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineSmall));
   }
 }
-
-
-
-
-
-
-
-
-
-

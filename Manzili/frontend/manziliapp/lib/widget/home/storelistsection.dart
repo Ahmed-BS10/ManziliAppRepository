@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/core/helper/app_colors.dart';
-import 'package:manziliapp/core/helper/image_helper.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
 import 'package:manziliapp/view/store_details_view.dart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
@@ -336,7 +334,8 @@ class _StoreImage extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         image: DecorationImage(
-          image: NetworkImage(ImageHelper.getImageUrl(imageUrl)),
+          // image: NetworkImage(imageUrl),
+          image: AssetImage('assets/image/ad1.jpeg'),
           fit: BoxFit.contain,
         ),
       ),

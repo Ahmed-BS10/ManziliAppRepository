@@ -134,7 +134,9 @@ class Category {
   factory Category.fromJson(Map<String, dynamic> json) {
     String rawImageUrl = json["imageUrl"] as String;
     if (rawImageUrl.startsWith("/")) {
-      rawImageUrl = "http://man.runasp.net" + rawImageUrl;
+      // rawImageUrl = "http://man.runasp.net" + rawImageUrl;
+
+      rawImageUrl = 'assets/image/ad1.jpeg';
     }
     return Category(
       id: json["id"] as int,
@@ -166,9 +168,9 @@ class SectionHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           InkWell(
-            onTap: (){
-              Get.to( StoreListSection());
-               },
+            onTap: () {
+              Get.to(StoreListSection());
+            },
             child: Text(action,
                 style: TextStyles.linkStyle.copyWith(color: Colors.black)),
           ),
@@ -216,7 +218,8 @@ class CategoryCard extends StatelessWidget {
           CircleAvatar(
             radius: 21.5,
             backgroundImage:
-                imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+                // imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+                imageUrl.isNotEmpty ? AssetImage('assets/image/ad1.jpeg') : null,
             child: imageUrl.isEmpty
                 ? Icon(Icons.category, color: AppColors.primaryColor)
                 : null,
