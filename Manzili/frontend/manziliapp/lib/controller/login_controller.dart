@@ -8,6 +8,7 @@ class LoginController extends GetxController {
   var isLoading = false.obs;
   var successMessage = ''.obs;
   var errorMessage = ''.obs;
+  var apiResponseData = {}.obs; // To store the API response data
 
   // API endpoint
   final String loginEndpoint = "http://man.runasp.net/api/Auhencation/Login";
@@ -29,12 +30,14 @@ class LoginController extends GetxController {
       final jsonResponse = json.decode(response.body);
 
       // Handle the response
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && jsonResponse['isSuccess'] == true) {
         successMessage.value = jsonResponse['message'];
         errorMessage.value = ''; // Clear any previous error messages
+
+        // Store the API response data
+        apiResponseData.value = jsonResponse['data'];
       } else {
         errorMessage.value = jsonResponse['message'];
-        successMessage.value = ''; // Clear any previous success messages
         successMessage.value = ''; // Clear any previous success messages
       }
     } catch (e) {

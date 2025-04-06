@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:manziliapp/controller/login_controller.dart';
+import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
 import 'package:manziliapp/main.dart';
@@ -8,28 +9,11 @@ import 'package:manziliapp/model/login_model.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/widget/auhentication/custom_password_text.dart';
 import 'package:manziliapp/widget/auhentication/email_text_filed.dart';
+import 'package:manziliapp/widget/auhentication/forgot_password_text.dart';
 import 'package:manziliapp/widget/auhentication/header_image.dart';
 import 'package:manziliapp/widget/auhentication/register_text.dart';
 import 'package:manziliapp/widget/auhentication/welcome_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-class ForgotPasswordText extends StatelessWidget {
-  const ForgotPasswordText();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 170),
-      child: InkWell(
-        onTap: () {},
-        child: Text(
-          'نسيت كلمة السر؟',
-          style: TextStyle(fontSize: 14, color: Colors.grey),
-        ),
-      ),
-    );
-  }
-}
 
 class LoginViewBody extends StatefulWidget {
   const LoginViewBody({super.key});
@@ -37,11 +21,12 @@ class LoginViewBody extends StatefulWidget {
   @override
   State<LoginViewBody> createState() => _LoginViewBodyState();
 }
-
 class _LoginViewBodyState extends State<LoginViewBody> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final LoginModel _loginModel = LoginModel(Email: '', Password: '');
   final LoginController loginController = Get.find<LoginController>();
+  // الحصول على الـ UserController من GetX
+  final UserController userController = Get.find<UserController>();
 
   @override
   Widget build(BuildContext context) {
@@ -113,13 +98,19 @@ class _LoginViewBodyState extends State<LoginViewBody> {
     if (_formKey.currentState!.validate()) {
       await loginController.login(_loginModel);
 
-      // Save the success message to SharedPreferences
-      if (loginController.successMessage.isNotEmpty) {
-        await sharedPreferences!.setString(
-            'loginMessage', loginController.successMessage.value);
+      if (loginController.apiResponseData.isNotEmpty) {
+        try {
+          final id = loginController.apiResponseData['id'] as int;
+          final token = loginController.apiResponseData['token'] as String;
 
-        // Navigate to the HomeView
-        Get.to(() => HomeView());
+          // حفظ البيانات باستخدام UserController
+          await userController.saveUserData(id, token);
+
+          // الانتقال إلى الصفحة الرئيسية
+          Get.offAll(() => HomeView());
+        } catch (e) {
+          print("Error saving user data: $e");
+        }
       }
     }
   }

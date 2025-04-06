@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
+import 'package:manziliapp/controller/user_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FavoriteProvider with ChangeNotifier {
@@ -30,7 +33,7 @@ class FavoriteProvider with ChangeNotifier {
 
     // Call your backend endpoint
     String url =
-        "http://man.runasp.net/api/StoreFavorite/ToggleFavorite?userId=3&storeId=$storeId";
+        "http://man.runasp.net/api/StoreFavorite/ToggleFavorite?userId=${Get.find<UserController>().userId.value}&storeId=$storeId";
     try {
       final response = await http.post(Uri.parse(url));
       final Map<String, dynamic> result = json.decode(response.body);

@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/main.dart';
 import 'package:manziliapp/view/profile.dart';
@@ -41,7 +37,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
         currentIndex: _currentIndex,
         onTap: (int index) {
           setState(() {
-          
+            sharedPreferences!.clear();
 
             _currentIndex = index;
           });
@@ -124,29 +120,19 @@ class _StartPageState extends State<StartPage> {
     );
   }
 }
+
+/// Placeholder for Order Page.
 class OrderPage extends StatelessWidget {
   const OrderPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // الحصول على بيانات المستخدم من UserController
-    final UserController userController = Get.find<UserController>();
-
-    return Obx(() {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('User ID: ${userController.userId.value}'),
-            Text('User Token: ${userController.userToken.value}'),
-            const Text('صفحة الطلبات', style: TextStyle(fontSize: 24)),
-          ],
-        ),
-      );
-    });
+    return Center(
+      child: Text('صفحة الطلبات',
+          style: Theme.of(context).textTheme.headlineSmall),
+    );
   }
 }
-
 
 /// Placeholder for Notification Page.
 class NotificationPage extends StatelessWidget {
@@ -171,13 +157,3 @@ class ProfilePage extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineSmall));
   }
 }
-
-
-
-
-
-
-
-
-
-

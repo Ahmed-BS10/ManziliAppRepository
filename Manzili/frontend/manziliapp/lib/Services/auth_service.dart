@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 class AuthService {
   final ApiService apiService;
 
+  static var to;
+
   AuthService({required this.apiService});
 
   Future<ApiResponse> login(String email, String password) async {

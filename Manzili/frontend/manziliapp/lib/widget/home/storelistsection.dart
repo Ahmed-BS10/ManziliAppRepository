@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
+import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/core/helper/image_helper.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
@@ -47,7 +48,7 @@ class _StoreListSectionState extends State<StoreListSection> {
       switch (widget.filter) {
         case "المفضلة":
           url =
-              "http://man.runasp.net/api/Store/GetUserFavoriteStores?userId=3";
+              "http://man.runasp.net/api/Store/GetUserFavoriteStores?userId=${Get.find<UserController>().userId.value}";
           break;
         case "الجديدة":
           url = "http://man.runasp.net/api/Store/OrderByDescending";
