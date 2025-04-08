@@ -16,35 +16,64 @@ namespace Manzili.API.Controllers
             _orderService = orderService;
         }
 
-        [HttpGet("get order")]
-        public async Task<IActionResult> GetOrders()
+
+
+        [HttpGet("GetDeliveredOrdersByUserId")]
+        public async Task<IActionResult> GetDeliveredOrdersByUserIdAsync(int userId)
         {
-            var result = await _orderService.GetOrdersAsync();
-            if (!result.IsSuccess)
-            {
-                return NotFound(new { Message = result.Message });
-            }
-            return Ok(result.Data);
+            var result = await _orderService.GetDeliveredOrdersByUserIdAsync(userId);
+            if (result.IsSuccess)
+                return Ok(result);
+
+
+            return BadRequest(result);
         }
-        [HttpGet("status/{status}")]
-        public async Task<IActionResult> GetOrdersByStatus(enOrderStatus status)
+
+
+        [HttpGet("GetUnDeliveredOrdersByUserId")]
+        public async Task<IActionResult> GetUnDeliveredOrdersByUserIdAsync(int userId)
         {
-            var result = await _orderService.GetOrdersByStatusAsync(status);
-            if (!result.IsSuccess)
-            {
-                return NotFound(new { Message = result.Message });
-            }
-            return Ok(result.Data);
+            var result = await _orderService.GetUnDeliveredOrdersByUserIdAsync(userId);
+            if (result.IsSuccess)
+                return Ok(result);
+
+
+            return BadRequest(result);
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderById(int id)
+
+
+        [HttpGet("GetOrderDetailsByUserAsync")]
+        public async Task<IActionResult> GetOrderDetailsByUserAsync(int userId)
         {
-            var result = await _orderService.GetOrderDetailsByIdAsync(id);
-            if (!result.IsSuccess)
-            {
-                return NotFound(new { Message = result.Message });
-            }
-            return Ok(result.Data);
+            var result = await _orderService.GetOrderDetailsByUserAsync(userId);
+            if (result.IsSuccess)
+                return Ok(result);
+
+
+            return BadRequest(result);
         }
+
+        [HttpPost("Add")]
+        public async Task<IActionResult> Add(CreateOrderDto createOrderDto)
+        {
+            var result = await _orderService.AddOrderAsync(createOrderDto);
+
+            if (result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpPut("UpdateOrderStatus")]
+        public async Task<IActionResult> UpdateOrderStatusAsync(int orderId, enOrderStatus status)
+        {
+            var result = await _orderService.UpdateOrderStatusAsync(orderId, status);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+
+
+        }
+
     }
 }

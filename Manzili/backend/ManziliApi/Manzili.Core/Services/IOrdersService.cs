@@ -1,20 +1,15 @@
 ﻿using Manzili.Core.Dto.OrderDto;
 using Manzili.Core.Entities;
 using Manzili.Core.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Manzili.Core.Services
+public interface IOrdersService
 {
-    public interface IOrdersService
-    {
-        Task<OperationResult<List<Order>>> GetOrdersAsync();
-        Task<OperationResult<List<Order>>> GetOrdersByStatusAsync(enOrderStatus status);
-        Task<OperationResult<OrderDetailsDto>> GetOrderDetailsByIdAsync(int id);
-    }
-}
+    
 
+    Task<OperationResult<IEnumerable<GetOrderDetailsDto>>> GetOrderDetailsByUserAsync(int userId);
+    Task<OperationResult<IEnumerable<GteBaseOrderDto>>> GetDeliveredOrdersByUserIdAsync(int userId);
+    Task<OperationResult<IEnumerable<GteBaseOrderDto>>> GetUnDeliveredOrdersByUserIdAsync(int userId);
+    Task<OperationResult<bool>> AddOrderAsync(CreateOrderDto createOrderDto);
+    Task<OperationResult<bool>> UpdateOrderStatusAsync(int orderId, enOrderStatus status);
+}
 

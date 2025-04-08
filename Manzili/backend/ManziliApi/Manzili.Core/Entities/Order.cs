@@ -1,4 +1,5 @@
-﻿using Manzili.Core.Enum;
+﻿using Manzili.Core.Entities;
+using Manzili.Core.Enum;
 using System.Text;
 
 namespace Manzili.Core.Entities
@@ -10,7 +11,7 @@ namespace Manzili.Core.Entities
         public int StoreId { get; set; } // FK
 
 
-        public enOrderStatus Status { get; set; }
+        public enOrderStatus Status { get; set; } = enOrderStatus.Pending;
         public DateTime CreatedAt { get; set; }
         public double Total { get; set; }
         public string? Note { get; set; }
@@ -18,7 +19,7 @@ namespace Manzili.Core.Entities
 
         public string DeliveryAddress { get; set; }
         public string? DeliveryTime { get; set; }
-        public int? NumberOfProducts { get; set; }
+        public int NumberOfProducts { get; set; }
         public int ?  DeliveryFees {  get; set; }
 
         // Navigation properties
@@ -31,3 +32,6 @@ namespace Manzili.Core.Entities
     }
 
 }
+
+
+

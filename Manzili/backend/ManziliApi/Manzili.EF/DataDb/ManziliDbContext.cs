@@ -24,6 +24,7 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartProduct> CartProducts { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderProduct> OrderProducts { get; set; }  
 
 
 
