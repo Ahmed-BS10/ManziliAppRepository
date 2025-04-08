@@ -53,8 +53,8 @@ namespace Manzili.API.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("Add")]
-        public async Task<IActionResult> Add(CreateOrderDto createOrderDto)
+        [HttpPost("AddOrder")]
+        public async Task<IActionResult> AddOrderAsync(CreateOrderDto createOrderDto)
         {
             var result = await _orderService.AddOrderAsync(createOrderDto);
 
