@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 
 class CategoryController extends GetxController {
   // Reactive variables
-  var categories = <Map<String, dynamic>>[].obs; // List of category objects (name and id)
-  var selectedCategoryNames = <String>[].obs; // List of selected category names
+  var categories = <Map<String, dynamic>>[].obs; 
+  var selectedCategoryNames = <String>[].obs; 
   var isLoading = false.obs; // Loading state
 
   // API endpoint
