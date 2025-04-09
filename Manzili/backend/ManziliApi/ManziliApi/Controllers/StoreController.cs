@@ -15,18 +15,16 @@ namespace ManziliApi.Controllers
             _storeServices = storeServices;
         }
 
-        [HttpGet("FullStoreInfo")]
-        public async Task<IActionResult> GetList()
+        [HttpGet("SearchStoreByName")]
+        public async Task<IActionResult> SearchStoreByNameAsync(string businessName)
         {
-            var result = await _storeServices.GetInfoStore(1);
+            var result = await _storeServices.SearchStoreByNameAsync(businessName);
             if (result.IsSuccess)
                 return Ok(result);
 
             return NotFound(result);
 
         }
-
-
 
 
         [HttpGet("GetUserFavoriteStores")]
@@ -72,18 +70,7 @@ namespace ManziliApi.Controllers
 
         }
 
-        //[HttpGet(StoreRouting.GetById)]
-        //public async Task<IActionResult> Get(int id)
-        //{
-        //    var result = await _storeServices.GetByIdAsync(id);
-        //    if (result.IsSuccess)
-        //        return Ok(result);
-
-        //    return NotFound(result);
-
-
-        //}
-
+      
         [HttpPost(StoreRouting.Create)]
         public async Task<IActionResult> Create(CreateStoreDto storeDto , List<int> categories)
         {

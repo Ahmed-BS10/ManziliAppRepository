@@ -40,54 +40,7 @@ namespace Manzili.EF.Implementaion
 
         #region Methods
 
-        public async Task<OperationResult<GetStoreDto>> GetByIdAsync(int id)
-        {
-            var store = await _dbSet.FindAsync(id);
-            if (store == null) return OperationResult<GetStoreDto>.Failure(message: "Store not found");
-
-            return OperationResult<GetStoreDto>.Success(new GetStoreDto(id ,store.ImageUrl ,store.BusinessName ,store.Rate , [""] ,store.Status ));
-        }
-        //public async Task<OperationResult<GetFullInfoStoreDto>> GetWithProductsAsync(int id)
-        //{
-        //    var store = _dbSet.Include("asassa").FirstOrDefault(x => x.Id == id);
-        //    if (store == null) return OperationResult<GetFullInfoStoreDto>.Failure(message: "Store not found");
-
-        //    return OperationResult<GetFullInfoStoreDto>.Success(new GetFullInfoStoreDto(
-        //          store.Id,
-        //          store.ImageUrl,
-        //          store.BusinessName,
-        //          store.Description,
-        //          store.Address,
-        //          store.BankAccount,
-        //          store.PhoneNumber,
-        //          store.Rate,
-        //          store.Status
-        //         ));
-
-        //}
-        public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetListAsync()
-        {
-            var stores = await _dbSet.AsNoTracking().ToListAsync();
-
-            if (!stores.Any())
-            {
-                return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
-            }
-
-            var storeDtos = stores.Select(store => new GetStoreDto(
-                  store.Id,
-                  store.ImageUrl,
-                  store.BusinessName,
-                  store.Rate,
-                  [""],
-                  store.Status
-                  )).ToList();
-
-
-            return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
-        }
-
-
+      
 
         // Get List
 
@@ -138,7 +91,27 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
         }
+        public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetListAsync()
+        {
+            var stores = await _dbSet.AsNoTracking().ToListAsync();
 
+            if (!stores.Any())
+            {
+                return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
+            }
+
+            var storeDtos = stores.Select(store => new GetStoreDto(
+                  store.Id,
+                  store.ImageUrl,
+                  store.BusinessName,
+                  store.Rate,
+                  [""],
+                  store.Status
+                  )).ToList();
+
+
+            return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
+        }
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetLatestStoresAsync()
         {
 
@@ -184,6 +157,27 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
         }
+        public async Task<OperationResult<IEnumerable<GetStoreDto>>> SearchStoreByNameAsync(string BusinessName)
+        {
+            var stores = await _dbSet.Where(x => x.BusinessName.Contains(BusinessName)).ToListAsync();
+            if(!stores.Any())
+                return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
+
+
+            var storeDtos = stores.Select(store => new GetStoreDto(
+                 store.Id,
+                 store.ImageUrl,
+                 store.BusinessName,
+                 store.Rate,
+                 store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
+                 store.Status
+                 )).ToList();
+
+
+            return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
+
+        }
+
 
         // Get
 
@@ -210,7 +204,16 @@ namespace Manzili.EF.Implementaion
                   store.Status
                  ));
         }
+        public async Task<OperationResult<GetStoreDto>> GetByIdAsync(int id)
+        {
+            var store = await _dbSet.FindAsync(id);
+            if (store == null) return OperationResult<GetStoreDto>.Failure(message: "Store not found");
 
+            return OperationResult<GetStoreDto>.Success(new GetStoreDto(id, store.ImageUrl, store.BusinessName, store.Rate, [""], store.Status));
+        }
+
+
+        // Anther
         public async Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto , List<int> categoriesIds)
         {
 
@@ -372,6 +375,7 @@ namespace Manzili.EF.Implementaion
             return OperationResult<Store>.Success(store);
         }
 
+       
         #endregion
     }
 }
