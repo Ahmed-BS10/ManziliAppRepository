@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:manziliapp/controller/login_controller.dart';
+import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
@@ -19,11 +19,11 @@ class LoginViewBody extends StatefulWidget {
   @override
   State<LoginViewBody> createState() => _LoginViewBodyState();
 }
+
 class _LoginViewBodyState extends State<LoginViewBody> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final LoginModel _loginModel = LoginModel(Email: '', Password: '');
-  final LoginController loginController = Get.find<LoginController>();
-  // الحصول على الـ UserController من GetX
+  final AuthController authController = Get.find<AuthController>();
   final UserController userController = Get.find<UserController>();
 
   @override
@@ -38,28 +38,22 @@ class _LoginViewBodyState extends State<LoginViewBody> {
             const WelcomeText(),
             const SizedBox(height: 20),
             EmailTextFiled(
-              onChanged: (value) {
-                _loginModel.Email = value;
-              },
+              onChanged: (value) => _loginModel.Email = value,
             ),
             const SizedBox(height: 10),
             PasswordTextField(
-              onChanged: (value) {
-                _loginModel.Password = value;
-              },
+              onChanged: (value) => _loginModel.Password = value,
               hintText: 'كلمة السر',
             ),
             const SizedBox(height: 10),
             const ForgotPasswordText(),
             const SizedBox(height: 15),
             Obx(() {
-              if (loginController.isLoading.value) {
+              if (authController.isLoading.value) {
                 return const CircularProgressIndicator();
               }
               return CustomTextButton(
-                onPressed: () async {
-                  await _validateForm();
-                },
+                onPressed: _validateForm,
                 name: 'تسجيل الدخول',
                 radius: 23,
                 fontColor: Colors.white,
@@ -67,25 +61,25 @@ class _LoginViewBodyState extends State<LoginViewBody> {
               );
             }),
             Obx(() {
-              if (loginController.successMessage.isNotEmpty) {
+              if (authController.successMessage.isNotEmpty) {
                 return Text(
-                  loginController.successMessage.value,
+                  authController.successMessage.value,
                   style: const TextStyle(color: Colors.green),
                 );
               }
               return const SizedBox.shrink();
             }),
             Obx(() {
-              if (loginController.errorMessage.isNotEmpty) {
+              if (authController.errorMessage.isNotEmpty) {
                 return Text(
-                  loginController.errorMessage.value,
+                  authController.errorMessage.value,
                   style: const TextStyle(color: Colors.red),
                 );
               }
               return const SizedBox.shrink();
             }),
             const SizedBox(height: 20),
-            RegisterText(),
+            const RegisterText(),
           ],
         ),
       ),
@@ -94,17 +88,13 @@ class _LoginViewBodyState extends State<LoginViewBody> {
 
   Future<void> _validateForm() async {
     if (_formKey.currentState!.validate()) {
-      await loginController.login(_loginModel);
+      await authController.login(_loginModel);
 
-      if (loginController.apiResponseData.isNotEmpty) {
+      if (authController.apiResponseData.isNotEmpty) {
         try {
-          final id = loginController.apiResponseData['id'] as int;
-          final token = loginController.apiResponseData['token'] as String;
-
-          // حفظ البيانات باستخدام UserController
+          final id = authController.apiResponseData['id'] as int;
+          final token = authController.apiResponseData['token'] as String;
           await userController.saveUserData(id, token);
-
-          // الانتقال إلى الصفحة الرئيسية
           Get.offAll(() => HomeView());
         } catch (e) {
           print("Error saving user data: $e");

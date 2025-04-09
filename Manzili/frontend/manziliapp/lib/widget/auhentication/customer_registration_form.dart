@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:manziliapp/controller/register-controller.dart';
+import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
 import 'package:manziliapp/core/widget/custome_text_filed.dart';
@@ -24,18 +24,16 @@ class CustomerRegistrationForm extends StatefulWidget {
   });
 
   @override
-  _CustomerRegistrationFormState createState() =>
-      _CustomerRegistrationFormState();
+  _CustomerRegistrationFormState createState() => _CustomerRegistrationFormState();
 }
-class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
-  final RegisterController registerController = Get.find<RegisterController>();
 
+class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
+  final AuthController authController = Get.find<AuthController>();
   late UserCreateModel userCreateModel;
 
   @override
   void initState() {
     super.initState();
-    // Initialize userCreateModel with default values
     userCreateModel = UserCreateModel(
       image: null,
       email: "",
@@ -49,9 +47,7 @@ class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         userCreateModel.image = File(pickedFile.path);
@@ -79,69 +75,52 @@ class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
           ),
           const SizedBox(height: 15),
           CustomeTextFiled(
-            onChanged: (value) {
-              userCreateModel.userName = value;
-            },
+            onChanged: (value) => userCreateModel.userName = value,
             hintText: 'اسم المستخدم',
           ),
           CustomeTextFiled(
-            onChanged: (value) {
-              userCreateModel.phonenumber = value;
-            },
+            onChanged: (value) => userCreateModel.phonenumber = value,
             hintText: 'رقمك',
           ),
           const SizedBox(height: 10),
           EmailTextFiled(
-            onChanged: (value) {
-              userCreateModel.email = value;
-            },
+            onChanged: (value) => userCreateModel.email = value,
           ),
           const SizedBox(height: 10),
           CustomeTextFiled(
-            onChanged: (value) {
-              userCreateModel.city = value;
-            },
+            onChanged: (value) => userCreateModel.city = value,
             hintText: 'المدينة',
           ),
           const SizedBox(height: 10),
           CustomeTextFiled(
-            onChanged: (value) {
-              userCreateModel.address = value;
-            },
+            onChanged: (value) => userCreateModel.address = value,
             hintText: 'عنوانك : مثل الديس - الدائرة ',
           ),
           const SizedBox(height: 10),
           PasswordTextField(
-            onChanged: (value) {
-              userCreateModel.password = value;
-            },
+            onChanged: (value) => userCreateModel.password = value,
             hintText: 'كلمة السر',
           ),
           const SizedBox(height: 10),
           PasswordTextField(
-            onChanged: (value) {
-              userCreateModel.confirmPassword = value;
-            },
+            onChanged: (value) => userCreateModel.confirmPassword = value,
             hintText: 'تاكيد كلمة السر',
           ),
           TermsAndPrivacyCheckbox(
-            onChanged: (value) {
-              widget.onAgreementChanged(value);
-            },
+            onChanged: widget.onAgreementChanged,
           ),
           const SizedBox(height: 10),
-          registerController.isLoading.value
+          authController.isLoading.value
               ? const CircularProgressIndicator()
               : CustomTextButton(
                   onPressed: () {
                     if (widget.formKey.currentState!.validate()) {
                       if (widget.isAgreed) {
-                        registerController.registerUser(userCreateModel);
+                        authController.registerUser(userCreateModel);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content:
-                                Text('يجب الموافقة على الشروط وسياسة الخصوصية'),
+                            content: Text('يجب الموافقة على الشروط وسياسة الخصوصية'),
                           ),
                         );
                       }
@@ -151,14 +130,14 @@ class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
                   fontColor: Colors.white,
                   backColor: pColor,
                 ),
-          if (registerController.successMessage.isNotEmpty)
+          if (authController.successMessage.isNotEmpty)
             Text(
-              registerController.successMessage.value,
+              authController.successMessage.value,
               style: const TextStyle(color: Colors.green),
             ),
-          if (registerController.errorMessage.isNotEmpty)
+          if (authController.errorMessage.isNotEmpty)
             Text(
-              registerController.errorMessage.value,
+              authController.errorMessage.value,
               style: const TextStyle(color: Colors.red),
             ),
         ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:manziliapp/bindings/login_binding.dart';
-import 'package:manziliapp/bindings/register_binding.dart';
+import 'package:manziliapp/controller/auth_controller.dart';
+import 'package:manziliapp/controller/category_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/middleware/auth_middelware.dart';
 import 'package:manziliapp/view/home_view.dart';
@@ -18,9 +18,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // تسجيل UserController قبل تشغيل التطبيق
   Get.put(UserController());
-  
+
   // يمكن تحميل البيانات المحفوظة عند بدء التطبيق إن رغبت
   await Get.find<UserController>().loadUserData();
+
+  Get.put(AuthController());
+  Get.put(CategoryController());
+  Get.put(UserController());
 
   runApp(MultiProvider(
     providers: [
@@ -30,7 +34,6 @@ void main() async {
     child: const MyApp(),
   ));
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -43,17 +46,14 @@ class MyApp extends StatelessWidget {
         GetPage(
             name: '/sp',
             page: () => const SplashsView(),
-            binding: LoginBinding(),
             middlewares: [AuthMiddleware()]),
         GetPage(
           name: '/login',
           page: () => const LoginView(),
-            binding: LoginBinding(),
         ),
         GetPage(
           name: '/register',
           page: () => const RegisterView(),
-          binding: RegisterBinding(),
         ),
         GetPage(
           name: '/home',

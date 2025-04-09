@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:manziliapp/controller/store_controller.dart';
+import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/model/store_create_model.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
@@ -26,30 +26,26 @@ class ProducerRegistrationForm extends StatefulWidget {
   });
 
   @override
-  State<ProducerRegistrationForm> createState() =>
-      _ProducerRegistrationFormState();
+  State<ProducerRegistrationForm> createState() => _ProducerRegistrationFormState();
 }
 
 class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
-  // Controllers for form fields
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
-  TextEditingController businessNameController = TextEditingController();
-  TextEditingController bankAccountController = TextEditingController();
-  TextEditingController businessDescriptionController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController businessNameController = TextEditingController();
+  final TextEditingController bankAccountController = TextEditingController();
+  final TextEditingController businessDescriptionController = TextEditingController();
 
-  File? userImage; // User image
-
-  final StoreController storeController = Get.put(StoreController());
+  File? userImage;
+  final AuthController authController = Get.find<AuthController>();
 
   @override
   void dispose() {
-    // Dispose controllers
     usernameController.dispose();
     phoneController.dispose();
     emailController.dispose();
@@ -64,8 +60,7 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
   }
 
   void _submitForm() {
-    // Create store data model
-    StoreCreateModel storeData = StoreCreateModel(
+    final storeData = StoreCreateModel(
       userName: usernameController.text,
       phone: phoneController.text,
       email: emailController.text,
@@ -79,8 +74,7 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
       socileMediaAcount: '',
     );
 
-    // Call the registerStore method
-    storeController.registerStore(storeData);
+    authController.registerStore(storeData);
   }
 
   @override
@@ -101,22 +95,16 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
             businessNameController: businessNameController,
             bankAccountController: bankAccountController,
             categoryOfWorkController: businessDescriptionController,
-            onUserImagePicked: (image) {
-              setState(() {
-                userImage = image;
-              });
-            },
+            onUserImagePicked: (image) => setState(() => userImage = image),
           ),
         ),
         TermsAndPrivacyCheckbox(
-          onChanged: (value) {
-            widget.onAgreementChanged(value);
-          },
+          onChanged: widget.onAgreementChanged,
         ),
         const SizedBox(height: 10),
         CustomIndicator(dotIndex: widget.currentIndex),
         Obx(() {
-          if (storeController.isLoading.value) {
+          if (authController.isLoading.value) {
             return const CircularProgressIndicator();
           }
           return CustomTextButton(
@@ -134,8 +122,7 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text(
-                          'يجب الموافقة على الشروط وسياسة الخصوصية للمتابعة'),
+                      content: Text('يجب الموافقة على الشروط وسياسة الخصوصية للمتابعة'),
                     ),
                   );
                 }
