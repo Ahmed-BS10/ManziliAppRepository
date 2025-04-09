@@ -67,16 +67,18 @@ namespace ManziliApi.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("SearchProductByNameInStore")]
+        public async Task<IActionResult> SearchProductByNameInStoreAsync(int storeId , string name )
+        {
+            var result = await _productservices.SearchProductByNameInStore(storeId , name);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return NotFound(result);
+        }
 
 
-        //[HttpPost("GetStoreProduct")]
-        //public async Task<IActionResult> GetStoreProduct(int storeId , string n1 , string n2)
-        //{
-        //    var result = await _productservices.GetStoreProduct(storeId, n1, n2);
-        //    if (result.IsSuccess)
-        //        return Ok(result);
-        //    return BadRequest(result);
-        //}
+        
 
         #endregion
     }

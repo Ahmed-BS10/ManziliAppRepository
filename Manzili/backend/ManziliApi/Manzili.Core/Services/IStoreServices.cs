@@ -26,8 +26,7 @@ namespace Manzili.Core.Services
         //Delete
         Task<OperationResult<Store>> DeleteAsync(int id);
        
-      
-
+        // Update 
 
         Task<OperationResult<UpdateStoreDto>> UpdateAsync(UpdateStoreDto newStore, int storeId);
         Task<OperationResult<int>> UpdateToRateAsync(int storeId, int valueRate);
