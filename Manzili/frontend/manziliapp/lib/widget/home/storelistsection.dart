@@ -7,16 +7,21 @@ import 'package:manziliapp/view/store_details_view.dart';
 class StoreListSection extends StatelessWidget {
   final int? category;
   final String? filter;
+  final String? searchQuery; // New parameter for search
 
-  const StoreListSection({Key? key, this.category, this.filter})
+  const StoreListSection({Key? key, this.category, this.filter, this.searchQuery})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final StoreController storeController = Get.put(StoreController());
 
-    // Fetch stores when the widget is built
-    storeController.fetchStores(category: category, filter: filter);
+    // Fetch stores when the widget is built or when parameters change
+    storeController.fetchStores(
+      category: category,
+      filter: filter,
+      searchQuery: searchQuery,
+    );
 
     return Obx(() {
       if (storeController.isLoading.value) {
