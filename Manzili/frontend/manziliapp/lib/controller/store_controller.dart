@@ -11,13 +11,23 @@ class StoreController extends GetxController {
   var errorMessage = ''.obs;
   var stores = <StoreModle>[].obs;
 
-  Future<void> fetchStores({int? category, String? filter}) async {
+  Future<void> fetchStores({
+    int? category,
+    String? filter,
+    String? searchQuery,
+  }) async {
     isLoading.value = true;
     errorMessage.value = '';
     try {
       String url;
 
-      if (filter != null) {
+      // Check for search query first
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        // Use the search API. Make sure you URL-encode searchQuery if needed.
+        final encodedQuery = Uri.encodeComponent(searchQuery);
+        url =
+            "http://man.runasp.net/api/Store/SearchStoreByName?businessName=$encodedQuery";
+      } else if (filter != null) {
         switch (filter) {
           case "المفضلة":
             url =

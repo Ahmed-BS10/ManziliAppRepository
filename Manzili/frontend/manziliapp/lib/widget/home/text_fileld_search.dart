@@ -3,17 +3,22 @@ import 'package:manziliapp/core/helper/app_colors.dart';
 
 class TextFileldSearch extends StatelessWidget {
   const TextFileldSearch({
-    super.key,
-    required TextEditingController searchController,
-  }) : _searchController = searchController;
+    Key? key,
+    required this.searchController,
+    required this.onSubmitted,
+  }) : super(key: key);
 
-  final TextEditingController _searchController;
+  final TextEditingController searchController;
+  final ValueChanged<String> onSubmitted;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      textDirection: TextDirection.rtl,
+      textInputAction: TextInputAction.search,
       textAlign: TextAlign.right,
-      controller: _searchController,
+      controller: searchController,
+      onSubmitted: onSubmitted,
       decoration: InputDecoration(
         hintTextDirection: TextDirection.rtl,
         hintText: 'ابحث هنا...',
@@ -30,7 +35,7 @@ class TextFileldSearch extends StatelessWidget {
             size: 24,
           ),
         ),
-        suffixIcon: _searchController.text.isNotEmpty
+        suffixIcon: searchController.text.isNotEmpty
             ? Padding(
                 padding: const EdgeInsets.only(left: 8),
                 child: IconButton(
@@ -48,7 +53,8 @@ class TextFileldSearch extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    _searchController.clear();
+                    searchController.clear();
+                    onSubmitted(''); // send empty search to clear search results
                   },
                 ),
               )
