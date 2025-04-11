@@ -4,6 +4,7 @@ import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/controller/category_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/middleware/auth_middelware.dart';
+import 'package:manziliapp/view/cart_view.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
 import 'package:manziliapp/view/profile.dart';
@@ -45,8 +46,9 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
             name: '/sp',
-            page: () => const SplashsView(),
-            middlewares: [AuthMiddleware()]),
+            page: () => const CartView(),
+            // middlewares: [AuthMiddleware()]
+           ),
         GetPage(
           name: '/login',
           page: () => const LoginView(),

@@ -19,7 +19,11 @@ class _QuantitySelectorWidgetState extends State<QuantitySelectorWidget> {
           onPressed: () {
             setState(
               () {
-                quantity--;
+                if (quantity == 1) {
+                  return;
+                } else {
+                  quantity--;
+                }
               },
             );
           },
