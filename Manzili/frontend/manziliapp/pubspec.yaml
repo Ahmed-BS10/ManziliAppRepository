@@ -48,6 +48,8 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   carousel_slider: ^5.0.0
   firstsplashscreenview: ^0.0.8
+  file_picker: ^10.1.0
+  platform_file: ^0.1.0
 
 dev_dependencies:
   flutter_test:
