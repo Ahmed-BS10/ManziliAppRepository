@@ -181,29 +181,29 @@ namespace Manzili.EF.Implementaion
 
         // Get
 
-        public async Task<OperationResult<GetInfoStoreDto>> GetInfoStore(int storeId)
-        {
-            var store = await _dbSet
-                .Include(x => x.storeCategoryStores!)
-                .ThenInclude(s => s.StoreCategory)
-                .FirstOrDefaultAsync(x => x.Id == storeId);
-            if (store == null) return OperationResult<GetInfoStoreDto>.Failure("Store not found");
+        //public async Task<OperationResult<GetInfoStoreDto>> GetInfoStore(int storeId)
+        //{
+        //    var store = await _dbSet
+        //        .Include(x => x.storeCategoryStores!)
+        //        .ThenInclude(s => s.StoreCategory)
+        //        .FirstOrDefaultAsync(x => x.Id == storeId);
+        //    if (store == null) return OperationResult<GetInfoStoreDto>.Failure("Store not found");
 
-            return OperationResult<GetInfoStoreDto>.Success(new GetInfoStoreDto(
-                  store.Id,
-                  store.ImageUrl,
-                  store.BusinessName,
-                  store.Description,
-                  store.storeCategoryStores!.Select(x => x.StoreCategory.Name).ToList(),
-                  store.BookTime,
-                  store.Address,
-                  store.BankAccount,
-                  store.PhoneNumber,
-                  store.SocileMediaAcount,
-                  store.Rate ?? 0,
-                  store.Status
-                 ));
-        }
+        //    return OperationResult<GetInfoStoreDto>.Success(new GetInfoStoreDto(
+        //          store.Id,
+        //          store.ImageUrl,
+        //          store.BusinessName,
+        //          store.Description,
+        //          store.storeCategoryStores!.Select(x => x.StoreCategory.Name).ToList(),
+        //          store.BookTime,
+        //          store.Address,
+        //          store.BankAccount,
+        //          store.PhoneNumber,
+        //          store.SocileMediaAcount,
+        //          store.Rate ?? 0,
+        //          store.Status
+        //         ));
+        //}
         public async Task<OperationResult<GetStoreDto>> GetByIdAsync(int id)
         {
             var store = await _dbSet.FindAsync(id);
@@ -375,7 +375,34 @@ namespace Manzili.EF.Implementaion
             return OperationResult<Store>.Success(store);
         }
 
-       
+        public async Task<OperationResult<GetInfoStoreDto>> GetInfoStore(int storeId)
+        {
+            var store = await _db.Stores
+                .Include(x => x.storeCategoryStores!)
+                .ThenInclude(s => s.StoreCategory)
+                .FirstOrDefaultAsync(x => x.Id == storeId);
+
+            if (store == null)
+                return OperationResult<GetInfoStoreDto>.Failure("Store not found");
+
+            var storeInfo = new GetInfoStoreDto(
+                store.Id,
+                store.ImageUrl ?? "/Profile/383ba157cb9f4367b67f7baeea98097d.jpg",
+                store.BusinessName,
+                store.Description,
+                store.storeCategoryStores!.Select(x => x.StoreCategory.Name).ToList(),
+                store.BookTime,
+                store.BankAccount,
+                store.Address,
+                store.PhoneNumber ?? "99999",
+                store.SocileMediaAcount,
+                store.Rate ?? 0,
+                store.Status
+            );
+
+            return OperationResult<GetInfoStoreDto>.Success(storeInfo);
+        }
+
         #endregion
     }
 }
