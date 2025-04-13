@@ -68,6 +68,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   }
 }
 
+/// HomePage contains your original UI elements.
 class StartPage extends StatefulWidget {
   const StartPage({Key? key}) : super(key: key);
 
@@ -78,30 +79,6 @@ class StartPage extends StatefulWidget {
 class _StartPageState extends State<StartPage> {
   int? selectedCategory;
   String? selectedFilter;
-  String? searchQuery; // New search query parameter
-  final TextEditingController searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    // Optionally you can listen to changes if you want live search updates
-    // Here we use onSubmitted for simplicity.
-  }
-
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
-  }
-
-  void _onSearchSubmitted(String query) {
-    setState(() {
-      // When search is performed, clear filters and categories.
-      searchQuery = query;
-      selectedCategory = null;
-      selectedFilter = null;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,8 +93,6 @@ class _StartPageState extends State<StartPage> {
                 setState(() {
                   selectedCategory = category;
                   selectedFilter = null;
-                  searchQuery = null; // Clear search when using category
-                  searchController.clear();
                 });
               },
             ),
@@ -127,22 +102,16 @@ class _StartPageState extends State<StartPage> {
                 setState(() {
                   selectedFilter = filter;
                   selectedCategory = null;
-                  searchQuery = null; // Clear search when using filter
-                  searchController.clear();
                 });
               },
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextFileldSearch(
-                searchController: searchController,
-                onSubmitted: _onSearchSubmitted, // pass the callback
-              ),
+              child: TextFileldSearch(searchController: SearchController()),
             ),
             StoreListSection(
               category: selectedCategory,
               filter: selectedFilter,
-              searchQuery: searchQuery,
             ),
           ],
         ),
