@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:manziliapp/controller/product_controller.dart';
+import 'package:manziliapp/view/product_detail_view.dart';
 import 'package:manziliapp/widget/store/category_tabs.dart';
 import 'package:manziliapp/widget/store/product_card.dart';
 
@@ -115,17 +116,25 @@ class _ProductsViewState extends State<ProductsView> {
               itemCount: _productController.products.length,
               itemBuilder: (context, index) {
                 final product = _productController.products[index];
-                return ProductCard(
-                  product: product,
-                  subCategoryId: _productController.subCategories.isNotEmpty
-                      ? _productController.subCategories.firstWhere(
-                          (sub) =>
-                              sub["name"] ==
-                              _productController.selectedSubCategory.value,
-                          orElse: () => {"id": null},
-                        )["id"]
-                      : null,
-                  storeId: widget.storeid,
+                return InkWell(
+                  onTap: () {
+                    Get.to(() => ProductDetailView(
+                        // product: product,
+                        // storeId: widget.storeid,
+                        ));
+                  },
+                  child: ProductCard(
+                    product: product,
+                    subCategoryId: _productController.subCategories.isNotEmpty
+                        ? _productController.subCategories.firstWhere(
+                            (sub) =>
+                                sub["name"] ==
+                                _productController.selectedSubCategory.value,
+                            orElse: () => {"id": null},
+                          )["id"]
+                        : null,
+                    storeId: widget.storeid,
+                  ),
                 );
               },
             );

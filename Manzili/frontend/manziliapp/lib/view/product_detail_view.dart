@@ -49,14 +49,14 @@ class ProductState {
 }
 
 // Main Product Detail Page
-class ProductDetailPage extends StatefulWidget {
-  const ProductDetailPage({Key? key}) : super(key: key);
+class ProductDetailView extends StatefulWidget {
+  const ProductDetailView({Key? key}) : super(key: key);
 
   @override
-  State<ProductDetailPage> createState() => _ProductDetailPageState();
+  State<ProductDetailView> createState() => _ProductDetailViewState();
 }
 
-class _ProductDetailPageState extends State<ProductDetailPage> {
+class _ProductDetailViewState extends State<ProductDetailView> {
   late ProductState _state;
 
   @override
