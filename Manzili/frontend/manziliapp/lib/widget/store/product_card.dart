@@ -1,19 +1,15 @@
-
-
-// UI for each product (ProductCard remains mostly unchanged except for using the image property)
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:manziliapp/model/product.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
+  final int? subCategoryId;
   final int storeId;
-  final int subCategoryId; // If needed for further logic
 
   const ProductCard({
     Key? key,
     required this.product,
-    required this.subCategoryId,
+    this.subCategoryId,
     required this.storeId,
   }) : super(key: key);
 
@@ -29,7 +25,7 @@ class ProductCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Column for price and cart button
+          // Price and cart column
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +54,7 @@ class ProductCard extends StatelessWidget {
                         size: 30,
                       ),
                       onPressed: () {
-                        // Add your add-to-cart logic here
+                        // Add to cart logic
                       },
                     ),
                   ),
@@ -66,6 +62,7 @@ class ProductCard extends StatelessWidget {
               ],
             ),
           ),
+
           // Product details
           Expanded(
             flex: 2,
@@ -99,7 +96,8 @@ class ProductCard extends StatelessWidget {
               ),
             ),
           ),
-          // Product image and rating overlay
+
+          // Product image and rating
           Stack(
             alignment: Alignment.topRight,
             children: [
@@ -128,7 +126,10 @@ class ProductCard extends StatelessWidget {
                 left: 0,
                 child: Container(
                   margin: const EdgeInsets.all(4),
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF1548C7),
                     borderRadius: BorderRadius.circular(4),
@@ -141,7 +142,7 @@ class ProductCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '${product.rating}',
+                        product.rating.toStringAsFixed(1),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
