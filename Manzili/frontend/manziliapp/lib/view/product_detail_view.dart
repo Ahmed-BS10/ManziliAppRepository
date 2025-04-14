@@ -50,7 +50,9 @@ class ProductState {
 
 // Main Product Detail Page
 class ProductDetailView extends StatefulWidget {
-  const ProductDetailView({Key? key}) : super(key: key);
+  const ProductDetailView({Key? key, required this.productId}) : super(key: key);
+
+  final int productId;
 
   @override
   State<ProductDetailView> createState() => _ProductDetailViewState();

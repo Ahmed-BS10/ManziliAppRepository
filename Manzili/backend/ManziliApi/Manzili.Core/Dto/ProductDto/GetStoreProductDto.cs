@@ -16,16 +16,7 @@ namespace Manzili.Core.Dto.ProductDto
         public string State { get; set; }
         public List<string> Categories { get; set; }
 
-        public GetStoreProductDto(int id, string name, List<string> imageUrls, string description, double price, string state, List<string> categories)
-        {
-            Id = id;
-            Name = name;
-            ImageUrls = imageUrls;
-            Description = description;
-            Price = price;
-            State = state;
-            Categories = categories;
-        }
+      
     }
 }
 

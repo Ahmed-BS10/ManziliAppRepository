@@ -168,7 +168,8 @@ namespace Manzili.Core.Services
         public async Task<OperationResult<GteFullInfoProdcut>> GetProductByIdAsync(int productId)
         {
             var product = await _db.Set<Product>()
-                .Include(p => p.Store)
+                .Include(s => s.Store)
+                .Include(im => im.Images)
                 .FirstOrDefaultAsync(p => p.Id == productId);
 
             if (product == null)
@@ -185,7 +186,8 @@ namespace Manzili.Core.Services
                 State = product.State,
                 Quantity = product.Quantity,
                 StoreName = product.Store.BusinessName,
-                images = product.Images.Select(i => i.ImageUrl).ToList()
+                images = product.Images.Select(i => i.ImageUrl).ToList() ?? [],
+                StoreImage = product.Store.ImageUrl ?? "/Profile/383ba157cb9f4367b67f7baeea98097d.jpg",
             };
 
             return OperationResult<GteFullInfoProdcut>.Success(productDto, "Product retrieved successfully.");
@@ -219,7 +221,6 @@ namespace Manzili.Core.Services
             return OperationResult<IEnumerable<GetAllProduct>>.Success(productsDto, "Store products retrieved successfully.");
 
         }
-
         public async Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndProductCategoriesAsync(int storeId, int productCategoryId)
         {
             // Query the database for products matching the storeId and productCategoryId

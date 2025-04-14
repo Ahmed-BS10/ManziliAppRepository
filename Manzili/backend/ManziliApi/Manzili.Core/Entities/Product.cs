@@ -46,12 +46,13 @@ public class GteFullInfoProdcut
     public string Name { get; set; }
     public double Price { get; set; }
     public string? Description { get; set; }
-    public string State { get; set; } = enProductStatus.Available.ToString();
+    public string? State { get; set; } = enProductStatus.Available.ToString();
     public int? Quantity { get; set; }
 
 
     public double? Rate { get; set; }
     public string StoreName { get; set; }
+    public string? StoreImage { get; set; }
     public List<string>? images { get; set; }
 
    
