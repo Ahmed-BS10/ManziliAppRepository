@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 class ProductDescription extends StatelessWidget {
   final String title;
   final String description;
-  final String additionalInfo;
+  //final String additionalInfo;
   
   const ProductDescription({
     Key? key,
     required this.title,
     required this.description,
-    required this.additionalInfo,
+    //required this.additionalInfo,
   }) : super(key: key);
   
   @override
@@ -35,11 +35,11 @@ class ProductDescription extends StatelessWidget {
           textAlign: TextAlign.right,
         ),
         const SizedBox(height: 8),
-        Text(
-          additionalInfo,
-          style: const TextStyle(fontSize: 16),
-          textAlign: TextAlign.right,
-        ),
+        // Text(
+        //   additionalInfo,
+        //   style: const TextStyle(fontSize: 16),
+        //   textAlign: TextAlign.right,
+        // ),
       ],
     );
   }

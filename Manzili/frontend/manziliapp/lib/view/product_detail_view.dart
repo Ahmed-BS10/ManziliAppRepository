@@ -1,184 +1,113 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:manziliapp/controller/product_detail_controller.dart';
+import 'package:manziliapp/view/product_ratings_view.dart';
+import 'package:manziliapp/widget/product/BottomBar.dart';
+import 'package:manziliapp/widget/product/ImageCarousel.dart';
+import 'package:manziliapp/widget/product/ProductDescription.dart';
+import 'package:manziliapp/widget/product/ProductNameAndQuantity.dart';
+import 'package:manziliapp/widget/product/RatingAndStoreInfo.dart';
+import 'package:manziliapp/widget/product/TabSelector.dart';
 import '../model/full_producta.dart';
-import '../model/review_product.dart';
-import '../widget/product/BottomBar.dart';
-import '../widget/product/CommentButton.dart';
-import '../widget/product/ImageCarousel.dart';
-import '../widget/product/ProductDescription.dart';
-import '../widget/product/ProductNameAndQuantity.dart';
-import '../widget/product/RatingAndStoreInfo.dart';
-import '../widget/product/RatingHeader.dart';
-import '../widget/product/ReviewItem.dart';
-import '../widget/product/TabSelector.dart';
 
-// State Management
-class ProductState {
-  final FullProduct product;
-  final List<ReviewProduct> reviews;
-  int quantity;
-  int selectedTabIndex;
-  int currentImageIndex;
-
-  ProductState({
-    required this.product,
-    required this.reviews,
-    this.quantity = 1,
-    this.selectedTabIndex = 0,
-    this.currentImageIndex = 0,
-  });
-
-  // Calculate price based on size and quantity
-  double calculatePrice() {
-    return product.basePrice * quantity;
-  }
-
-  // Create a copy with updated values
-  ProductState copyWith({
-    int? quantity,
-    int? selectedTabIndex,
-    int? currentImageIndex,
-  }) {
-    return ProductState(
-      product: product,
-      reviews: reviews,
-      quantity: quantity ?? this.quantity,
-      selectedTabIndex: selectedTabIndex ?? this.selectedTabIndex,
-      currentImageIndex: currentImageIndex ?? this.currentImageIndex,
-    );
-  }
-}
-
-// Main Product Detail Page
-class ProductDetailView extends StatefulWidget {
-  const ProductDetailView({Key? key, required this.productId}) : super(key: key);
-
+class ProductDetailView extends StatelessWidget {
   final int productId;
 
-  @override
-  State<ProductDetailView> createState() => _ProductDetailViewState();
-}
-
-class _ProductDetailViewState extends State<ProductDetailView> {
-  late ProductState _state;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Initialize state with available sizes
-    _state = ProductState(
-      product: FullProduct.sample(),
-      reviews: ReviewProduct.getSampleReviews(),
-      // Default to small size
-    );
-  }
-
-  void _updateState(ProductState newState) {
-    setState(() {
-      _state = newState;
-    });
-  }
+  const ProductDetailView({Key? key, required this.productId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final ProductDetailController controller =
+        Get.put(ProductDetailController());
+    // جلب تفاصيل المنتج
+    controller.fetchProductDetails(productId);
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          // Top section with image carousel
-          ImageCarousel(
-            images: _state.product.images,
-            currentIndex: _state.currentImageIndex,
-            onPageChanged: (index) {
-              _updateState(_state.copyWith(currentImageIndex: index));
-            },
-          ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          // Tab navigation
-          TabSelector(
-            selectedTabIndex: _state.selectedTabIndex,
-            onTabSelected: (index) {
-              _updateState(_state.copyWith(selectedTabIndex: index));
-            },
-          ),
+        if (controller.errorMessage.isNotEmpty) {
+          return Center(child: Text(controller.errorMessage.value));
+        }
 
-          // Content based on selected tab
-          Expanded(
-            child: _state.selectedTabIndex == 0
-                ? ProductDetailsView(
-                    state: _state,
+        final product = controller.product.value;
+
+        return Column(
+          children: [
+            // معرض الصور
+            ImageCarousel(
+              images: product.images!,
+              currentIndex: 0, // الصورة الافتراضية الأولى
+              onPageChanged: (index) {
+                // يمكن التعامل مع تغيير الصورة إذا لزم الأمر
+              },
+            ),
+
+            // عنصر التبويبات
+            TabSelector(
+              selectedTabIndex: controller.selectedTabIndex.value,
+              onTabSelected: (index) {
+                controller.updateTabIndex(index);
+              },
+            ),
+
+            // المحتوى المتغير بناءً على التبويب المحدد
+            Expanded(
+              child: Obx(() {
+                if (controller.selectedTabIndex.value == 0) {
+                  // تفاصيل المنتج
+                  return ProductDetailsViewBody(
+                    product: product,
+                    storeImage: product.storeImage,
                     onQuantityChanged: (quantity) {
-                      _updateState(_state.copyWith(quantity: quantity));
+                      controller.updateQuantity(quantity);
                     },
-                  )
-                : ProductRatingsView(reviews: _state.reviews),
-          ),
+                  );
+                } else if (controller.selectedTabIndex.value == 1) {
+                  // تقييمات المنتج
+                  return ProductRatingsView(reviews: []); // استخدم بيانات التقييم الحقيقية عند توفرها
+                } else {
+                  return Container();
+                }
+              }),
+            ),
 
-          // Bottom bar with price and add to cart button
-          BottomBar(
-            price: _state.calculatePrice(),
-            onAddToCart: () {
-              // Show a message with the selected size and price
-              final price = _state.calculatePrice().toStringAsFixed(0);
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'تمت إضافة برجر لحم  إلى السلة بسعر \$$price',
-                    textAlign: TextAlign.right,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+            // شريط الأسفل الذي يُظهر السعر الإجمالي (المتغير تلقائيًا)
+            Obx(() => BottomBar(
+                  price: controller.totalPrice,
+                  onAddToCart: () {
+                    final price = controller.totalPrice;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'تمت إضافة ${product.name} إلى السلة بسعر $price ريال',
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                    );
+                  },
+                )),
+          ],
+        );
+      }),
     );
   }
 }
 
-// Product Ratings View
-class ProductRatingsView extends StatelessWidget {
-  final List<ReviewProduct> reviews;
-
-  const ProductRatingsView({
-    Key? key,
-    required this.reviews,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        // Overall Rating
-        const RatingHeader(totalReviews: 3),
-
-        const SizedBox(height: 24),
-
-        // Reviews List
-        ...reviews.map((review) => ReviewItem(review: review)).toList(),
-
-        const SizedBox(height: 24),
-
-        // Comment Input
-        const CommentButton(),
-
-        const SizedBox(height: 32),
-      ],
-    );
-  }
-}
-
-// Product Details View
-class ProductDetailsView extends StatelessWidget {
-  final ProductState state;
+class ProductDetailsViewBody extends StatelessWidget {
+  final ProductData product;
   final Function(int) onQuantityChanged;
+  final String storeImage;
 
-  const ProductDetailsView({
+  const ProductDetailsViewBody({
     Key? key,
-    required this.state,
+    required this.product,
     required this.onQuantityChanged,
+    required this.storeImage,
   }) : super(key: key);
 
   @override
@@ -186,37 +115,31 @@ class ProductDetailsView extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: [
-        // Rating and Store Info
+        // عرض تقييم ومعلومات المتجر
         RatingAndStoreInfo(
-          rating: state.product.rating,
-          storeName: state.product.storeName,
+          rating: 0,
+          storeName: product.storeName,
+          storeImage: storeImage,
         ),
-
         const SizedBox(height: 24),
-
-        // Product Name and Quantity in same line
+        // اسم المنتج والكمية مع زر الزيادة والنقصان
         ProductNameAndQuantity(
-          name: state.product.name,
-          quantity: state.quantity,
-          onIncrement: () => onQuantityChanged(state.quantity + 1),
+          name: product.name,
+          quantity: product.quantity,
+          onIncrement: () => onQuantityChanged(product.quantity + 1),
           onDecrement: () {
-            if (state.quantity > 1) {
-              onQuantityChanged(state.quantity - 1);
+            if (product.quantity > 1) {
+              onQuantityChanged(product.quantity - 1);
             }
           },
         ),
-
         const SizedBox(height: 24),
-
         const SizedBox(height: 32),
-
-        // Product Description
+        // وصف المنتج
         ProductDescription(
           title: 'وصف المنتج',
-          description: state.product.description,
-          additionalInfo: state.product.additionalInfo,
+          description: product.description,
         ),
-
         const SizedBox(height: 32),
       ],
     );

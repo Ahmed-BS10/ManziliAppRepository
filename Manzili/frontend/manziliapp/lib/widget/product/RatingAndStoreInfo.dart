@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 
-
-
 // Rating and Store Info Component
 class RatingAndStoreInfo extends StatelessWidget {
-  final double rating;
+  final int rating;
   final String storeName;
-  
+  final String storeImage;
+
   const RatingAndStoreInfo({
     Key? key,
     required this.rating,
-    required this.storeName,
+    required this.storeName, required this.storeImage,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -22,17 +21,19 @@ class RatingAndStoreInfo extends StatelessWidget {
           children: [
             const Icon(Icons.star, color: Colors.amber, size: 20),
             const SizedBox(width: 4),
-            Text(rating.toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(rating.toString(),
+                style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         Row(
           children: [
-            Text(storeName, style: const TextStyle(fontWeight: FontWeight.w500)),
+            Text(storeName,
+                style: const TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(width: 8),
             CircleAvatar(
               radius: 15,
               backgroundColor: const Color(0xFF0047FF),
-              child: const Icon(Icons.person, color: Colors.white, size: 18),
+              child: Image.network('http://man.runasp.net'+storeImage),
             ),
           ],
         ),
