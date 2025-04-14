@@ -185,6 +185,7 @@ namespace Manzili.Core.Services
                 Price = product.Price,
                 State = product.State,
                 Quantity = product.Quantity,
+                Rate = product.Rate,
                 StoreName = product.Store.BusinessName,
                 images = product.Images.Select(i => i.ImageUrl).ToList() ?? [],
                 StoreImage = product.Store.ImageUrl ?? "/Profile/383ba157cb9f4367b67f7baeea98097d.jpg",
