@@ -3,7 +3,7 @@ using Manzili.Core.Entities;
 
 namespace Manzili.Core.Services
 {
-    public interface IProductservices
+    public interface IProductServices
     {
 
         Task<OperationResult<IEnumerable<GetAllProduct>>> SearchProductByNameInStore(int storeId , string name);
@@ -12,6 +12,8 @@ namespace Manzili.Core.Services
 
         Task<OperationResult<string>> AddProductToStoreAsync(int storeId, CreateProductDto productDto);
         Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndCategoriesAsync(int storeId, int storeCategoryId, int productCategoryId);
+        Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndProductCategoriesAsync(int storeId, int productCategoryId);
+
 
 
 

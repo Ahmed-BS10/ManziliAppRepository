@@ -169,7 +169,6 @@ namespace Manzili.Core.Services
 
 
         }
-
         public async Task<OperationResult<IEnumerable<GetStoreCategoryIdAndName>>> GetLists()
         {
             var result = await _dbSet.Include("StoreCategoriesStores").AsNoTracking().ToListAsync();
@@ -186,6 +185,48 @@ namespace Manzili.Core.Services
 
             return OperationResult<IEnumerable<GetStoreCategoryIdAndName>>.Success(storeCategoryDtos);
         }
+        public async Task<OperationResult<IEnumerable<GetStoreSubCategoryIdAndName>>> GetStoreSubCategoryIdAndNameAsync(int storeId, string storeCategoryName)
+        {
+            // Find the store category by name and store ID
+            var storeCategory = await _db.StoreCategories
+                .Include(sc => sc.ProductCategories)
+                .FirstOrDefaultAsync(sc => sc.StoreCategoriesStores.Any(scs => scs.StoreId == storeId) && sc.Name == storeCategoryName);
+
+            if (storeCategory == null)
+                return OperationResult<IEnumerable<GetStoreSubCategoryIdAndName>>.Failure("Store category not found.");
+
+            // Map the product categories to the DTO
+            var productCategories = storeCategory.ProductCategories?.Select(pc => new GetStoreSubCategoryIdAndName(pc.Id, pc.Name)).ToList();
+
+            if (productCategories == null || !productCategories.Any())
+                return OperationResult<IEnumerable<GetStoreSubCategoryIdAndName>>.Failure("No product categories found for the specified store category.");
+
+            return OperationResult<IEnumerable<GetStoreSubCategoryIdAndName>>.Success(productCategories);
+        }
+
+        public async Task<OperationResult<IEnumerable<GetStoreSubCategoryIdAndName>>> GetStoreAllSubCategoryIdAndNameAsync(int storeId)
+        {
+            // Find the store categories by store ID
+            var storeCategories = await _db.StoreCategories
+                .Include(sc => sc.ProductCategories)
+                .Where(sc => sc.StoreCategoriesStores.Any(scs => scs.StoreId == storeId))
+                .ToListAsync();
+
+            if (storeCategories == null || !storeCategories.Any())
+                return OperationResult<IEnumerable<GetStoreSubCategoryIdAndName>>.Failure("Store categories not found.");
+
+            // Flatten the product categories from all store categories
+            var productCategories = storeCategories
+                .SelectMany(sc => sc.ProductCategories ?? new List<ProductCategory>())
+                .Select(pc => new GetStoreSubCategoryIdAndName(pc.Id, pc.Name))
+                .ToList();
+
+            if (productCategories == null || !productCategories.Any())
+                return OperationResult<IEnumerable<GetStoreSubCategoryIdAndName>>.Failure("No product categories found for the specified store categories.");
+
+            return OperationResult<IEnumerable<GetStoreSubCategoryIdAndName>>.Success(productCategories);
+        }
+
 
         #endregion
     }

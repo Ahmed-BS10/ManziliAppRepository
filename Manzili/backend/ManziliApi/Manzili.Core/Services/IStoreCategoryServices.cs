@@ -9,5 +9,9 @@ namespace Manzili.Core.Services
         Task<OperationResult<IEnumerable<GetStoreCategoryDto>>> GetList();
         Task<OperationResult<IEnumerable<GetStoreCategoryIdAndName>>> GetLists();
         Task<OperationResult<UpdateStoreCatagoryDto>> Update(int id, UpdateStoreCatagoryDto updateStoreCatagoryDto);
+        Task<OperationResult<IEnumerable<GetStoreSubCategoryIdAndName>>> GetStoreSubCategoryIdAndNameAsync(int storeId, string storeCategoryName);
+
+        Task<OperationResult<IEnumerable<GetStoreSubCategoryIdAndName>>> GetStoreAllSubCategoryIdAndNameAsync(int storeId);
+
     }
 }

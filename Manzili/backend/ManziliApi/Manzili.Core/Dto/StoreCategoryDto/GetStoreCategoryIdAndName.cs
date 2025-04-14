@@ -13,3 +13,10 @@ namespace Manzili.Core.Dto.StoreCategoryDto
 
            );
 }
+
+
+public sealed record GetStoreSubCategoryIdAndName(
+         int Id,
+         string Name
+
+         );

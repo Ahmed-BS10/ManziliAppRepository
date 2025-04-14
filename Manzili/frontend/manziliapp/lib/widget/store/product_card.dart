@@ -1,35 +1,43 @@
+
+
+// UI for each product (ProductCard remains mostly unchanged except for using the image property)
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:manziliapp/model/product.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
+  final int storeId;
+  final int subCategoryId; // If needed for further logic
 
   const ProductCard({
     Key? key,
     required this.product,
+    required this.subCategoryId,
+    required this.storeId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16.0),
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0), // توسيع الفراغ الداخلي
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFF1548C7)),
+        border: Border.all(color: const Color(0xFF1548C7)),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          /// **عمود السعر والسلة**
+          // Column for price and cart button
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 5), // إزاحة السعر للأسفل قليلًا
+                  padding: const EdgeInsets.only(top: 10, bottom: 5),
                   child: Text(
-                    '${product.price.toInt()} ريال', // جعل الريال بعد الرقم
+                    '${product.price.toInt()} ريال',
                     style: const TextStyle(
                       color: Color(0xFF1548C7),
                       fontWeight: FontWeight.bold,
@@ -38,32 +46,36 @@ class ProductCard extends StatelessWidget {
                     textAlign: TextAlign.right,
                   ),
                 ),
-                const SizedBox(height: 20), // مسافة بين السعر والسلة
+                const SizedBox(height: 20),
                 Align(
-                  alignment: Alignment.centerLeft, // إزاحة السلة لليسار قليلًا
+                  alignment: Alignment.centerLeft,
                   child: Container(
-                    margin: const EdgeInsets.only(right: 25), // تحريك السلة لليسار
+                    margin: const EdgeInsets.only(right: 25),
                     child: IconButton(
-                      icon: const Icon(Icons.shopping_cart_outlined, color: Color(0xFF1548C7), size: 30),
-                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.shopping_cart_outlined,
+                        color: Color(0xFF1548C7),
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        // Add your add-to-cart logic here
+                      },
                     ),
                   ),
                 ),
               ],
             ),
           ),
-
-          /// **تفاصيل المنتج**
+          // Product details
           Expanded(
-            flex: 2, // مساحة أكبر لتفاصيل المنتج
+            flex: 2,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  // اسم المنتج (إزاحة للأعلى)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 11), // تحريك للأعلى
+                    padding: const EdgeInsets.only(bottom: 11),
                     child: Text(
                       product.name,
                       style: const TextStyle(
@@ -74,12 +86,9 @@ class ProductCard extends StatelessWidget {
                       textAlign: TextAlign.right,
                     ),
                   ),
-
-                  const SizedBox(height: 4), // مسافة صغيرة
-
-                  // وصف المنتج (إزاحة للأسفل)
+                  const SizedBox(height: 4),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8), // تحريك للأسفل
+                    padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       product.description,
                       style: const TextStyle(fontSize: 14),
@@ -90,21 +99,20 @@ class ProductCard extends StatelessWidget {
               ),
             ),
           ),
-
-          /// **صورة المنتج والتقييم**
+          // Product image and rating overlay
           Stack(
             alignment: Alignment.topRight,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(12), // حدود دائرية للصورة
+                borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  'assets/images/meat burger.jpg',
-                  width: 100, // الحفاظ على حجم الصورة الأصلي
+                  'http://man.runasp.net${product.image}',
+                  width: 100,
                   height: 100,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      width: 100, // نفس أبعاد الصورة الأصلية
+                      width: 100,
                       height: 100,
                       decoration: BoxDecoration(
                         color: Colors.grey.shade300,
@@ -115,8 +123,6 @@ class ProductCard extends StatelessWidget {
                   },
                 ),
               ),
-
-              /// **تقييم المنتج**
               Positioned(
                 top: 0,
                 left: 0,
@@ -127,7 +133,7 @@ class ProductCard extends StatelessWidget {
                     color: const Color(0xFF1548C7),
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
-                      color: Colors.white, // حد أبيض للتباين
+                      color: Colors.white,
                       width: 1,
                     ),
                   ),
@@ -157,9 +163,5 @@ class ProductCard extends StatelessWidget {
         ],
       ),
     );
-
-
-
   }
 }
-

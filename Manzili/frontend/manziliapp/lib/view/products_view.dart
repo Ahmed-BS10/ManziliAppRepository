@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:manziliapp/model/product.dart';
 import 'package:manziliapp/widget/store/category_tabs.dart';
 import 'package:manziliapp/widget/store/product_card.dart';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ProductsView extends StatefulWidget {
-  const ProductsView({Key? key}) : super(key: key);
+  const ProductsView(
+      {Key? key, required this.categoryNames, required this.storeid})
+      : super(key: key);
+
+  final List<String> categoryNames;
+  final int storeid;
 
   @override
   State<ProductsView> createState() => _ProductsViewState();
@@ -13,26 +19,77 @@ class ProductsView extends StatefulWidget {
 
 class _ProductsViewState extends State<ProductsView> {
   String _selectedCategory = 'الكل';
-  String _selectedSubCategory = 'مأكولات';
+  String _selectedSubCategory = '';
   final TextEditingController _searchController = TextEditingController();
+  List<Map<String, dynamic>> _subCategories = []; // Store id and name
+  List<Product> _products = []; // Dynamically fetched products
 
-  final List<String> _categories = [
-    'الكل',
-    'مأكولات',
-    'مشروبات',
-    'حلويات',
-    'معجنات',
-    'حلويات',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    widget.categoryNames.add('الكل');
+    _fetchSubCategories('الكل'); // Fetch all subcategories by default
+  }
 
-  final List<String> _subCategories = [
-    'مأكولات',
-    'مأكولات',
-    'مأكولات',
-    'مأكولات',
-  ];
+  Future<void> _fetchSubCategories(String categoryName) async {
+    String apiUrl;
 
-  final List<Product> _products = Product.sampleProducts();
+    if (categoryName == 'الكل') {
+      apiUrl =
+          'http://man.runasp.net/api/StoreCategory/GetStoreAllSubCategoryIdAndName?storeId=${widget.storeid}';
+    } else {
+      apiUrl =
+          'http://man.runasp.net/api/StoreCategory/GetStoreSubCategoryIdAndName?storeId=${widget.storeid}&storeCategoryName=$categoryName';
+    }
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        if (jsonResponse["isSuccess"] == true) {
+          setState(() {
+            _subCategories = (jsonResponse["data"] as List<dynamic>)
+                .map((item) => {
+                      "id": item["id"],
+                      "name": item["name"],
+                    })
+                .toList();
+          });
+        } else {
+          throw Exception("Error: ${jsonResponse["message"]}");
+        }
+      } else {
+        throw Exception("Failed to load: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching subcategories: $e");
+    }
+  }
+
+  Future<void> _fetchProducts(int subCategoryId) async {
+    final String apiUrl =
+        'http://man.runasp.net/api/Product/GetProductsByStoreAndProductCategories?storeId=${widget.storeid}&storeProductCategoryI=$subCategoryId';
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        if (jsonResponse["isSuccess"] == true) {
+          setState(() {
+            _products = (jsonResponse["data"] as List<dynamic>)
+                .map((item) => Product.fromJson(item))
+                .toList();
+          });
+        } else {
+          throw Exception("Error: ${jsonResponse["message"]}");
+        }
+      } else {
+        throw Exception("Failed to load: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching products: $e");
+    }
+  }
 
   @override
   void dispose() {
@@ -48,27 +105,37 @@ class _ProductsViewState extends State<ProductsView> {
         Container(
           margin: const EdgeInsets.only(top: 30),
           child: CategoryTabs(
-            categories: _categories,
+            categories: widget.categoryNames,
             selectedCategory: _selectedCategory,
             onCategorySelected: (category) {
               setState(() {
                 _selectedCategory = category;
+                _subCategories = []; // Clear subcategories while fetching
               });
+              _fetchSubCategories(category);
             },
           ),
         ),
 
         // Sub-category tabs
-        if (_selectedCategory != 'الكل')
+        if (_subCategories.isNotEmpty)
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: CategoryTabs(
-              categories: _subCategories,
+              categories:
+                  _subCategories.map((sub) => sub["name"] as String).toList(),
               selectedCategory: _selectedSubCategory,
-              onCategorySelected: (category) {
+              onCategorySelected: (subCategoryName) {
                 setState(() {
-                  _selectedSubCategory = category;
+                  _selectedSubCategory = subCategoryName;
                 });
+                final selectedSubCategoryId = _subCategories.firstWhere(
+                  (sub) => sub["name"] == subCategoryName,
+                  orElse: () => {"id": null},
+                )["id"];
+                if (selectedSubCategoryId != null) {
+                  _fetchProducts(selectedSubCategoryId);
+                }
               },
               showMore: true,
             ),
@@ -91,7 +158,6 @@ class _ProductsViewState extends State<ProductsView> {
                 hintStyle: TextStyle(color: Colors.grey),
                 prefixIcon: Icon(Icons.search, color: Colors.grey),
                 border: InputBorder.none,
-                // إضافة مسافة 20px من اليمين لإزاحة النص إلى اليسار
                 contentPadding: EdgeInsets.fromLTRB(0, 12, 25, 12),
               ),
             ),
@@ -104,7 +170,14 @@ class _ProductsViewState extends State<ProductsView> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             itemCount: _products.length,
             itemBuilder: (context, index) {
-              return ProductCard(product: _products[index]);
+              return ProductCard(
+                product: _products[index],
+                subCategoryId: _subCategories.firstWhere(
+                  (sub) => sub["name"] == _selectedSubCategory,
+                  orElse: () => {"id": null},
+                )["id"],
+                storeId: widget.storeid,
+              );
             },
           ),
         ),

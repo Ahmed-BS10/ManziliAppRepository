@@ -11,7 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Manzili.Core.Services
 {
-    internal class Productservices : IProductservices
+    internal class Productservices : IProductServices
     {
        
         readonly ManziliDbContext _db;
@@ -220,12 +220,36 @@ namespace Manzili.Core.Services
 
         }
 
+        public async Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndProductCategoriesAsync(int storeId, int productCategoryId)
+        {
+            // Query the database for products matching the storeId and productCategoryId
+            var products = await _dbSet
+                .Include(p => p.Images) // Include related images
+                .Where(p => p.StoreId == storeId && p.ProductCategoryId == productCategoryId)
+                .ToListAsync();
 
+            // Check if no products were found
+            if (!products.Any())
+            {
+                return OperationResult<IEnumerable<GetAllProduct>>.Failure("No products found for the specified store and product category.");
+            }
 
+            // Map the products to the GetAllProduct DTO
+            var productDtos = products.Select(p => new GetAllProduct
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                State = p.State,
+                Rate = p.Rate,
+                ImageUrl = p.Images?.FirstOrDefault()?.ImageUrl ?? string.Empty
+            }).ToList();
 
-
-
+            // Return the result
+            return OperationResult<IEnumerable<GetAllProduct>>.Success(productDtos, "Products retrieved successfully.");
+        }
 
     }
-  
+
 }

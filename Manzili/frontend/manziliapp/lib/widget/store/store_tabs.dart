@@ -4,10 +4,14 @@ class StoreTabs extends StatelessWidget {
   final int selectedTabIndex;
   final Function(int) onTabSelected;
 
+  final String status;
+  final String addrees;
+
   const StoreTabs({
     Key? key,
     required this.selectedTabIndex,
     required this.onTabSelected,
+    required this.status, required this.addrees,
   }) : super(key: key);
 
   @override
@@ -28,14 +32,18 @@ class StoreTabs extends StatelessWidget {
                   child: Transform.translate(
                     offset: Offset(15, 0), // زيادة القيمة لتحريك العنصر لليمين
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 4),
                       decoration: BoxDecoration(
                         color: Color(0xFF20D851),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Text(
-                        'مفتوح',
-                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      child: Text(
+                        status,
+                        style: TextStyle(
+                            color:
+                                status == 'مفتوح' ? Colors.white : Colors.red,
+                            fontSize: 15),
                       ),
                     ),
                   ),
@@ -48,14 +56,18 @@ class StoreTabs extends StatelessWidget {
                     offset: const Offset(25, 0), // إزاحة لليمين بمقدار 15 بكسل
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Text(
-                          'فوة المتضررين',
-                          style: TextStyle(color: Color(0xFF1548C7), fontSize: 18, fontWeight: FontWeight.bold),
+                          addrees,
+                          style: const TextStyle(
+                              color: Color(0xFF1548C7),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(width: 4),
-                        Icon(Icons.location_on, color: Color(0xFF1548C7), size: 35),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.location_on,
+                            color: Color(0xFF1548C7), size: 35),
                       ],
                     ),
                   ),
@@ -89,7 +101,8 @@ class StoreTabs extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          margin: const EdgeInsets.symmetric(horizontal: 4), // <-- أضف هذا السطر
+          margin:
+              const EdgeInsets.symmetric(horizontal: 4), // <-- أضف هذا السطر
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFF1548C7) : Colors.transparent,
@@ -100,13 +113,13 @@ class StoreTabs extends StatelessWidget {
             ),
             boxShadow: isSelected
                 ? [
-              BoxShadow(
-                color: const Color(0xFF1548C7).withOpacity(0.4),
-                spreadRadius: 2,
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              )
-            ]
+                    BoxShadow(
+                      color: const Color(0xFF1548C7).withOpacity(0.4),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    )
+                  ]
                 : [],
           ),
           alignment: Alignment.center,

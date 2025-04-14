@@ -4,7 +4,9 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:manziliapp/view/cart_view.dart';
 
 class StoreHeader extends StatelessWidget {
-  const StoreHeader({Key? key}) : super(key: key);
+  const StoreHeader({Key? key, required this.imageUrl}) : super(key: key);
+
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class StoreHeader extends StatelessWidget {
             ),
           ),
 
-          // Store logo
+          //Store logo
           Transform.translate(
             offset: const Offset(10, 15),
             child: Container(
@@ -39,8 +41,8 @@ class StoreHeader extends StatelessWidget {
                 border: Border.all(color: Color(0xFF1548C7), width: 4),
               ),
               child: ClipOval(
-                child: Image.asset(
-                  'assets/images/Rectangle 509.jpg',
+                child: Image.network(
+                  imageUrl,
                   fit: BoxFit.fill,
                   errorBuilder: (context, error, stackTrace) {
                     return const CircleAvatar(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class StoreAbout extends StatelessWidget {
-  const StoreAbout({Key? key}) : super(key: key);
+  const StoreAbout({Key? key, required this.description, required this.bookTime}) : super(key: key);
+
+  final String description;
+  final String bookTime;
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +23,9 @@ class StoreAbout extends StatelessWidget {
             textAlign: TextAlign.right,
           ),
           const SizedBox(height: 8),
-          const Text(
-            'متجر لوني يقدم لك منتجات منزلية عالية الجودة مصنوعة بحب وإتقان. '
-                'نوفر لك أنواع المنتجات، مثل: المأكولات، المشغولات اليدوية، الملابس. '
-                'لمسة فريدة تعكس أصالة الحرف اليدوية. '
-                'تسوق الآن واستمتع بمنتجات مميزة وبسعر لا يُقاوم',
-            style: TextStyle(fontSize: 17, height: 1.5),
+          Text(
+            description,
+            style: const TextStyle(fontSize: 17, height: 1.5),
             textAlign: TextAlign.right,
           ),
           const SizedBox(height: 16),
@@ -33,15 +33,14 @@ class StoreAbout extends StatelessWidget {
           // Delivery time
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: const [
+            children: [
               Text(
-                'يتم التسليم خلال يومين',
-
-                style: TextStyle(fontSize: 19 ,color: Color(0xFF1548C7)),
+                bookTime,
+                style: const TextStyle(fontSize: 19, color: Color(0xFF1548C7)),
                 textAlign: TextAlign.right,
               ),
-              SizedBox(width: 8),
-              Icon(Icons.access_time, color: Color(0xFF1548C7), size: 30),
+              const SizedBox(width: 8),
+              const Icon(Icons.access_time, color: Color(0xFF1548C7), size: 30),
             ],
           ),
         ],
@@ -49,4 +48,3 @@ class StoreAbout extends StatelessWidget {
     );
   }
 }
-

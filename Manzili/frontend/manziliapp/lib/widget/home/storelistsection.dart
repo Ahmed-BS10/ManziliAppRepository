@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:manziliapp/controller/user_controller.dart';
+import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
 import 'package:manziliapp/view/store_details_view.dart';
@@ -109,7 +110,9 @@ class _StoreListSectionState extends State<StoreListSection> {
               children: stores.map((store) {
                 final statusMap = mapStatus(store.status);
                 return InkWell(
-                  onTap: () => Get.to(() => StoreDetailsView()),
+                  onTap: () => Get.to(() => StoreDetailsScreen(
+                        storeId: store.id,
+                      )),
                   child: StoreListItem(
                     storeId: store.id,
                     title: store.businessName,

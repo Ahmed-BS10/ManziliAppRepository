@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:manziliapp/widget/store/storeInfo_section.dart';
+
 import 'package:manziliapp/widget/store/store_about.dart';
 import 'package:manziliapp/widget/store/store_contact.dart';
 import 'package:manziliapp/widget/store/store_header.dart';
@@ -6,58 +8,163 @@ import 'package:manziliapp/widget/store/store_tabs.dart';
 
 import 'products_view.dart';
 import 'reviews_view.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class StoreDetailsView extends StatefulWidget {
-  const StoreDetailsView({Key? key}) : super(key: key);
+class StoreData {
+  final int id;
+  final String businessName;
+  final String imageUrl;
+  final String description;
+  final String PhoneNumber;
+  final List<String> categoryNames;
+  final String bookTime;
+  final String bankAccount;
+  final String address;
+  final String socileMediaAcount;
+  final double rate;
+  final String status;
 
-  @override
-  State<StoreDetailsView> createState() => _StoreDetailsViewState();
+  StoreData({
+    required this.id,
+    required this.imageUrl,
+    required this.PhoneNumber,
+    required this.businessName,
+    required this.description,
+    required this.categoryNames,
+    required this.bookTime,
+    required this.bankAccount,
+    required this.address,
+    required this.socileMediaAcount,
+    required this.rate,
+    required this.status,
+  });
+
+  factory StoreData.fromJson(Map<String, dynamic> json) {
+    return StoreData(
+      id: json['id'],
+      imageUrl: json['imageUrl'] ?? 'aa',
+      businessName: json['businessName'] ?? 'aa',
+      PhoneNumber: json['PhoneNumber'] ?? 'aa',
+      description: json['description'] ?? 'aa',
+      categoryNames: List<String>.from(json['categoryNames'] ?? []),
+      bookTime: json['bookTime'] ?? 'aa',
+      bankAccount: json['bankAccount'] ?? 'aa',
+      address: json['address'] ?? 'aa',
+      socileMediaAcount: json['socileMediaAcount'] ?? 'aa',
+      rate: json['rate'].toDouble() ?? 0.0,
+      status: json['status'] ?? 'aa',
+    );
+  }
 }
 
-class _StoreDetailsViewState extends State<StoreDetailsView> {
+class StoreDetailsScreen extends StatefulWidget {
+  const StoreDetailsScreen({Key? key, required this.storeId}) : super(key: key);
+
+  final int storeId;
+
+  @override
+  State<StoreDetailsScreen> createState() => _StoreDetailsScreenState();
+}
+
+class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
   int _selectedTabIndex = 0; // Default to about tab (عن المتجر)
+  late Future<StoreData> _storeDetailsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _storeDetailsFuture = _fetchStoreDetails();
+  }
+
+  Future<StoreData> _fetchStoreDetails() async {
+    final response = await http.get(
+      Uri.parse(
+          'http://man.runasp.net/api/Store/GetInfoStore?storeId=${widget.storeId}'),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      if (jsonResponse["isSuccess"] == true) {
+        return StoreData.fromJson(jsonResponse["data"]);
+      } else {
+        throw Exception("Error: ${jsonResponse["message"]}");
+      }
+    } else {
+      throw Exception("Failed to load: ${response.statusCode}");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Header with back button, logo, and cart
-            const StoreHeader(),
+        child: FutureBuilder<StoreData>(
+          future: _storeDetailsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text("Error: ${snapshot.error}"));
+            } else if (!snapshot.hasData) {
+              return const Center(child: Text("No data available."));
+            } else {
+              final storeData = snapshot.data!;
+              return Column(
+                children: [
+                  // Header with back button, logo, and cart
+                  StoreHeader(
+                    imageUrl: storeData
+                        .imageUrl, // Replace with actual image URL if available
+                  ),
 
-            // Store info (favorite, rating, name) and category display
-            const StoreInfoSection(),
+                  // Store info (favorite, rating, name) and category display
+                  StoreInfoSection(
+                    rate: storeData.rate.toInt(),
+                    businessName: storeData.businessName,
+                    categoryNames: storeData.categoryNames,
+                  ),
 
-            // Navigation tabs
-            StoreTabs(
-              selectedTabIndex: _selectedTabIndex,
-              onTabSelected: (index) {
-                setState(() {
-                  _selectedTabIndex = index;
-                });
-              },
-            ),
+                  // Navigation tabs
+                  StoreTabs(
+                    selectedTabIndex: _selectedTabIndex,
+                    onTabSelected: (index) {
+                      setState(() {
+                        _selectedTabIndex = index;
+                      });
+                    },
+                    status: storeData.status,
+                    addrees: storeData.address,
+                  ),
 
-            // Main content based on selected tab
-            Expanded(
-              child: _buildTabContent(),
-            ),
-          ],
+                  // Main content based on selected tab
+                  Expanded(
+                    child: _buildTabContent(storeData),
+                  ),
+                ],
+              );
+            }
+          },
         ),
       ),
     );
   }
 
-  Widget _buildTabContent() {
+  Widget _buildTabContent(StoreData storeData) {
     switch (_selectedTabIndex) {
       case 0: // About store (عن المتجر)
         return SingleChildScrollView(
           child: Column(
-            children: const [
-              StoreAbout(),
-              StoreContact(),
+            children: [
+              StoreAbout(
+                description: storeData.description,
+                bookTime: storeData.bookTime,
+              ),
+              StoreContact(
+                socileMediaAcount: storeData.socileMediaAcount,
+                phoneNumberl: storeData.PhoneNumber,
+              ),
             ],
           ),
         );
@@ -68,139 +175,14 @@ class _StoreDetailsViewState extends State<StoreDetailsView> {
           child: Text('محتوى قيد التطوير'),
         );
       case 3: // Products (منتجاتنا)
-        return const ProductsView();
+        return ProductsView(
+          categoryNames: storeData.categoryNames,
+          storeid: storeData.id,
+        );
       default:
         return const Center(
           child: Text('محتوى قيد التطوير'),
         );
     }
-  }
-}
-
-class StoreInfoSection extends StatelessWidget {
-  const StoreInfoSection({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Store info (favorite, rating, name)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            children: [
-              // Favorite button
-              IconButton(
-                icon: const Icon(Icons.favorite_border,
-                    color: Color(0xFF1548C7), size: 35),
-                onPressed: () {},
-              ),
-
-              // Rating
-              Row(
-                children: const [
-                  Icon(Icons.star, color: Colors.amber, size: 28),
-                  SizedBox(width: 4),
-                  Text('4.6',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 21)),
-                ],
-              ),
-
-              const SizedBox(width: 16),
-
-              // Store name with icon before text and left offset
-              Expanded(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Transform.translate(
-                    offset: Offset(-45, 0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Text(
-                          'متجر الأسر المنتجة',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 17),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(width: 4),
-                        Icon(Icons.store,
-                            color: Color(0xFF1548C7),
-                            size: 31), // الأيقونة أولاً
-                        SizedBox(width: 6), // مسافة صغيرة بين الأيقونة والنص
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Categories display (non-clickable)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-          child: Wrap(
-            spacing: 8.0,
-            runSpacing: 8.0,
-            children: [
-              // زر مقاطعات الأيسر
-              Container(
-                decoration: BoxDecoration(
-                  color: Color(0xFFECF1F6), // اللون الأزرق الداكن
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: const Text(
-                  'مأكولات',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF66707A),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              Container(
-                decoration: BoxDecoration(
-                  color: Color(0xFFECF1F6), // اللون الأخضر
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: const Text(
-                  'حرف يدوية',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF66707A),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              // زر مقاطعات الأيمن
-              Container(
-                decoration: BoxDecoration(
-                  color: Color(0xFFECF1F6), // اللون البرتقالي
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: const Text(
-                  'مأكولات',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF66707A),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
   }
 }

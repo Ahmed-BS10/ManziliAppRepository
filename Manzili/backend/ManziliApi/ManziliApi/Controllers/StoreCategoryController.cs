@@ -25,6 +25,27 @@ namespace ManziliApi.Controllers
         #endregion
 
         #region Endpoint
+
+
+        [HttpGet("GetStoreAllSubCategoryIdAndName")]
+        public async Task<IActionResult> GetStoreAllSubCategoryIdAndNameAsync(int storeId)
+        {
+            var result = await _storeCategoryServices.GetStoreAllSubCategoryIdAndNameAsync(storeId);
+            if (!result.IsSuccess)
+                return NotFound(result);
+            return Ok(result);
+        }
+
+
+        [HttpGet("GetStoreSubCategoryIdAndName")]
+        public async Task<IActionResult> GetStoreSubCategoryIdAndName(int storeId, string storeCategoryName)
+        {
+            var result = await _storeCategoryServices.GetStoreSubCategoryIdAndNameAsync(storeId, storeCategoryName);
+            if (!result.IsSuccess)
+                return NotFound(result);
+            return Ok(result);
+        }
+
         [HttpGet(StoreCategoryRouting.List)]
         public async Task<IActionResult> GetAll()
         {

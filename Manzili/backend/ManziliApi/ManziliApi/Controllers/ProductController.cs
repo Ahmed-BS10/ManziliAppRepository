@@ -12,12 +12,12 @@ namespace ManziliApi.Controllers
     {
         #region Fields
 
-        readonly IProductservices _productservices;
+        readonly IProductServices _productservices;
 
         #endregion
 
         #region Constructor
-        public ProductController(IProductservices productservices)
+        public ProductController(IProductServices productservices)
         {
             _productservices = productservices;
         }
@@ -78,7 +78,19 @@ namespace ManziliApi.Controllers
         }
 
 
-        
+        [HttpGet("GetProductsByStoreAndProductCategories")]
+        public async Task<IActionResult> GetProductsByStoreAndProductCategoriesAsync(int storeId, int storeProductCategoryI)
+        {
+            var result = await _productservices.GetProductsByStoreAndProductCategoriesAsync(storeId, storeProductCategoryI);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+
+
+
 
         #endregion
     }

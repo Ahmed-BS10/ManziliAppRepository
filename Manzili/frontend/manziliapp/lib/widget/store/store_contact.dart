@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 
 class StoreContact extends StatelessWidget {
-  const StoreContact({Key? key}) : super(key: key);
+  const StoreContact(
+      {Key? key, required this.socileMediaAcount, required this.phoneNumberl})
+      : super(key: key);
+
+  final String socileMediaAcount;
+  final String phoneNumberl;
 
   @override
   Widget build(BuildContext context) {
@@ -24,19 +30,8 @@ class StoreContact extends StatelessWidget {
           // Phone number 1
           _buildContactItem(
             icon: Icons.phone,
-            text: '+967 7777777' ,
+            text: phoneNumberl,
             color: Color(0xFF1548C7),
-
-          ),
-
-          const SizedBox(height: 8),
-
-          // WhatsApp
-          _buildContactItem(
-            icon: Icons.call,
-            text: '+967 7777777',
-            color: Color(0xFF1548C7),
-
           ),
 
           const SizedBox(height: 16),
@@ -56,7 +51,7 @@ class StoreContact extends StatelessWidget {
           // Instagram
           _buildContactItem(
             icon: Icons.camera_alt,
-            text: 'ck_storeApp',
+            text: socileMediaAcount,
             color: Color(0xFF1548C7),
           ),
         ],
@@ -86,4 +81,3 @@ class StoreContact extends StatelessWidget {
     );
   }
 }
-
