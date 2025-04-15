@@ -28,6 +28,9 @@ public class Product
     public ICollection<CartProduct>? CartProducts { get; set; }
     public ICollection<OrderProduct>? OrderProducts { get; set; }
 
+    public ICollection<Comment>? Comments {  get; set; }
+    public ICollection<ProductRating>? ProductRatings { get; set; }
+
 
 
 

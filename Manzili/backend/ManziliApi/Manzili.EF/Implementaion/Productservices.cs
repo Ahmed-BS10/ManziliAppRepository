@@ -27,6 +27,123 @@ namespace Manzili.Core.Services
             _fileService = fileService;
         }
 
+        public async Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId)
+        {
+            var store = await _db.Stores
+                .Include(s => s.Products)
+                .ThenInclude(p => p.Images)
+                .FirstOrDefaultAsync(s => s.Id == storeId);
+
+            if (store == null)
+            {
+                return OperationResult<List<GetAllProduct>>.Failure("Store not found.");
+            }
+
+            var productsDto = store.Products.Select(x => new GetAllProduct
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description,
+                Price = x.Price,
+                State = x.State,
+                Rate = 45,
+                ImageUrl = x.Images.First().ImageUrl,
+            }).ToList();
+
+
+            return OperationResult<List<GetAllProduct>>.Success(productsDto, "Store products retrieved successfully.");
+        }
+        public async Task<OperationResult<GteFullInfoProdcut>> GetProductByIdAsync(int productId)
+        {
+            var product = await _db.Set<Product>()
+                .Include(s => s.Store)
+                .Include(im => im.Images)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+
+            if (product == null)
+            {
+                return OperationResult<GteFullInfoProdcut>.Failure("Product not found.");
+            }
+
+            var productDto = new GteFullInfoProdcut
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                State = product.State,
+                Quantity = product.Quantity,
+                Rate = product.Rate,
+                StoreName = product.Store.BusinessName,
+                images = product.Images.Select(i => i.ImageUrl).ToList() ?? [],
+                StoreImage = product.Store.ImageUrl ?? "/Profile/383ba157cb9f4367b67f7baeea98097d.jpg",
+            };
+
+            return OperationResult<GteFullInfoProdcut>.Success(productDto, "Product retrieved successfully.");
+        }
+
+        public async Task<OperationResult<IEnumerable<GetAllProduct>>> SearchProductByNameInStore(int storeId, string name)
+        {
+            var store = await _db.Stores
+            .Include(s => s.Products)
+            .ThenInclude(p => p.Images)
+            .FirstOrDefaultAsync(s => s.Id == storeId);
+
+            if (store is null)
+                return OperationResult<IEnumerable<GetAllProduct>>.Failure("Store not found.");
+
+            var productsDto = store.Products
+                .Where(x => x.Name.Contains(name))
+                .Select(x => new GetAllProduct
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    Price = x.Price,
+                    State = x.State,
+                    Rate = x.Rate,
+                    ImageUrl = x.Images?.FirstOrDefault()?.ImageUrl ?? string.Empty
+                }).ToList();
+
+            if (!productsDto.Any())
+                return OperationResult<IEnumerable<GetAllProduct>>.Failure($"not {name} product in store {storeId}");
+
+            return OperationResult<IEnumerable<GetAllProduct>>.Success(productsDto, "Store products retrieved successfully.");
+
+        }
+        public async Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndProductCategoriesAsync(int storeId, int productCategoryId)
+        {
+            // Query the database for products matching the storeId and productCategoryId
+            var products = await _dbSet
+                .Include(p => p.Images) // Include related images
+                .Where(p => p.StoreId == storeId && p.ProductCategoryId == productCategoryId)
+                .ToListAsync();
+
+            // Check if no products were found
+            if (!products.Any())
+            {
+                return OperationResult<IEnumerable<GetAllProduct>>.Failure("No products found for the specified store and product category.");
+            }
+
+            // Map the products to the GetAllProduct DTO
+            var productDtos = products.Select(p => new GetAllProduct
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                State = p.State,
+                Rate = p.Rate,
+                ImageUrl = p.Images?.FirstOrDefault()?.ImageUrl ?? string.Empty
+            }).ToList();
+
+            // Return the result
+            return OperationResult<IEnumerable<GetAllProduct>>.Success(productDtos, "Products retrieved successfully.");
+        }
+
+
+
+
 
         public async Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndCategoriesAsync(int storeId, int storeCategoryId, int productCategoryId)
         {
@@ -63,32 +180,6 @@ namespace Manzili.Core.Services
  
 
             return OperationResult<IEnumerable<GetAllProduct>>.Success(productDto, "Products retrieved successfully.");
-        }
-        public async Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId)
-        {
-            var store = await _db.Stores
-                .Include(s => s.Products)
-                .ThenInclude(p => p.Images)
-                .FirstOrDefaultAsync(s => s.Id == storeId);
-
-            if (store == null)
-            {
-                return OperationResult<List<GetAllProduct>>.Failure("Store not found.");
-            }
-
-            var productsDto = store.Products.Select(x => new GetAllProduct
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Description = x.Description,
-                Price = x.Price,
-                State = x.State,
-                Rate = 45,
-                ImageUrl = x.Images.First().ImageUrl,
-            }).ToList();
-
-
-            return OperationResult<List<GetAllProduct>>.Success(productsDto, "Store products retrieved successfully.");
         }
         public async Task<OperationResult<string>> AddProductToStoreAsync(int storeId, CreateProductDto productDto)
         {
@@ -165,92 +256,48 @@ namespace Manzili.Core.Services
 
             return OperationResult<string>.Failure("Product not added successfully");
         }
-        public async Task<OperationResult<GteFullInfoProdcut>> GetProductByIdAsync(int productId)
+        public async Task<OperationResult<IEnumerable<GetProductRatingsAndCommentsDto>>> GetAllRatingsAndCommentsAsync(int productId)
         {
-            var product = await _db.Set<Product>()
-                .Include(s => s.Store)
-                .Include(im => im.Images)
+            // Fetch the product along with its comments and ratings
+            var productWithCommentsAndRatings = await _db.Products
+                .Include(p => p.Comments)
+                .Include(p => p.ProductRatings)
                 .FirstOrDefaultAsync(p => p.Id == productId);
 
-            if (product == null)
+            // Check if the product exists
+            if (productWithCommentsAndRatings is null)
+                return OperationResult<IEnumerable<GetProductRatingsAndCommentsDto>>.Failure("No ratings or comments found for the specified product.");
+
+            // Map the comments and ratings to the DTO
+            var result = productWithCommentsAndRatings.Comments.Select(comment => new GetProductRatingsAndCommentsDto
             {
-                return OperationResult<GteFullInfoProdcut>.Failure("Product not found.");
-            }
+                RatingValue = productWithCommentsAndRatings.ProductRatings
+                    .FirstOrDefault(rating => rating.UserId == comment.UserId)?.RatingValue ?? 0, // Match rating by UserId
+                Comment = comment.Content,
+                UserName = _db.Users.FirstOrDefault(u => u.Id == comment.UserId)?.UserName ?? "Unknown",
+                UserImage = _db.Users.FirstOrDefault(u => u.Id == comment.UserId).ImageUrl,
 
-            var productDto = new GteFullInfoProdcut
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                State = product.State,
-                Quantity = product.Quantity,
-                Rate = product.Rate,
-                StoreName = product.Store.BusinessName,
-                images = product.Images.Select(i => i.ImageUrl).ToList() ?? [],
-                StoreImage = product.Store.ImageUrl ?? "/Profile/383ba157cb9f4367b67f7baeea98097d.jpg",
-            };
-
-            return OperationResult<GteFullInfoProdcut>.Success(productDto, "Product retrieved successfully.");
-        }
-        public async Task<OperationResult<IEnumerable<GetAllProduct>>> SearchProductByNameInStore(int storeId, string name)
-        {
-            var store = await _db.Stores
-            .Include(s => s.Products)
-            .ThenInclude(p => p.Images)
-            .FirstOrDefaultAsync(s => s.Id == storeId);
-
-            if (store is null)
-                return OperationResult<IEnumerable<GetAllProduct>>.Failure("Store not found.");
-
-            var productsDto = store.Products
-                .Where(x => x.Name.Contains(name))
-                .Select(x => new GetAllProduct
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description,
-                    Price = x.Price,
-                    State = x.State,
-                    Rate = x.Rate,
-                    ImageUrl = x.Images?.FirstOrDefault()?.ImageUrl ?? string.Empty
-                }).ToList();
-
-            if (!productsDto.Any())
-                return OperationResult<IEnumerable<GetAllProduct>>.Failure($"not {name} product in store {storeId}");
-
-            return OperationResult<IEnumerable<GetAllProduct>>.Success(productsDto, "Store products retrieved successfully.");
-
-        }
-        public async Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndProductCategoriesAsync(int storeId, int productCategoryId)
-        {
-            // Query the database for products matching the storeId and productCategoryId
-            var products = await _dbSet
-                .Include(p => p.Images) // Include related images
-                .Where(p => p.StoreId == storeId && p.ProductCategoryId == productCategoryId)
-                .ToListAsync();
-
-            // Check if no products were found
-            if (!products.Any())
-            {
-                return OperationResult<IEnumerable<GetAllProduct>>.Failure("No products found for the specified store and product category.");
-            }
-
-            // Map the products to the GetAllProduct DTO
-            var productDtos = products.Select(p => new GetAllProduct
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                State = p.State,
-                Rate = p.Rate,
-                ImageUrl = p.Images?.FirstOrDefault()?.ImageUrl ?? string.Empty
+                CreatedAt = comment.CreatedAt
             }).ToList();
 
+            // Add ratings without comments
+            var ratingsWithoutComments = productWithCommentsAndRatings.ProductRatings
+                .Where(rating => !productWithCommentsAndRatings.Comments.Any(comment => comment.UserId == rating.UserId))
+                .Select(rating => new GetProductRatingsAndCommentsDto
+                {
+                    RatingValue = rating.RatingValue,
+                    UserImage = _db.Users.FirstOrDefault(u => u.Id == rating.UserId).ImageUrl,
+                    Comment = "No comment",
+                    UserName = _db.Users.FirstOrDefault(u => u.Id == rating.UserId)?.UserName ?? "Unknown",
+                    CreatedAt = DateTime.MinValue // Default value for ratings without comments
+                });
+
+            result.AddRange(ratingsWithoutComments);
+
             // Return the result
-            return OperationResult<IEnumerable<GetAllProduct>>.Success(productDtos, "Products retrieved successfully.");
+            return OperationResult<IEnumerable<GetProductRatingsAndCommentsDto>>.Success(result);
         }
+
 
     }
 

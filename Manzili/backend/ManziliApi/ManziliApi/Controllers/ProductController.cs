@@ -90,6 +90,17 @@ namespace ManziliApi.Controllers
 
 
 
+        [HttpGet("GetAllRatingsAndComments")]
+        public async Task<IActionResult> GetAllRatingsAndCommentsAsync(int productId)
+        {
+            var result = await _productservices.GetAllRatingsAndCommentsAsync(productId);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return NotFound(result);
+        }
+
+
 
 
         #endregion
