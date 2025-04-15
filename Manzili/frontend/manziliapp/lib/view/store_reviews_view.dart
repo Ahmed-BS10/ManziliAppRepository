@@ -55,13 +55,18 @@ class _StoreReviewsViewState extends State<StoreReviewsView> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
+                    onPressed: () async {
+                      await Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) =>
-                              AddReviewView(storeId: widget.storeId, userId: userId),
+                          builder: (context) => AddReviewView(
+                              storeId: widget.storeId, userId: userId),
                         ),
                       );
+                      // Refresh data after returning from AddReviewView
+                      setState(() {
+                        _futureReviews =
+                            ReviewService.fetchStoreReviews(widget.storeId);
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1548C7),
@@ -90,4 +95,3 @@ class _StoreReviewsViewState extends State<StoreReviewsView> {
     );
   }
 }
-

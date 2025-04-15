@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
 
 class AddReviewView extends StatefulWidget {
-  const AddReviewView({Key? key, required this.storeId, required this.userId}) : super(key: key);
+  const AddReviewView({Key? key, required this.storeId, required this.userId})
+      : super(key: key);
 
   final int storeId;
   final int userId;
@@ -107,9 +111,36 @@ class _AddReviewViewState extends State<AddReviewView> {
             Container(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // Submit review and go back
-                  Navigator.of(context).pop();
+                onPressed: () async {
+                  final url =
+                      Uri.parse('http://man.runasp.net/api/StoreRating/Create');
+                  final body = json.encode({
+                    'userId': widget.userId,
+                    'storeId': widget.storeId,
+                    'valueRate': _rating,
+                  });
+
+                  try {
+                    final response = await http.post(
+                      url,
+                      headers: {'Content-Type': 'application/json'},
+                      body: body,
+                    );
+
+                    if (response.statusCode == 200) {
+                      final responseData = json.decode(response.body);
+                      if (responseData['isSuccess'] == true) {
+                        Get.snackbar('نجاح', 'تم إرسال التقييم بنجاح');
+                        Navigator.of(context).pop();
+                      } else {
+                        Get.snackbar('خطأ', responseData['message']);
+                      }
+                    } else {
+                      Get.snackbar('خطأ', 'فشل في إرسال التقييم');
+                    }
+                  } catch (e) {
+                    Get.snackbar('خطأ', 'حدث خطأ أثناء الإرسال');
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF1548C7),
