@@ -69,7 +69,7 @@ class ProductDetailView extends StatelessWidget {
                   );
                 } else if (controller.selectedTabIndex.value == 1) {
                   // تقييمات المنتج
-                  return ProductRatingsView(reviews: []); // استخدم بيانات التقييم الحقيقية عند توفرها
+                  return ProductRatingsView(productId: product.id ,); // استخدم بيانات التقييم الحقيقية عند توفرها
                 } else {
                   return Container();
                 }

@@ -7,46 +7,48 @@ class ReviewsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Rating summary section
-        const RatingSummarySection(),
+    return Scaffold(
+      body: Column(
+        children: [
+          // Rating summary section
+          const RatingSummarySection(),
 
-        // Reviews list section
-        const Expanded(
-          child: ReviewsListSection(),
-        ),
+          // Reviews list section
+          const Expanded(
+            child: ReviewsListSection(),
+          ),
 
-        // Add review button
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16.0),
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AddReviewView(),
+          // Add review button
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const AddReviewView(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF1548C7),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF1548C7),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
               ),
-            ),
-            child: const Text(
-              'أعطي لنا تقييمك',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+              child: const Text(
+                'أعطي لنا تقييمك',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

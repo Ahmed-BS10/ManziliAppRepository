@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/model/review_product.dart';
-
-
+import 'package:intl/intl.dart';
 
 // Review Item Component
 class ReviewItem extends StatelessWidget {
   final ReviewProduct review;
-  
+
   const ReviewItem({
     Key? key,
     required this.review,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,7 +22,8 @@ class ReviewItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                review.date,
+                DateFormat('yyyy-MM-dd HH:mm')
+                    .format(DateTime.parse(review.date)),
                 style: const TextStyle(
                   color: Colors.grey,
                   fontSize: 14,
@@ -42,8 +42,11 @@ class ReviewItem extends StatelessWidget {
                   CircleAvatar(
                     radius: 15,
                     backgroundColor: const Color(0xFF1548c7),
-                    child: const Icon(Icons.person, color: Colors.white, size: 18),
+                    child:
+                        Image.network('http://man.runasp.net' + review.avatar),
                   ),
+
+                  //   const Icon(Icons.person, color: Colors.white, size: 18),
                 ],
               ),
             ],
@@ -55,7 +58,8 @@ class ReviewItem extends StatelessWidget {
               5,
               (index) => Icon(
                 Icons.star,
-                color: index < review.rating ? Colors.amber : Colors.grey.shade300,
+                color:
+                    index < review.rating ? Colors.amber : Colors.grey.shade300,
                 size: 18,
               ),
             ),
