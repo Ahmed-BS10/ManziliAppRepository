@@ -7,7 +7,7 @@ import 'package:manziliapp/widget/store/store_header.dart';
 import 'package:manziliapp/widget/store/store_tabs.dart';
 
 import 'products_view.dart';
-import 'reviews_view.dart';
+import 'store_reviews_view.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -169,7 +169,9 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
           ),
         );
       case 1: // Reviews (تقييمات المتجر)
-        return const ReviewsView();
+        return StoreReviewsView(
+          storeId: storeData.id,
+        );
       case 2: // Store policy (سياسة المتجر)
         return const Center(
           child: Text('محتوى قيد التطوير'),

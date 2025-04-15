@@ -1,61 +1,72 @@
-class Review {
-  final String id;
-  final String userName;
-  final String userImage;
-  final int rating;
-  final String date;
-  final String? comment;
+import 'dart:convert';
 
-  Review({
-    required this.id,
-    required this.userName,
-    required this.userImage,
-    required this.rating,
-    required this.date,
-    this.comment,
+import 'package:http/http.dart' as http;
+
+class StoreReviewResponse {
+  final int storeId;
+  final double averageRating;
+  final int totalRatings;
+  final List<Review> ratings;
+
+  StoreReviewResponse({
+    required this.storeId,
+    required this.averageRating,
+    required this.totalRatings,
+    required this.ratings,
   });
 
-  // Factory method to create sample reviews
-  static List<Review> sampleReviews() {
-    return [
-      Review(
-        id: 'r1',
-        userName: 'Ahmed Salah',
-        userImage: 'assets/images/Guy.jpg',
-        rating: 5,
-        date: '30/3/25',
-      ),
-      Review(
-        id: 'r2',
-        userName: 'Ahmed Salah',
-        userImage: 'assets/images/Guy.jpg',
-        rating: 5,
-        date: '30/3/25',
-      ),
-      Review(
-        id: 'r3',
-        userName: 'محمد علي',
-        userImage: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-a7upSfEQOAI5cflvhy2p78oHYtqe5x.png', // Replace with actual image URL
-        rating: 4,
-        date: '25/3/25',
-        comment: 'منتجات رائعة وخدمة ممتازة',
-      ),
-      Review(
-        id: 'r4',
-        userName: 'سارة أحمد',
-        userImage: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-a7upSfEQOAI5cflvhy2p78oHYtqe5x.png', // Replace with actual image URL
-        rating: 5,
-        date: '20/3/25',
-      ),
-      Review(
-        id: 'r5',
-        userName: 'خالد محمود',
-        userImage: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-a7upSfEQOAI5cflvhy2p78oHYtqe5x.png', // Replace with actual image URL
-        rating: 3,
-        date: '15/3/25',
-        comment: 'المنتجات جيدة ولكن التوصيل متأخر قليلاً',
-      ),
-    ];
+  factory StoreReviewResponse.fromJson(Map<String, dynamic> json) {
+    return StoreReviewResponse(
+      storeId: json['storeId'],
+      averageRating: (json['averageRating'] as num).toDouble(),
+      totalRatings: json['totalRatings'],
+      ratings: (json['ratings'] as List)
+          .map((e) => Review.fromJson(e))
+          .toList(),
+    );
   }
 }
 
+class Review {
+  final String userName;
+  final String userImage;
+  final int valueRate;
+  final String date;
+
+  Review({
+    required this.userName,
+    required this.userImage,
+    required this.valueRate,
+    required this.date,
+  });
+
+  factory Review.fromJson(Map<String, dynamic> json) {
+    return Review(
+      userName: json['userName'],
+      userImage: json['imageUser'],
+      valueRate: json['valueRate'],
+      date: json['dateTime'].split('T').first,
+    );
+  }
+}
+
+
+
+
+
+class ReviewService {
+  static Future<StoreReviewResponse?> fetchStoreReviews(int storeId) async {
+    final url = 'http://man.runasp.net/api/StoreRating/store/$storeId/ratings';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonData = json.decode(response.body);
+
+      if (jsonData['isSuccess']) {
+        return StoreReviewResponse.fromJson(jsonData['data']);
+      }
+    }
+    return null;
+  }
+}

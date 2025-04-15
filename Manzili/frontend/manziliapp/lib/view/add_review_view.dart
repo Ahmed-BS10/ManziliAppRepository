@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AddReviewView extends StatefulWidget {
-  const AddReviewView({Key? key}) : super(key: key);
+  const AddReviewView({Key? key, required this.storeId, required this.userId}) : super(key: key);
+
+  final int storeId;
+  final int userId;
 
   @override
   State<AddReviewView> createState() => _AddReviewViewState();
