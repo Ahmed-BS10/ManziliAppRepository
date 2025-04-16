@@ -19,9 +19,9 @@ namespace Manzili.API.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddProductToCart(int userId, int storeId, int productId)
+        public async Task<IActionResult> AddProductToCart(int userId, int storeId, int productId , int quantity = 1)
         {
-            var result = await _cartService.AddProductToCartAsync(userId, storeId, productId);
+            var result = await _cartService.AddProductToCartAsync(userId, storeId, productId , quantity);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Message);
@@ -59,6 +59,17 @@ namespace Manzili.API.Controllers
             {
                 return Ok(result);
             }
+            return BadRequest(result);
+        }
+
+
+        [HttpPut("UpdateProductQuantityAsync")]
+        public async Task<IActionResult> UpdateProductQuantity(int cartId , int productId , int newQuantity)
+        {
+            var result = await _cartService.UpdateProductQuantityAsync(cartId, productId, newQuantity);
+            if (result.IsSuccess)
+                return Ok(result);
+
             return BadRequest(result);
         }
 

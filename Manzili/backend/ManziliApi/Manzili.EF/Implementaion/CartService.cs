@@ -42,6 +42,7 @@ namespace Manzili.Services
                     Name = product.Product.Name,
                     Price = product.Product.Price,
                     ImageUrl = product.Product.Images.FirstOrDefault()?.ImageUrl ?? string.Empty,
+                    Quantity = product.Quantity
                 }).ToList()
             };
             return OperationResult<GetCartDto>.Success(getCardDto, "Cart retrieved successfully");
@@ -59,7 +60,7 @@ namespace Manzili.Services
             _context.SaveChanges();
             return OperationResult<bool>.Success(true, "Product removed from cart successfully.");
         }
-        public async Task<OperationResult<bool>> AddProductToCartAsync(int userId, int storeId, int productId)
+        public async Task<OperationResult<bool>> AddProductToCartAsync(int userId, int storeId, int productId , int quantity )
         {
            
             var cart = await _context.Carts
@@ -97,6 +98,7 @@ namespace Manzili.Services
                 {
                     CartId = cart.CartId,
                     ProductId = productId,
+                    Quantity = quantity
                   
                 };
                 cart.CartProducts.Add(cartProduct);
@@ -137,185 +139,33 @@ namespace Manzili.Services
             throw new NotImplementedException();
         }
 
-
-
-        public Task<OperationResult<bool>> AddOrUpdateShippingAddressAsync(int userId, string address)
+        public async Task<OperationResult<bool>> UpdateProductQuantityAsync(int cartId, int productId, int newQuantity)
         {
-            throw new NotImplementedException();
+            // Validate the new quantity
+            if (newQuantity <= 0)
+            {
+                return OperationResult<bool>.Failure("Quantity must be greater than zero.");
+            }
+
+            // Fetch the cart product
+            var cartProduct = await _context.CartProducts
+                .FirstOrDefaultAsync(cp => cp.CartId == cartId && cp.ProductId == productId);
+
+            // Check if the cart product exists
+            if (cartProduct == null)
+            {
+                return OperationResult<bool>.Failure("Product not found in the cart.");
+            }
+
+            // Update the quantity
+            cartProduct.Quantity = newQuantity;
+
+            // Save changes to the database
+            _context.CartProducts.Update(cartProduct);
+            await _context.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true, "Product quantity updated successfully.");
         }
 
-        public Task<OperationResult<string>> UploadPaymentReceiptAsync(int userId, IFormFile receipt)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<OperationResult<decimal>> CalculateTotalCostAsync(int userId, decimal shippingCost)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        //public async Task<OperationResult<bool>> IsCartEmptyAsync(int userId)
-        //{
-        //    var cart = await _context.Carts
-        //        .Include(c => c.Products)
-        //        .FirstOrDefaultAsync(c => c.UserId == userId);
-
-        //    if (cart == null || !cart.Products.Any())
-        //    {
-        //        return OperationResult<bool>.Success(true, "Cart is empty");
-        //    }
-
-        //    return OperationResult<bool>.Success(false, "Cart is not empty");
-        //}
-
-        //public async Task<OperationResult<bool>> EditCartItemAsync(int userId, int productId, int quantity)
-        //{
-        //    var cart = await _context.Carts
-        //        .Include(c => c.Products)
-        //        .FirstOrDefaultAsync(c => c.UserId == userId);
-
-        //    if (cart == null)
-        //    {
-        //        return OperationResult<bool>.Failure("Cart not found.");
-        //    }
-
-        //    var cartItem = cart.Products.FirstOrDefault(item => item.Id == productId);
-        //    if (cartItem == null)
-        //    {
-        //        return OperationResult<bool>.Failure("Product not found in cart.");
-        //    }
-
-        //    cartItem.Quantity = quantity;
-        //    _context.Carts.Update(cart);
-        //    await _context.SaveChangesAsync();
-
-        //    return OperationResult<bool>.Success(true, "Cart item updated successfully.");
-        //}
-        //public async Task<OperationResult<bool>> DeleteCartItemAsync(int userId, int productId)
-        //{
-        //    var cart = await _context.Carts
-        //        .Include(c => c.Products)
-        //        .FirstOrDefaultAsync(c => c.UserId == userId);
-
-        //    if (cart == null)
-        //    {
-        //        return OperationResult<bool>.Failure("Cart not found.");
-        //    }
-
-        //    var cartItem = cart.Products.FirstOrDefault(item => item.Id == productId);
-        //    if (cartItem == null)
-        //    {
-        //        return OperationResult<bool>.Failure("Product not found in cart.");
-        //    }
-
-        //    cart.Products.Remove(cartItem);
-        //    _context.Carts.Update(cart);
-        //    await _context.SaveChangesAsync();
-
-        //    return OperationResult<bool>.Success(true, "Cart item removed successfully.");
-        //}
-        //public async Task<OperationResult<IEnumerable<CartProductDto>>> GetCartProductsAsync(int userId)
-        //{
-        //    var cart = await _context.Carts
-        //        .Include(c => c.Products)
-        //        .FirstOrDefaultAsync(c => c.UserId == userId);
-
-        //    if (cart == null)
-        //    {
-        //        return OperationResult<IEnumerable<CartProductDto>>.Failure("Cart not found");
-        //    }
-
-        //    var products = cart.Products.Select(p => new CartProductDto(
-        //        p.Id,
-        //        p.Name,
-        //        p.Images.FirstOrDefault()?.ImageUrl ?? string.Empty,
-        //        p.Description,
-        //        p.Price,
-        //        p.State,
-        //        p.Quantity ?? 0 // Provide a default value if Quantity is null
-        //    )).ToList();
-
-        //    return OperationResult<IEnumerable<CartProductDto>>.Success(products, "Products retrieved successfully");
-        //}
-
-        //public async Task<OperationResult<bool>> AddOrUpdateShippingAddressAsync(int userId, string address)
-        //{
-        //    var user = await _context.Users.FindAsync(userId);
-        //    if (user == null)
-        //    {
-        //        return OperationResult<bool>.Failure("User not found.");
-        //    }
-
-        //    user.Address = address;
-        //    _context.Users.Update(user);
-        //    await _context.SaveChangesAsync();
-
-        //    return OperationResult<bool>.Success(true, "Shipping address added/updated successfully.");
-        //}
-
-        //public async Task<OperationResult<string>> UploadPaymentReceiptAsync(int userId, IFormFile receipt)
-        //{
-        //    if (receipt == null || receipt.Length == 0)
-        //    {
-        //        return OperationResult<string>.Failure("Invalid receipt file.");
-        //    }
-
-        //    var filePath = Path.Combine("Receipts", $"{userId}_{DateTime.UtcNow.Ticks}_{receipt.FileName}");
-        //    using (var stream = new FileStream(filePath, FileMode.Create))
-        //    {
-        //        await receipt.CopyToAsync(stream);
-        //    }
-
-        //    return OperationResult<string>.Success(filePath, "Receipt uploaded successfully.");
-        //}
-
-        //public async Task<OperationResult<decimal>> CalculateTotalCostAsync(int userId, decimal shippingCost)
-        //{
-        //    var cart = await _context.Carts
-        //        .Include(c => c.Products)
-        //        .FirstOrDefaultAsync(c => c.UserId == userId);
-
-        //    if (cart == null)
-        //    {
-        //        return OperationResult<decimal>.Failure("Cart not found.");
-        //    }
-
-        //    var subtotal = cart.Products.Sum(p => (decimal)p.Price * p.Quantity);
-        //    var total = subtotal + shippingCost;
-
-        //    return OperationResult<decimal>.Success((decimal)total, "Total cost calculated successfully.");
-        //}
-
-        //public Task<OperationResult<bool>> AddProductToCartAsync(int userId, int storeId, int productId)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public async Task<OperationResult<bool>> CompleteOrderAsync(int userId, decimal shippingCost, string receiptPath)
-        //{
-        //    var cart = await _context.Carts
-        //        .Include(c => c.Products)
-        //        .FirstOrDefaultAsync(c => c.UserId == userId);
-
-        //    if (cart == null)
-        //    {
-        //        return OperationResult<bool>.Failure("Cart not found.");
-        //    }
-
-        //    var order = new Order
-        //    {
-        //        UserId = userId,
-        //        CreatedAt = DateTime.UtcNow,
-        //        Total = (double)(cart.Products.Sum(p => (decimal)p.Price * p.Quantity) + shippingCost),
-        //        ReceiptPath = receiptPath
-        //    };
-
-        //    _context.Orders.Add(order);
-        //    _context.Carts.Remove(cart);
-        //    await _context.SaveChangesAsync();
-
-        //    return OperationResult<bool>.Success(true, "Order completed successfully.");
-        //}
     }
 }

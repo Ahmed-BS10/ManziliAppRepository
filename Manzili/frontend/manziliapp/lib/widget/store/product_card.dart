@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/model/product.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   final Product product;
   final int? subCategoryId;
   final int storeId;
@@ -12,6 +12,38 @@ class ProductCard extends StatelessWidget {
     this.subCategoryId,
     required this.storeId,
   }) : super(key: key);
+
+  @override
+  _ProductCardState createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  bool isInCart = false; // Track whether the product is in cart
+
+  // Example methods to simulate adding or removing a product from a cart.
+  void _addProductToCart(Product product) {
+    // Insert your logic here to add the product to your cart data model, API, etc.
+    print('${product.name} added to cart');
+  }
+
+  void _removeProductFromCart(Product product) {
+    // Insert your logic here to remove the product from your cart
+    print('${product.name} removed from cart');
+  }
+
+  void _toggleCart(int produtcId) {
+    setState(() {
+      // Toggle cart status
+      isInCart = !isInCart;
+
+      // Call the appropriate method
+      if (isInCart) {
+        _addProductToCart(widget.product);
+      } else {
+        _removeProductFromCart(widget.product);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +65,7 @@ class ProductCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 5),
                   child: Text(
-                    '${product.price.toInt()} ريال',
+                    '${widget.product.price.toInt()} ريال',
                     style: const TextStyle(
                       color: Color(0xFF1548C7),
                       fontWeight: FontWeight.bold,
@@ -48,14 +80,16 @@ class ProductCard extends StatelessWidget {
                   child: Container(
                     margin: const EdgeInsets.only(right: 25),
                     child: IconButton(
-                      icon: const Icon(
-                        Icons.shopping_cart_outlined,
-                        color: Color(0xFF1548C7),
+                      icon: Icon(
+                        isInCart
+                            ? Icons
+                                .remove_shopping_cart // Icon to remove from cart
+                            : Icons
+                                .shopping_cart_outlined, // Icon to add product to cart
+                        color: const Color(0xFF1548C7),
                         size: 30,
                       ),
-                      onPressed: () {
-                        // Add to cart logic
-                      },
+                      onPressed: () => _toggleCart(widget.product.id),
                     ),
                   ),
                 ),
@@ -74,7 +108,7 @@ class ProductCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 11),
                     child: Text(
-                      product.name,
+                      widget.product.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
@@ -87,7 +121,7 @@ class ProductCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
-                      product.description,
+                      widget.product.description,
                       style: const TextStyle(fontSize: 14),
                       textAlign: TextAlign.right,
                     ),
@@ -104,7 +138,7 @@ class ProductCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  'http://man.runasp.net${product.image}',
+                  'http://man.runasp.net${widget.product.image}',
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
@@ -126,23 +160,18 @@ class ProductCard extends StatelessWidget {
                 left: 0,
                 child: Container(
                   margin: const EdgeInsets.all(4),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 5,
-                    vertical: 2,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                   decoration: BoxDecoration(
                     color: const Color(0xFF1548C7),
                     borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.white, width: 1),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        product.rating.toStringAsFixed(1),
+                        widget.product.rating.toStringAsFixed(1),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
