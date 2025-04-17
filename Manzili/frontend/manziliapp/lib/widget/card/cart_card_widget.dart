@@ -70,7 +70,10 @@ class _CartCardWidgetState extends State<CartCardWidget> {
         final responseData = json.decode(response.body);
         if (responseData['isSuccess'] == true) {
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setBool('isInCart_$productId', false);
+          // Remove isInCart, quantity, and price from SharedPreferences
+          await prefs.remove('isInCart_$productId');
+          await prefs.remove('quantity_$productId');
+          await prefs.remove('price_$productId');
 
           if (mounted) {
             setState(() {
