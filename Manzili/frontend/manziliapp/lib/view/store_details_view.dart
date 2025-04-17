@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/widget/store/storeInfo_section.dart';
-
 import 'package:manziliapp/widget/store/store_about.dart';
 import 'package:manziliapp/widget/store/store_contact.dart';
 import 'package:manziliapp/widget/store/store_header.dart';
 import 'package:manziliapp/widget/store/store_tabs.dart';
-
 import 'products_view.dart';
 import 'store_reviews_view.dart';
 import 'dart:convert';
@@ -185,7 +182,6 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
         return ProductsView(
           categoryNames: storeData.categoryNames,
           storeid: storeData.id,
-          
         );
       default:
         return const Center(

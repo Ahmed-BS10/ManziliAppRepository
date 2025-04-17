@@ -11,33 +11,35 @@ class ProductCard extends StatefulWidget {
   final int? subCategoryId;
   final int storeId;
 
-  const ProductCard(
-      {Key? key,
-      required this.product,
-      this.subCategoryId,
-      required this.storeId})
-      : super(key: key);
+  const ProductCard({
+    Key? key,
+    required this.product,
+    this.subCategoryId,
+    required this.storeId,
+  }) : super(key: key);
 
   @override
   _ProductCardState createState() => _ProductCardState();
 }
 
 class _ProductCardState extends State<ProductCard> {
-  bool isInCart = false; // Track whether the product is in cart
-  bool isLoading = false; // Track whether a network call is in progress
+  bool isInCart = false;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _loadCartState(); // Load saved cart state
+    _loadCartState();
   }
 
   Future<void> _loadCartState() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'isInCart_${widget.product.id}';
-    setState(() {
-      isInCart = prefs.getBool(key) ?? false; // Default to false if not saved
-    });
+    if (mounted) {
+      setState(() {
+        isInCart = prefs.getBool(key) ?? false;
+      });
+    }
   }
 
   Future<void> _saveCartState(bool state) async {
@@ -49,49 +51,47 @@ class _ProductCardState extends State<ProductCard> {
   Future<void> _toggleCart(int productId, int quantity) async {
     setState(() {
       isLoading = true;
-      isInCart = !isInCart; // Toggle cart state immediately
+      isInCart = !isInCart;
     });
 
     try {
       if (isInCart) {
+        // Add to cart logic
         final userId = Get.find<UserController>().userId.value;
-        // Add product to cart
         final url = Uri.parse(
-            'http://man.runasp.net/api/Cart/add?userId=$userId&storeId=${widget.storeId}&productId=$productId&quantity=$quantity');
+          'http://man.runasp.net/api/Cart/add?userId=$userId&storeId=${widget.storeId}&productId=$productId&quantity=$quantity',
+        );
         final response = await http.post(url);
 
         if (response.statusCode == 200 && json.decode(response.body) == true) {
-          print('Product added to cart successfully.');
+          await _saveCartState(true);
         } else {
-          print('Failed to add product to cart.');
+          if (mounted) setState(() => isInCart = !isInCart);
         }
       } else {
-        // Update product quantity in cart
+        // Remove from cart logic
+        final userId = Get.find<UserController>().userId.value;
         final url = Uri.parse(
-            'http://man.runasp.net/api/Cart/DeleteCartItem?cartId=5&productId=$productId');
-        final response = await http.post(url);
+          'http://man.runasp.net/api/Cart/DeleteCartItem?userId=$userId&productId=$productId',
+        );
+        final response = await http.delete(url);
 
         if (response.statusCode == 200) {
           final responseData = json.decode(response.body);
           if (responseData['isSuccess'] == true) {
-            print('Product quantity updated successfully.');
+            await _saveCartState(false);
           } else {
-            print(
-                'Failed to update product quantity: ${responseData['message']}');
+            if (mounted) setState(() => isInCart = !isInCart);
           }
         } else {
-          print('Failed to update product quantity.');
+          if (mounted) setState(() => isInCart = !isInCart);
         }
       }
     } catch (e) {
-      print('Error occurred: $e');
+      if (mounted) setState(() => isInCart = !isInCart);
+      debugPrint('Error toggling cart: $e');
     } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-        _saveCartState(isInCart); // Save the cart state
-      }
+      if (mounted) setState(() => isLoading = false);
     }
   }
 

@@ -59,10 +59,7 @@ class _CartCardWidgetState extends State<CartCardWidget> {
   }
 
   Future<void> _deleteCartItem(int cartId, int productId) async {
-    setState(() {
-      _isLoading = true; // Show loading indicator
-    });
-
+    setState(() => _isLoading = true);
     try {
       final url = Uri.parse(
           'http://man.runasp.net/api/Cart/DeleteCartItem?cartId=$cartId&productId=$productId');
@@ -71,26 +68,19 @@ class _CartCardWidgetState extends State<CartCardWidget> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         if (responseData['isSuccess'] == true) {
-          print('Product removed from cart successfully.');
+          // Update SharedPreferences for ProductCard
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isInCart_$productId', false); // Add this line
+
           if (mounted) {
             setState(() {
               widget.cartCardModel.getProductCard.removeAt(widget.index);
             });
           }
-        } else {
-          print('Failed to remove product: ${responseData['message']}');
         }
-      } else {
-        print('Failed to remove product from cart.');
       }
-    } catch (e) {
-      print('Error occurred while removing product: $e');
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false; // Hide loading indicator
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -160,15 +150,26 @@ class _CartCardWidgetState extends State<CartCardWidget> {
                           onSelected: (value) async {
                             if (value == 'delete') {
                               await _deleteCartItem(cartId, product.productId);
-                              // Optionally, remove the item from the UI or notify the parent widget
+                              if (mounted) {
+                                setState(() {
+                                  widget.cartCardModel.getProductCard
+                                      .removeAt(widget.index);
+                                });
+                                // Notify parent widget or update shared state
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.setBool(
+                                    'isInCart_${product.productId}', false);
+                              }
                             }
                           },
                           itemBuilder: (c) => const [
                             PopupMenuItem(
                               value: 'delete',
                               child: Center(
-                                  child: Text('حذف من السلة',
-                                      style: TextStyle(fontSize: 16))),
+                                child: Text('حذف من السلة',
+                                    style: TextStyle(fontSize: 16)),
+                              ),
                             ),
                           ],
                           icon: const Icon(Icons.more_vert),
