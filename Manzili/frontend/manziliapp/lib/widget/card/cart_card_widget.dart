@@ -1,11 +1,11 @@
-// cart_card_widget.dart
-
 import 'package:flutter/material.dart';
-import 'package:manziliapp/view/cart_view.dart'; // your model import
+import 'package:manziliapp/main.dart';
+import 'package:manziliapp/view/cart_view.dart';
 import 'package:manziliapp/widget/card/quantity_selector_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:get/get.dart';
 
 class CartCardWidget extends StatefulWidget {
   const CartCardWidget({
@@ -24,7 +24,8 @@ class CartCardWidget extends StatefulWidget {
 class _CartCardWidgetState extends State<CartCardWidget> {
   int _quantity = 1;
   late final String _prefsKey;
-  bool _isLoading = false; // Add loading state
+  bool _isLoading = false;
+  final CartController cartController = Get.find<CartController>();
 
   @override
   void initState() {
@@ -68,14 +69,14 @@ class _CartCardWidgetState extends State<CartCardWidget> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         if (responseData['isSuccess'] == true) {
-          // Update SharedPreferences for ProductCard
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setBool('isInCart_$productId', false); // Add this line
+          await prefs.setBool('isInCart_$productId', false);
 
           if (mounted) {
             setState(() {
               widget.cartCardModel.getProductCard.removeAt(widget.index);
             });
+            cartController.removeFromCart(); // Notify ProductCard
           }
         }
       }
@@ -95,7 +96,7 @@ class _CartCardWidgetState extends State<CartCardWidget> {
     }
 
     final product = widget.cartCardModel.getProductCard[widget.index];
-    final cartId = widget.cartCardModel.cartId; // Assuming cartId is available
+    final cartId = widget.cartCardModel.cartId;
     final totalPrice = product.price * _quantity;
 
     return Stack(
@@ -109,7 +110,6 @@ class _CartCardWidgetState extends State<CartCardWidget> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Product image
               Expanded(
                 flex: 1,
                 child: AspectRatio(
@@ -126,16 +126,12 @@ class _CartCardWidgetState extends State<CartCardWidget> {
                   ),
                 ),
               ),
-
               const SizedBox(width: 8),
-
-              // Details: name, menu, quantity & total price
               Expanded(
                 flex: 2,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Name + delete menu
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -150,17 +146,6 @@ class _CartCardWidgetState extends State<CartCardWidget> {
                           onSelected: (value) async {
                             if (value == 'delete') {
                               await _deleteCartItem(cartId, product.productId);
-                              if (mounted) {
-                                setState(() {
-                                  widget.cartCardModel.getProductCard
-                                      .removeAt(widget.index);
-                                });
-                                // Notify parent widget or update shared state
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.setBool(
-                                    'isInCart_${product.productId}', false);
-                              }
                             }
                           },
                           itemBuilder: (c) => const [
@@ -176,10 +161,7 @@ class _CartCardWidgetState extends State<CartCardWidget> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 8),
-
-                    // Quantity selector + total price
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

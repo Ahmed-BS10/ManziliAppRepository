@@ -63,3 +63,20 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+class CartController extends GetxController {
+  var isInCart = true.obs;
+  var isLoading = false.obs;
+
+  void toggleCartState() {
+    isInCart.value = !isInCart.value;
+  }
+
+  void setLoading(bool loading) {
+    isLoading.value = loading;
+  }
+
+  void removeFromCart() {
+    isInCart.value = false;
+  }
+}

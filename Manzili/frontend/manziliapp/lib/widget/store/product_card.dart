@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:manziliapp/controller/user_controller.dart';
+import 'package:manziliapp/main.dart';
 import 'package:manziliapp/model/product.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -23,8 +24,7 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
-  bool isInCart = false;
-  bool isLoading = false;
+  final CartController cartController = Get.put(CartController());
 
   @override
   void initState() {
@@ -36,9 +36,7 @@ class _ProductCardState extends State<ProductCard> {
     final prefs = await SharedPreferences.getInstance();
     final key = 'isInCart_${widget.product.id}';
     if (mounted) {
-      setState(() {
-        isInCart = prefs.getBool(key) ?? false;
-      });
+      cartController.isInCart.value = prefs.getBool(key) ?? false;
     }
   }
 
@@ -49,31 +47,27 @@ class _ProductCardState extends State<ProductCard> {
   }
 
   Future<void> _toggleCart(int productId, int quantity) async {
-    setState(() {
-      isLoading = true;
-      isInCart = !isInCart;
-    });
+    cartController.setLoading(true);
+    cartController.toggleCartState();
 
     try {
-      if (isInCart) {
+      if (cartController.isInCart.value) {
         // Add to cart logic
         final userId = Get.find<UserController>().userId.value;
         final url = Uri.parse(
-          'http://man.runasp.net/api/Cart/add?userId=$userId&storeId=${widget.storeId}&productId=$productId&quantity=$quantity',
-        );
+            'http://man.runasp.net/api/Cart/add?userId=$userId&storeId=${widget.storeId}&productId=$productId&quantity=$quantity');
         final response = await http.post(url);
 
         if (response.statusCode == 200 && json.decode(response.body) == true) {
           await _saveCartState(true);
         } else {
-          if (mounted) setState(() => isInCart = !isInCart);
+          cartController.toggleCartState();
         }
       } else {
         // Remove from cart logic
         final userId = Get.find<UserController>().userId.value;
         final url = Uri.parse(
-          'http://man.runasp.net/api/Cart/DeleteCartItem?userId=$userId&productId=$productId',
-        );
+            'http://man.runasp.net/api/Cart/DeleteCartItem?userId=$userId&productId=$productId');
         final response = await http.delete(url);
 
         if (response.statusCode == 200) {
@@ -81,17 +75,17 @@ class _ProductCardState extends State<ProductCard> {
           if (responseData['isSuccess'] == true) {
             await _saveCartState(false);
           } else {
-            if (mounted) setState(() => isInCart = !isInCart);
+            cartController.toggleCartState();
           }
         } else {
-          if (mounted) setState(() => isInCart = !isInCart);
+          cartController.toggleCartState();
         }
       }
     } catch (e) {
-      if (mounted) setState(() => isInCart = !isInCart);
+      cartController.toggleCartState();
       debugPrint('Error toggling cart: $e');
     } finally {
-      if (mounted) setState(() => isLoading = false);
+      cartController.setLoading(false);
     }
   }
 
@@ -129,29 +123,31 @@ class _ProductCardState extends State<ProductCard> {
                   alignment: Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.only(right: 25),
-                    child: isLoading
+                    child: Obx(() => cartController.isLoading.value
                         ? SizedBox(
                             width: 30,
                             height: 30,
                             child: CircularProgressIndicator(
                               strokeWidth: 2.5,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                isInCart ? Colors.red : const Color(0xFF1548C7),
+                                cartController.isInCart.value
+                                    ? Colors.red
+                                    : const Color(0xFF1548C7),
                               ),
                             ),
                           )
                         : IconButton(
                             icon: Icon(
-                              isInCart
+                              cartController.isInCart.value
                                   ? Icons.remove_circle_outline
                                   : Icons.shopping_cart_outlined,
-                              color: isInCart
+                              color: cartController.isInCart.value
                                   ? Colors.red
                                   : const Color(0xFF1548C7),
                               size: 30,
                             ),
                             onPressed: () => _toggleCart(widget.product.id, 1),
-                          ),
+                          )),
                   ),
                 ),
               ],
@@ -199,7 +195,7 @@ class _ProductCardState extends State<ProductCard> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  'http://man.runasp.net${widget.product.image}',
+                  '[http://man.runasp.net](http://man.runasp.net)${widget.product.image}',
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
