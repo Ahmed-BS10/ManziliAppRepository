@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/model/product.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
   final int? subCategoryId;
   final int storeId;
 
-  const ProductCard({
-    Key? key,
-    required this.product,
-    this.subCategoryId,
-    required this.storeId,
-  }) : super(key: key);
+  const ProductCard(
+      {Key? key,
+      required this.product,
+      this.subCategoryId,
+      required this.storeId})
+      : super(key: key);
 
   @override
   _ProductCardState createState() => _ProductCardState();
@@ -19,30 +24,75 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard> {
   bool isInCart = false; // Track whether the product is in cart
+  bool isLoading = false; // Track whether a network call is in progress
 
-  // Example methods to simulate adding or removing a product from a cart.
-  void _addProductToCart(Product product) {
-    // Insert your logic here to add the product to your cart data model, API, etc.
-    print('${product.name} added to cart');
+  @override
+  void initState() {
+    super.initState();
+    _loadCartState(); // Load saved cart state
   }
 
-  void _removeProductFromCart(Product product) {
-    // Insert your logic here to remove the product from your cart
-    print('${product.name} removed from cart');
-  }
-
-  void _toggleCart(int produtcId) {
+  Future<void> _loadCartState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'isInCart_${widget.product.id}';
     setState(() {
-      // Toggle cart status
-      isInCart = !isInCart;
-
-      // Call the appropriate method
-      if (isInCart) {
-        _addProductToCart(widget.product);
-      } else {
-        _removeProductFromCart(widget.product);
-      }
+      isInCart = prefs.getBool(key) ?? false; // Default to false if not saved
     });
+  }
+
+  Future<void> _saveCartState(bool state) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'isInCart_${widget.product.id}';
+    await prefs.setBool(key, state);
+  }
+
+  Future<void> _toggleCart(int productId, int quantity) async {
+    setState(() {
+      isLoading = true;
+      isInCart = !isInCart; // Toggle cart state immediately
+    });
+
+    try {
+      if (isInCart) {
+        final userId = Get.find<UserController>().userId.value;
+        // Add product to cart
+        final url = Uri.parse(
+            'http://man.runasp.net/api/Cart/add?userId=$userId&storeId=${widget.storeId}&productId=$productId&quantity=$quantity');
+        final response = await http.post(url);
+
+        if (response.statusCode == 200 && json.decode(response.body) == true) {
+          print('Product added to cart successfully.');
+        } else {
+          print('Failed to add product to cart.');
+        }
+      } else {
+        // Update product quantity in cart
+        final url = Uri.parse(
+            'http://man.runasp.net/api/Cart/DeleteCartItem?cartId=5&productId=$productId');
+        final response = await http.post(url);
+
+        if (response.statusCode == 200) {
+          final responseData = json.decode(response.body);
+          if (responseData['isSuccess'] == true) {
+            print('Product quantity updated successfully.');
+          } else {
+            print(
+                'Failed to update product quantity: ${responseData['message']}');
+          }
+        } else {
+          print('Failed to update product quantity.');
+        }
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+        _saveCartState(isInCart); // Save the cart state
+      }
+    }
   }
 
   @override
@@ -79,18 +129,29 @@ class _ProductCardState extends State<ProductCard> {
                   alignment: Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.only(right: 25),
-                    child: IconButton(
-                      icon: Icon(
-                        isInCart
-                            ? Icons
-                                .remove_shopping_cart // Icon to remove from cart
-                            : Icons
-                                .shopping_cart_outlined, // Icon to add product to cart
-                        color: const Color(0xFF1548C7),
-                        size: 30,
-                      ),
-                      onPressed: () => _toggleCart(widget.product.id),
-                    ),
+                    child: isLoading
+                        ? SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                isInCart ? Colors.red : const Color(0xFF1548C7),
+                              ),
+                            ),
+                          )
+                        : IconButton(
+                            icon: Icon(
+                              isInCart
+                                  ? Icons.remove_circle_outline
+                                  : Icons.shopping_cart_outlined,
+                              color: isInCart
+                                  ? Colors.red
+                                  : const Color(0xFF1548C7),
+                              size: 30,
+                            ),
+                            onPressed: () => _toggleCart(widget.product.id, 1),
+                          ),
                   ),
                 ),
               ],

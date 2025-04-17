@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:manziliapp/model/product.dart';
 
 import 'package:manziliapp/view/checkout_view.dart';
 import 'package:manziliapp/widget/card/cart_card_widget.dart';
 
 class CartView extends StatefulWidget {
-  const CartView({super.key});
+  const CartView({super.key, required this.cartCardModel});
+
+  final CartCardModel cartCardModel;
 
   @override
   State<CartView> createState() => _CartViewState();
 }
 
 class _CartViewState extends State<CartView> {
-  final int count = 10;
+ // final int count = 10;
   String note = '';
 
   void _showNoteBottomSheet() {
@@ -65,7 +68,7 @@ class _CartViewState extends State<CartView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: count == 0
+        child: widget.cartCardModel.getProductCard.isEmpty
             ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -110,9 +113,9 @@ class _CartViewState extends State<CartView> {
                 children: [
                   Expanded(
                     child: ListView.builder(
-                      itemCount: count,
+                      itemCount: widget.cartCardModel.getProductCard.length,
                       itemBuilder: (context, index) {
-                        return CartCardWidget();
+                        return CartCardWidget(cartCardModel:widget.cartCardModel , index: index,);
                       },
                     ),
                   ),
@@ -218,4 +221,34 @@ class _CartViewState extends State<CartView> {
       ),
     );
   }
+}
+
+class CartCardModel {
+  final int cartId;
+  final int userId;
+  final int storeId;
+  final String note;
+  final List<GetProductCard> getProductCard;
+
+  CartCardModel(
+      {required this.cartId,
+      required this.userId,
+      required this.storeId,
+      required this.note,
+      required this.getProductCard});
+}
+
+class GetProductCard {
+  final int productId;
+  final String name;
+  final String imageUrl;
+  final int price;
+  final int quantity;
+
+  GetProductCard(
+      {required this.productId,
+      required this.name,
+      required this.imageUrl,
+      required this.price,
+      required this.quantity});
 }

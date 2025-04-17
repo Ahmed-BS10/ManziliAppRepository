@@ -1,12 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:manziliapp/core/globals/globals.dart';
 import 'package:manziliapp/view/cart_view.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class StoreHeader extends StatelessWidget {
-  const StoreHeader({Key? key, required this.imageUrl}) : super(key: key);
+  const StoreHeader(
+      {Key? key,
+      required this.imageUrl,
+      required this.storeId,
+      required this.userId})
+      : super(key: key);
 
+  final int storeId;
+  final int userId;
   final String imageUrl;
+
+  Future<CartCardModel?> _fetchCartData(int userId, int storeId) async {
+    try {
+      final url = Uri.parse(
+          'http://man.runasp.net/api/Cart/GetCartByUserAndStoreAsync?userId=$userId&storeId=$storeId');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['isSuccess'] == true) {
+          final data = responseData['data'];
+          final cart = CartCardModel(
+            cartId: data['cartId'],
+            userId: data['userId'],
+            storeId: data['storeId'],
+            note: data['note'],
+            getProductCard: (data['getProductCardDtos'] as List)
+                .map((item) => GetProductCard(
+                      productId: item['productId'],
+                      name: item['name'],
+                      imageUrl: item['imageUrl'],
+                      price: item['price'],
+                      quantity: item['quantity'],
+                    ))
+                .toList(),
+          );
+          return cart;
+        }
+      }
+    } catch (e) {
+      print('Error fetching cart data: $e');
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +108,13 @@ class StoreHeader extends StatelessWidget {
                 color: Color(0xFF1548C7),
                 size: 38,
               ),
-              onPressed: () {
-                Get.to(() => CartView());
+              onPressed: () async {
+                final cartData = await _fetchCartData(userId, storeId);
+                if (cartData != null) {
+                  Get.to(() => CartView(cartCardModel: cartData));
+                } else {
+                  Get.snackbar('Error', 'Failed to load cart data');
+                }
               },
             ),
           ),

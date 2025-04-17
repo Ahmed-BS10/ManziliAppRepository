@@ -9,7 +9,7 @@ class ProductsView extends StatefulWidget {
   const ProductsView({
     Key? key,
     required this.categoryNames,
-    required this.storeid,
+    required this.storeid, 
   }) : super(key: key);
 
   final List<String> categoryNames;
@@ -118,11 +118,10 @@ class _ProductsViewState extends State<ProductsView> {
                 final product = _productController.products[index];
                 return InkWell(
                   onTap: () {
-                    Get.to(() => ProductDetailView(
-                        productId: product.id
-                        ));
+                    Get.to(() => ProductDetailView(productId: product.id));
                   },
                   child: ProductCard(
+                   
                     product: product,
                     subCategoryId: _productController.subCategories.isNotEmpty
                         ? _productController.subCategories.firstWhere(

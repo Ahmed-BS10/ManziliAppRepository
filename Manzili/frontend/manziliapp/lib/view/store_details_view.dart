@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/widget/store/storeInfo_section.dart';
 
 import 'package:manziliapp/widget/store/store_about.dart';
@@ -115,6 +118,8 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                 children: [
                   // Header with back button, logo, and cart
                   StoreHeader(
+                    storeId: storeData.id,
+                    userId: Get.find<UserController>().userId.value,
                     imageUrl: storeData
                         .imageUrl, // Replace with actual image URL if available
                   ),
@@ -180,6 +185,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
         return ProductsView(
           categoryNames: storeData.categoryNames,
           storeid: storeData.id,
+          
         );
       default:
         return const Center(
