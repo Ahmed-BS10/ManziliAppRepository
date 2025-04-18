@@ -8,6 +8,10 @@ import 'package:manziliapp/widget/product/ProductDescription.dart';
 import 'package:manziliapp/widget/product/ProductNameAndQuantity.dart';
 import 'package:manziliapp/widget/product/RatingAndStoreInfo.dart';
 import 'package:manziliapp/widget/product/TabSelector.dart';
+import 'package:manziliapp/widget/product/product_details_view_body.dart';
+import '../model/full_producta.dart';
+import 'package:get/get.dart';
+import 'package:dio/dio.dart';
 import '../model/full_producta.dart';
 
 class ProductDetailView extends StatelessWidget {
@@ -20,7 +24,6 @@ class ProductDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProductDetailController controller =
         Get.put(ProductDetailController());
-    // جلب تفاصيل المنتج
     controller.fetchProductDetails(productId);
 
     return Scaffold(
@@ -38,16 +41,14 @@ class ProductDetailView extends StatelessWidget {
 
         return Column(
           children: [
-            // معرض الصور
+            // Image Carousel
             ImageCarousel(
               images: product.images!,
-              currentIndex: 0, // الصورة الافتراضية الأولى
-              onPageChanged: (index) {
-                // يمكن التعامل مع تغيير الصورة إذا لزم الأمر
-              },
+              currentIndex: 0,
+              onPageChanged: (index) {},
             ),
 
-            // عنصر التبويبات
+            // Tab Selector
             TabSelector(
               selectedTabIndex: controller.selectedTabIndex.value,
               onTabSelected: (index) {
@@ -55,28 +56,27 @@ class ProductDetailView extends StatelessWidget {
               },
             ),
 
-            // المحتوى المتغير بناءً على التبويب المحدد
+            // Main Content
             Expanded(
               child: Obx(() {
                 if (controller.selectedTabIndex.value == 0) {
-                  // تفاصيل المنتج
                   return ProductDetailsViewBody(
                     product: product,
                     storeImage: product.storeImage,
+                    quantity: controller.selectedQuantity.value,
                     onQuantityChanged: (quantity) {
                       controller.updateQuantity(quantity);
                     },
                   );
                 } else if (controller.selectedTabIndex.value == 1) {
-                  // تقييمات المنتج
-                  return ProductRatingsView(productId: product.id ,); // استخدم بيانات التقييم الحقيقية عند توفرها
+                  return ProductRatingsView(productId: product.id);
                 } else {
                   return Container();
                 }
               }),
             ),
 
-            // شريط الأسفل الذي يُظهر السعر الإجمالي (المتغير تلقائيًا)
+            // Bottom Bar
             Obx(() => BottomBar(
                   price: controller.totalPrice,
                   onAddToCart: () {
@@ -98,50 +98,48 @@ class ProductDetailView extends StatelessWidget {
   }
 }
 
-class ProductDetailsViewBody extends StatelessWidget {
-  final ProductData product;
-  final Function(int) onQuantityChanged;
-  final String storeImage;
+class ProductDetailController extends GetxController {
+  final Dio _dio = Dio();
+  final Rx<FullProducta> product = FullProducta().obs;
+  final RxInt selectedQuantity = 1.obs;
+  final RxInt selectedTabIndex = 0.obs;
+  final RxBool isLoading = true.obs;
+  final RxString errorMessage = ''.obs;
 
-  const ProductDetailsViewBody({
-    Key? key,
-    required this.product,
-    required this.onQuantityChanged,
-    required this.storeImage,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        // عرض تقييم ومعلومات المتجر
-        RatingAndStoreInfo(
-          rating: 0,
-          storeName: product.storeName,
-          storeImage: storeImage,
-        ),
-        const SizedBox(height: 24),
-        // اسم المنتج والكمية مع زر الزيادة والنقصان
-        ProductNameAndQuantity(
-          name: product.name,
-          quantity: product.quantity,
-          onIncrement: () => onQuantityChanged(product.quantity + 1),
-          onDecrement: () {
-            if (product.quantity > 1) {
-              onQuantityChanged(product.quantity - 1);
-            }
-          },
-        ),
-        const SizedBox(height: 24),
-        const SizedBox(height: 32),
-        // وصف المنتج
-        ProductDescription(
-          title: 'وصف المنتج',
-          description: product.description,
-        ),
-        const SizedBox(height: 32),
-      ],
-    );
+  // Existing product details fetch method
+  Future<void> fetchProductDetails(int productId) async {
+    try {
+      isLoading.value = true;
+      // Your existing product fetch implementation
+    } catch (e) {
+      errorMessage.value = 'خطأ في تحميل بيانات المنتج';
+    } finally {
+      isLoading.value = false;
+    }
   }
+
+  // New add to cart method
+  Future<bool> addToCart(
+      int userId, int storeId, int productId, int quantity) async {
+    try {
+      final response = await _dio.get(
+        'https://localhost:7175/api/Cart/add',
+        queryParameters: {
+          'userId': userId,
+          'storeId': storeId,
+          'productId': productId,
+          'quantity': quantity,
+        },
+      );
+
+      return response.data == true;
+    } catch (e) {
+      print('Error adding to cart: $e');
+      throw e;
+    }
+  }
+
+  void updateTabIndex(int index) => selectedTabIndex.value = index;
+  void updateQuantity(int quantity) => selectedQuantity.value = quantity;
+  double get totalPrice => product.value.price! * selectedQuantity.value;
 }

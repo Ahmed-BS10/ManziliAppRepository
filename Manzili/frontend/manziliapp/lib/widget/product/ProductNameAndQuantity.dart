@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:manziliapp/widget/product/QuantityButton.dart';
 
-import 'QuantityButton.dart';
-
-
-
-// New combined Product Name and Quantity Component
 class ProductNameAndQuantity extends StatelessWidget {
   final String name;
   final int quantity;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
-  
+
   const ProductNameAndQuantity({
     Key? key,
     required this.name,
@@ -18,7 +14,7 @@ class ProductNameAndQuantity extends StatelessWidget {
     required this.onIncrement,
     required this.onDecrement,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -36,7 +32,8 @@ class ProductNameAndQuantity extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 quantity.toString(),
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
             QuantityButton(
@@ -45,7 +42,7 @@ class ProductNameAndQuantity extends StatelessWidget {
             ),
           ],
         ),
-        
+
         // Product Name
         Expanded(
           child: Padding(

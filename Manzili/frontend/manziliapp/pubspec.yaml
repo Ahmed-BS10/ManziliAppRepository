@@ -51,6 +51,7 @@ dependencies:
   file_picker: ^10.1.0
   platform_file: ^0.1.0
   intl: ^0.20.2
+  dio: ^5.8.0+1
 
 dev_dependencies:
   flutter_test:
