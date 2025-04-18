@@ -4,21 +4,22 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ProductDetailController extends GetxController {
+  // تعريف البيانات مع كمية ابتدائية تساوي 1
   var product = ProductData(
     id: 0,
     name: '',
     price: 0.0,
     description: '',
     state: '',
-    quantity: 1, // Product stock from API
+    quantity: 1,
     storeName: '',
     storeImage: '',
     images: [],
   ).obs;
 
-  var selectedQuantity = 1.obs; // User's selected quantity
   var isLoading = true.obs;
   var errorMessage = ''.obs;
+  // متغير لتحديد التبويب الحالي: 0 = تفاصيل المنتج ، 1 = تقييمات المنتج
   var selectedTabIndex = 0.obs;
 
   Future<void> fetchProductDetails(int productId) async {
@@ -33,7 +34,6 @@ class ProductDetailController extends GetxController {
         if (jsonResponse["isSuccess"] == true) {
           final productData = jsonResponse["data"];
           product.value = ProductData.fromJson(productData);
-          selectedQuantity.value = 1; // Reset to 1 when loading new product
         } else {
           errorMessage.value = jsonResponse["message"];
         }
@@ -47,10 +47,13 @@ class ProductDetailController extends GetxController {
     }
   }
 
-  double get totalPrice => product.value.price * selectedQuantity.value;
+  /// السعر الإجمالي يعتمد على سعر الوحدة وعدد القطع
+  double get totalPrice => product.value.price * product.value.quantity;
 
+  /// تحديث الكمية عبر استخدام copyWith لتغيير القيمة فقط
   void updateQuantity(int quantity) {
-    selectedQuantity.value = quantity < 1 ? 1 : quantity;
+    // ضمان أن الكمية لا تقل عن 1
+    product.value = product.value.copyWith(quantity: quantity < 1 ? 1 : quantity);
   }
 
   void updateTabIndex(int index) {
