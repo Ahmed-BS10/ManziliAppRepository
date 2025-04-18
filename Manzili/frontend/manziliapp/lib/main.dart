@@ -3,12 +3,12 @@ import 'package:get/get.dart';
 import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/controller/category_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
-import 'package:manziliapp/view/order_detalis_view.dart';
-import 'package:manziliapp/view/order_view.dart';
+
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
 import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/view/register_view.dart';
+import 'package:manziliapp/view/store_orders_viewdart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/sp',
-          page: () => const OrdersView(),
+          page: () => const StoreOrdersView(),
           // middlewares: [AuthMiddleware()]
         ),
         GetPage(
