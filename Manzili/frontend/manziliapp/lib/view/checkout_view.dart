@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/view/order_placed_view.dart';
+import 'package:manziliapp/view/order_view.dart';
 import 'package:manziliapp/widget/card/payment_receipt_widget.dart';
 import 'package:manziliapp/widget/card/shipment_address_widget.dart';
 
@@ -105,7 +106,7 @@ class CheckoutView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const OrderPlacedView(),
+                          builder: (context) => const OrdersView(),
                         ),
                       );
                     },

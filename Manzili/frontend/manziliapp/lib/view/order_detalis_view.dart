@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
-  const OrderDetailsScreen({super.key});
+class OrderDetailsView extends StatelessWidget {
+  const OrderDetailsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -81,21 +81,20 @@ class OrderProgressStepper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children:
-          steps.map((step) {
-            return Column(
-              children: [
-                Icon(
-                  step.isCompleted
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
-                  color: step.isCompleted ? Colors.blue : Colors.grey,
-                ),
-                const SizedBox(height: 4),
-                Text(step.title),
-              ],
-            );
-          }).toList(),
+      children: steps.map((step) {
+        return Column(
+          children: [
+            Icon(
+              step.isCompleted
+                  ? Icons.check_circle
+                  : Icons.radio_button_unchecked,
+              color: step.isCompleted ? Colors.blue : Colors.grey,
+            ),
+            const SizedBox(height: 4),
+            Text(step.title),
+          ],
+        );
+      }).toList(),
     );
   }
 }
@@ -185,34 +184,32 @@ class OrderInfoCard extends StatelessWidget {
         const SectionTitle(title: 'تفاصيل الطلب:'),
         const SizedBox(height: 8),
         Container(
-  padding: const EdgeInsets.all(12),
-  decoration: BoxDecoration(
-    border: Border.all(color: Colors.grey.shade300),
-    borderRadius: BorderRadius.circular(8),
-  ),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      InfoRow(label: 'تاريخ الطلب', value: info.date,     
-),
-      InfoRow(label: 'عنوان التوصيل', value: info.deliveryAddress,       
-),
-      InfoRow(label: 'اسم المتجر', value: info.storeName
-),
-      InfoRow(
-        label: 'الوقت المتوقع للتسليم',
-        value: info.deliveryTimeEstimate,
-
-      ),
-    ],
-  ),
-)
-
-
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InfoRow(
+                label: 'تاريخ الطلب',
+                value: info.date,
+              ),
+              InfoRow(
+                label: 'عنوان التوصيل',
+                value: info.deliveryAddress,
+              ),
+              InfoRow(label: 'اسم المتجر', value: info.storeName),
+              InfoRow(
+                label: 'الوقت المتوقع للتسليم',
+                value: info.deliveryTimeEstimate,
+              ),
+            ],
+          ),
+        )
       ],
-      
     );
-    
   }
 }
 
@@ -235,35 +232,33 @@ class PaymentDetailsCard extends StatelessWidget {
         const SectionTitle(title: 'تفاصيل الدفع'),
         const SizedBox(height: 8),
         Container(
-  padding: const EdgeInsets.all(12),
-  decoration: BoxDecoration(
-    border: Border.all(color: Colors.grey.shade300),
-    borderRadius: BorderRadius.circular(8),
-  ),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      InfoRow(
-        label: 'إجمالي المنتجات (2)',
-        value: '\$${payment.productsTotal.toStringAsFixed(2)}',
-
-      ),
-      InfoRow(
-        label: 'رسوم التوصيل',
-        value: '\$${payment.deliveryFee.toStringAsFixed(2)}',
-      ),
-      const Divider(),
-      InfoRow(
-        label: 'الإجمالي',
-        lableColor: Colors.black,
-        value: '\$${payment.total.toStringAsFixed(2)}',
-        isBold: true,
-        valueColor: Colors.blue,
-      ),
-    ],
-  ),
-)
-
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InfoRow(
+                label: 'إجمالي المنتجات (2)',
+                value: '\$${payment.productsTotal.toStringAsFixed(2)}',
+              ),
+              InfoRow(
+                label: 'رسوم التوصيل',
+                value: '\$${payment.deliveryFee.toStringAsFixed(2)}',
+              ),
+              const Divider(),
+              InfoRow(
+                label: 'الإجمالي',
+                lableColor: Colors.black,
+                value: '\$${payment.total.toStringAsFixed(2)}',
+                isBold: true,
+                valueColor: Colors.blue,
+              ),
+            ],
+          ),
+        )
       ],
     );
   }
@@ -273,18 +268,17 @@ class InfoRow extends StatelessWidget {
   final String label;
   final String value;
   final bool isBold;
-  
-  final Color? valueColor;
-    final Color? lableColor;
 
-  const InfoRow({
-    super.key,
-    required this.label,
-    required this.value,
-    this.isBold = false,
-    this.valueColor,
-    this.lableColor
-  });
+  final Color? valueColor;
+  final Color? lableColor;
+
+  const InfoRow(
+      {super.key,
+      required this.label,
+      required this.value,
+      this.isBold = false,
+      this.valueColor,
+      this.lableColor});
 
   @override
   Widget build(BuildContext context) {
@@ -293,7 +287,10 @@ class InfoRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label ,style: TextStyle(color:lableColor??Colors.blueGrey),),
+          Text(
+            label,
+            style: TextStyle(color: lableColor ?? Colors.blueGrey),
+          ),
           Text(
             value,
             style: TextStyle(

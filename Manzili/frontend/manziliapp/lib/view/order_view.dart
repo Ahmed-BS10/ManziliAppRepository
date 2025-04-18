@@ -103,23 +103,22 @@ class InfoRow extends StatelessWidget {
 }
 
 // Main Widget Code (Refactored)
-class OrdersScreen extends StatefulWidget {
-  const OrdersScreen({Key? key}) : super(key: key);
+class OrdersView extends StatefulWidget {
+  const OrdersView({Key? key}) : super(key: key);
 
   @override
-  State<OrdersScreen> createState() => _OrdersScreenState();
+  State<OrdersView> createState() => _OrdersViewState();
 }
 
-class _OrdersScreenState extends State<OrdersScreen> {
+class _OrdersViewState extends State<OrdersView> {
   final OrdersController _controller = OrdersController();
   bool _showDelivered = true;
 
   @override
   Widget build(BuildContext context) {
-    final orders =
-        _showDelivered
-            ? _controller.getDeliveredOrders()
-            : _controller.getInProgressOrders();
+    final orders = _showDelivered
+        ? _controller.getDeliveredOrders()
+        : _controller.getInProgressOrders();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -181,10 +180,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
           borderRadius: BorderRadius.horizontal(
             right:
                 title == 'تم توصيلها' ? const Radius.circular(20) : Radius.zero,
-            left:
-                title == 'قيد المعالجة'
-                    ? const Radius.circular(20)
-                    : Radius.zero,
+            left: title == 'قيد المعالجة'
+                ? const Radius.circular(20)
+                : Radius.zero,
           ),
         ),
         child: Text(
@@ -207,11 +205,10 @@ class OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap:
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const OrderDetailsScreen()),
-          ),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const OrderDetailsView()),
+      ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
@@ -269,13 +266,13 @@ class OrderCard extends StatelessWidget {
             order.isDelivered
                 ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
                 : const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                    ),
                   ),
-                ),
             const SizedBox(width: 8),
             Text(
               order.isDelivered ? 'تم التوصيل' : 'جاري التحضير',

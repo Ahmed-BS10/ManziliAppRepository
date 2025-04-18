@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/core/helper/app_colors.dart';
+import 'package:manziliapp/view/order_view.dart';
 import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/widget/home/categorysection.dart';
 import 'package:manziliapp/widget/home/filtersection.dart';
@@ -25,7 +26,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   final List<Widget> _pages = [
     const ProfileScreen(),
     const NotificationPage(),
-    const OrderPage(),
+    const OrdersView(),
     const StartPage(),
   ];
 
