@@ -10,6 +10,7 @@ import 'package:manziliapp/CustomerViews/view/login_view.dart';
 import 'package:manziliapp/CustomerViews/view/profile.dart';
 import 'package:manziliapp/CustomerViews/view/register_view.dart';
 import 'package:manziliapp/CustomerViews/widget/home/favorite_provider.dart';
+import 'package:manziliapp/StoreView/view/store_orders_viewdart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/sp',
-          page: () => const OrderDetailsView(),
+          page: () => const OrdersView(),
           // middlewares: [AuthMiddleware()]
         ),
         GetPage(
