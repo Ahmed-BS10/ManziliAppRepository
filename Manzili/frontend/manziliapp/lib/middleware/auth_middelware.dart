@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:manziliapp/CustomerViews/controller/user_controller.dart';
+import 'package:manziliapp/controller/user_controller.dart';
 
 class AuthMiddleware extends GetMiddleware {
   // The priority field determines the order of middleware execution (lower values run first)
