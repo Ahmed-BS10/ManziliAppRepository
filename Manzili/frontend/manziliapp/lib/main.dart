@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:manziliapp/controller/auth_controller.dart';
-import 'package:manziliapp/controller/category_controller.dart';
-import 'package:manziliapp/controller/user_controller.dart';
+import 'package:manziliapp/CustomerViews/controller/auth_controller.dart';
+import 'package:manziliapp/CustomerViews/controller/category_controller.dart';
+import 'package:manziliapp/CustomerViews/controller/user_controller.dart';
 import 'package:manziliapp/middleware/auth_middelware.dart';
-import 'package:manziliapp/view/home_view.dart';
-import 'package:manziliapp/view/login_view.dart';
-import 'package:manziliapp/view/profile.dart';
-import 'package:manziliapp/view/register_view.dart';
-import 'package:manziliapp/view/splash_view.dart';
-import 'package:manziliapp/widget/home/favorite_provider.dart';
+import 'package:manziliapp/CustomerViews/view/home_view.dart';
+import 'package:manziliapp/CustomerViews/view/login_view.dart';
+import 'package:manziliapp/CustomerViews/view/profile.dart';
+import 'package:manziliapp/CustomerViews/view/register_view.dart';
+import 'package:manziliapp/CustomerViews/view/splash_view.dart';
+import 'package:manziliapp/CustomerViews/widget/home/favorite_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
