@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/view/home_view.dart';
+import 'package:manziliapp/view/order_detalis_view.dart';
 
 // Order Model
 class Order {
@@ -209,7 +210,7 @@ class OrderCard extends StatelessWidget {
       onTap:
           () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const HomeView()),
+            MaterialPageRoute(builder: (context) => const OrderDetailsScreen()),
           ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
