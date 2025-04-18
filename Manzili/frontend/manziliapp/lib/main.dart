@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/controller/category_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
-
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
+import 'package:manziliapp/view/order_view.dart';
 import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/view/register_view.dart';
-import 'package:manziliapp/view/store_orders_viewdart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
+import 'package:manziliapp/view/store_orders_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,7 +46,8 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/sp',
-          page: () => const StoreOrdersView(),
+
+          page: () => StoreOrdersView(),
           // middlewares: [AuthMiddleware()]
         ),
         GetPage(

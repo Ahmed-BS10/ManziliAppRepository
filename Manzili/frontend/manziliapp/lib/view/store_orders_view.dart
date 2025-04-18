@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/order.dart';
-import '../models/mock_data.dart';
-import '../widgets/Order/order_card.dart';
+import '../model/order.dart';
+import '../model/mock_data.dart';
+import '../widget/store_order/order_card.dart';
 
 class StoreOrdersView extends StatefulWidget {
   const StoreOrdersView({Key? key}) : super(key: key);
