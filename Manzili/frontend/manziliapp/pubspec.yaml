@@ -79,8 +79,7 @@ flutter:
   assets:
     - lib/assets/image/
     - lib/assets/image/ad1.jpeg
-    - lib/assets/image/ad2.jpeg
-    - lib/assets/image/ad3.jpeg
+   
     
     
   # An image asset can refer to one or more resolution-specific "variants", see

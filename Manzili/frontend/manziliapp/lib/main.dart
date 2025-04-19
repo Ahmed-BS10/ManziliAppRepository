@@ -80,6 +80,6 @@ class CartController extends GetxController {
   }
 
   void removeFromCart() {
-    isInCart.value = false;
+    isInCart.value = true;
   }
 }

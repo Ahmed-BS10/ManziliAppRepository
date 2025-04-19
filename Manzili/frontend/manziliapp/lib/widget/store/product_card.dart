@@ -1,11 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/main.dart';
 import 'package:manziliapp/model/product.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class ProductCard extends StatefulWidget {
   final Product product;
@@ -24,62 +24,57 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
-  final CartController cartController = Get.put(CartController());
+  final CartController cartController =
+      Get.put<CartController>(CartController());
+  late final String _prefsKey;
 
   @override
   void initState() {
     super.initState();
+    _prefsKey = 'isInCart_${widget.product.id}';
     _loadCartState();
   }
 
   Future<void> _loadCartState() async {
     final prefs = await SharedPreferences.getInstance();
-    final key = 'isInCart_${widget.product.id}';
-    if (mounted) {
-      cartController.isInCart.value = prefs.getBool(key) ?? false;
-    }
+    final saved = prefs.getBool(_prefsKey) ?? false;
+    if (mounted) cartController.isInCart.value = saved;
   }
 
-  Future<void> _saveCartState(bool state) async {
+  Future<void> _saveCartState(bool isInCart) async {
     final prefs = await SharedPreferences.getInstance();
-    final key = 'isInCart_${widget.product.id}';
-    await prefs.setBool(key, state);
+    await prefs.setBool(_prefsKey, isInCart);
   }
 
   Future<void> _toggleCart(int productId, int quantity) async {
     cartController.setLoading(true);
     cartController.toggleCartState();
-
+    final bool desiredState = cartController.isInCart.value;
     try {
-      if (cartController.isInCart.value) {
-        // Add to cart logic
-        final userId = Get.find<UserController>().userId.value;
+      final userId = Get.find<UserController>().userId.value;
+      bool success;
+      if (desiredState) {
+        // Add to cart
         final url = Uri.parse(
-            'http://man.runasp.net/api/Cart/add?userId=$userId&storeId=${widget.storeId}&productId=$productId&quantity=$quantity');
+            'http://man.runasp.net/api/Cart/add?userId=$userId&storeId=${widget.storeId}&productId=${widget.product.id}&quantity=1');
         final response = await http.post(url);
-
-        if (response.statusCode == 200 && json.decode(response.body) == true) {
-          await _saveCartState(true);
-        } else {
-          cartController.toggleCartState();
-        }
+        success =
+            response.statusCode == 200 && json.decode(response.body) == true;
       } else {
-        // Remove from cart logic
-        final userId = Get.find<UserController>().userId.value;
+        // Remove from cart
         final url = Uri.parse(
-            'http://man.runasp.net/api/Cart/DeleteCartItem?userId=$userId&productId=$productId');
+            'http://man.runasp.net/api/Cart/DeleteCartItem?userId=$userId&productId=${widget.product.id}');
         final response = await http.delete(url);
+        final data = json.decode(response.body);
+        success = response.statusCode == 200 && data['isSuccess'] == true;
+      }
 
-        if (response.statusCode == 200) {
-          final responseData = json.decode(response.body);
-          if (responseData['isSuccess'] == true) {
-            await _saveCartState(false);
-          } else {
-            cartController.toggleCartState();
-          }
-        } else {
-          cartController.toggleCartState();
-        }
+      if (success) {
+        // Persist the new state
+        await _saveCartState(desiredState);
+      } else {
+        // Revert on failure
+        cartController.toggleCartState();
       }
     } catch (e) {
       cartController.toggleCartState();
@@ -101,7 +96,7 @@ class _ProductCardState extends State<ProductCard> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Price and cart column
+          // Price and cart icon
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,34 +116,34 @@ class _ProductCardState extends State<ProductCard> {
                 const SizedBox(height: 20),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 25),
-                    child: Obx(() => cartController.isLoading.value
-                        ? SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                cartController.isInCart.value
-                                    ? Colors.red
-                                    : const Color(0xFF1548C7),
-                              ),
-                            ),
-                          )
-                        : IconButton(
-                            icon: Icon(
-                              cartController.isInCart.value
-                                  ? Icons.remove_circle_outline
-                                  : Icons.shopping_cart_outlined,
-                              color: cartController.isInCart.value
-                                  ? Colors.red
-                                  : const Color(0xFF1548C7),
-                              size: 30,
-                            ),
-                            onPressed: () => _toggleCart(widget.product.id, 1),
-                          )),
-                  ),
+                  child: Obx(() {
+                    if (cartController.isLoading.value) {
+                      return SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            cartController.isInCart.value
+                                ? Colors.red
+                                : const Color(0xFF1548C7),
+                          ),
+                        ),
+                      );
+                    }
+                    return IconButton(
+                      icon: Icon(
+                        cartController.isInCart.value
+                            ? Icons.remove_circle_outline
+                            : Icons.shopping_cart_outlined,
+                        color: cartController.isInCart.value
+                            ? Colors.red
+                            : const Color(0xFF1548C7),
+                        size: 30,
+                      ),
+                      onPressed: () => _toggleCart(widget.product.id, 1),
+                    );
+                  }),
                 ),
               ],
             ),
@@ -195,21 +190,19 @@ class _ProductCardState extends State<ProductCard> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  'http://man.runasp.net+${widget.product.image}',
+                  'http://man.runasp.net${widget.product.image}',
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.fastfood, color: Colors.grey),
-                    );
-                  },
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.fastfood, color: Colors.grey),
+                  ),
                 ),
               ),
               Positioned(
