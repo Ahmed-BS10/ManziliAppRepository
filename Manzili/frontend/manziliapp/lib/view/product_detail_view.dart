@@ -1,27 +1,78 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:manziliapp/controller/product_detail_controller.dart';
+import 'package:manziliapp/controller/user_controller.dart';
+import 'package:manziliapp/main.dart';
+import 'package:manziliapp/model/full_producta.dart';
 import 'package:manziliapp/view/product_ratings_view.dart';
-import 'package:manziliapp/widget/product/BottomBar.dart';
 import 'package:manziliapp/widget/product/ImageCarousel.dart';
 import 'package:manziliapp/widget/product/ProductDescription.dart';
 import 'package:manziliapp/widget/product/ProductNameAndQuantity.dart';
 import 'package:manziliapp/widget/product/RatingAndStoreInfo.dart';
 import 'package:manziliapp/widget/product/TabSelector.dart';
-import '../model/full_producta.dart';
 
 class ProductDetailView extends StatelessWidget {
   final int productId;
+  final int storeId;
 
-  const ProductDetailView({Key? key, required this.productId})
-      : super(key: key);
+  const ProductDetailView({
+    Key? key,
+    required this.productId,
+    required this.storeId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Controllers
     final ProductDetailController controller =
         Get.put(ProductDetailController());
-    // جلب تفاصيل المنتج
+    final CartController cartController = Get.put(CartController());
+
+    // Fetch product details
     controller.fetchProductDetails(productId);
+
+    // Toggle cart state (add/remove)
+    Future<void> _toggleCart(int quantity) async {
+      cartController.setLoading(true);
+      cartController.toggleCartState();
+
+      try {
+        final userId = Get.find<UserController>().userId.value;
+        if (cartController.isInCart.value) {
+          // Add to cart
+          final url = Uri.parse(
+            'http://man.runasp.net/api/Cart/add'
+            '?userId=$userId&storeId=$storeId'
+            '&productId=${controller.product.value.id}'
+            '&quantity=$quantity',
+          );
+          final response = await http.post(url);
+          if (!(response.statusCode == 200 &&
+              json.decode(response.body) == true)) {
+            cartController.toggleCartState();
+          }
+        } else {
+          // Remove from cart
+          final url = Uri.parse(
+            'http://man.runasp.net/api/Cart/DeleteCartItem'
+            '?userId=$userId&productId=${controller.product.value.id}',
+          );
+          final response = await http.delete(url);
+          final data = json.decode(response.body);
+          if (!(response.statusCode == 200 && data['isSuccess'] == true)) {
+            cartController.toggleCartState();
+          }
+        }
+      } catch (e) {
+        // Revert state on error
+        cartController.toggleCartState();
+        debugPrint('Error toggling cart: \$e');
+      } finally {
+        cartController.setLoading(false);
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -29,7 +80,6 @@ class ProductDetailView extends StatelessWidget {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
-
         if (controller.errorMessage.isNotEmpty) {
           return Center(child: Text(controller.errorMessage.value));
         }
@@ -38,61 +88,74 @@ class ProductDetailView extends StatelessWidget {
 
         return Column(
           children: [
-            // معرض الصور
+            // Image carousel
             ImageCarousel(
               images: product.images!,
-              currentIndex: 0, // الصورة الافتراضية الأولى
-              onPageChanged: (index) {
-                // يمكن التعامل مع تغيير الصورة إذا لزم الأمر
-              },
+              currentIndex: 0,
+              onPageChanged: (index) {},
             ),
 
-            // عنصر التبويبات
+            // Tab selector
             TabSelector(
               selectedTabIndex: controller.selectedTabIndex.value,
-              onTabSelected: (index) {
-                controller.updateTabIndex(index);
-              },
+              onTabSelected: controller.updateTabIndex,
             ),
 
-            // المحتوى المتغير بناءً على التبويب المحدد
+            // Tab content
             Expanded(
               child: Obx(() {
                 if (controller.selectedTabIndex.value == 0) {
-                  // تفاصيل المنتج
                   return ProductDetailsViewBody(
                     product: product,
                     storeImage: product.storeImage,
-                    onQuantityChanged: (quantity) {
-                      controller.updateQuantity(quantity);
-                    },
+                    onQuantityChanged: controller.updateQuantity,
                   );
                 } else if (controller.selectedTabIndex.value == 1) {
-                  // تقييمات المنتج
-                  return ProductRatingsView(
-                    productId: product.id,
-                  ); // استخدم بيانات التقييم الحقيقية عند توفرها
-                } else {
-                  return Container();
+                  return ProductRatingsView(productId: product.id);
                 }
+                return const SizedBox();
               }),
             ),
 
-            // شريط الأسفل الذي يُظهر السعر الإجمالي (المتغير تلقائيًا)
-            Obx(() => BottomBar(
-                  price: controller.totalPrice,
-                  onAddToCart: () {
-                    final price = controller.totalPrice;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'تمت إضافة ${product.name} إلى السلة بسعر $price ريال',
-                          textAlign: TextAlign.right,
+            // Bottom action: add/remove cart button with loader
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  margin: const EdgeInsets.only(right: 25),
+                  child: Obx(() {
+                    if (cartController.isLoading.value) {
+                      return SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            cartController.isInCart.value
+                                ? Colors.red
+                                : const Color(0xFF1548C7),
+                          ),
                         ),
+                      );
+                    }
+                    return IconButton(
+                      icon: Icon(
+                        cartController.isInCart.value
+                            ? Icons.remove_circle_outline
+                            : Icons.shopping_cart_outlined,
+                        color: cartController.isInCart.value
+                            ? Colors.red
+                            : const Color(0xFF1548C7),
+                        size: 30,
                       ),
+                      onPressed: () => _toggleCart(product.quantity),
                     );
-                  },
-                )),
+                  }),
+                ),
+              ),
+            ),
           ],
         );
       }),

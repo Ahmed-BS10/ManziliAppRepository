@@ -118,7 +118,10 @@ class _ProductsViewState extends State<ProductsView> {
                 final product = _productController.products[index];
                 return InkWell(
                   onTap: () {
-                    Get.to(() => ProductDetailView(productId: product.id));
+                    Get.to(() => ProductDetailView(
+                          productId: product.id,
+                          storeId: widget.storeid,
+                        ));
                   },
                   child: ProductCard(
                     product: product,

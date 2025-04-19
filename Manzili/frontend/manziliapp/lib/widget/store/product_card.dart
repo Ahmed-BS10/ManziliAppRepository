@@ -195,7 +195,7 @@ class _ProductCardState extends State<ProductCard> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  '[http://man.runasp.net](http://man.runasp.net)${widget.product.image}',
+                  'http://man.runasp.net+${widget.product.image}',
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,

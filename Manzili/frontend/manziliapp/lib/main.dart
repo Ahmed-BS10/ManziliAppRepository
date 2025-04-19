@@ -4,11 +4,13 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/controller/category_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
+import 'package:manziliapp/middleware/auth_middelware.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
 import 'package:manziliapp/view/order_view.dart';
 import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/view/register_view.dart';
+import 'package:manziliapp/view/splash_view.dart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
 import 'package:manziliapp/view/store_orders_view.dart';
 import 'package:provider/provider.dart';
@@ -44,9 +46,10 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       initialRoute: '/sp',
       getPages: [
-        GetPage(name: '/sp', page: () => StoreOrdersView()
-            // middlewares: [AuthMiddleware()]
-            ),
+        GetPage(
+            name: '/sp',
+            page: () => SplashsView(),
+            middlewares: [AuthMiddleware()]),
         GetPage(
           name: '/login',
           page: () => const LoginView(),

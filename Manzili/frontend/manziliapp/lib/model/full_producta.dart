@@ -28,13 +28,14 @@ class ProductData {
       price: (json['price'] as num).toDouble(), // ضمان التحويل إلى double
       description: json['description'],
       state: json['state'],
-      quantity: json['quantity'],
+      quantity: 1,
       storeName: json['storeName'],
       storeImage: json['storeImage'],
-      images: List<String>.from(json['images'] ?? [
-        'http://man.runasp.net/Profile/383ba157cb9f4367b67f7baeea98097d.jpg',
-        'http://man.runasp.net/Profile/383ba157cb9f4367b67f7baeea98097d.jpg'
-      ]),
+      images: List<String>.from(json['images'] ??
+          [
+            'http://man.runasp.net/Profile/383ba157cb9f4367b67f7baeea98097d.jpg',
+            'http://man.runasp.net/Profile/383ba157cb9f4367b67f7baeea98097d.jpg'
+          ]),
     );
   }
 
