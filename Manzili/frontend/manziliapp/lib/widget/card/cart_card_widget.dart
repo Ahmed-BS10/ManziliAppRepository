@@ -194,7 +194,7 @@ class _CartCardWidgetState extends State<CartCardWidget> {
         if (_isLoading)
           Positioned.fill(
             child: Container(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black,
               child: const Center(
                 child: CircularProgressIndicator(),
               ),

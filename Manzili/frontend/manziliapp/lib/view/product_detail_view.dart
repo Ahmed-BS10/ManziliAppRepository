@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:manziliapp/controller/product_detail_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/main.dart';
@@ -12,8 +11,10 @@ import 'package:manziliapp/widget/product/ProductDescription.dart';
 import 'package:manziliapp/widget/product/ProductNameAndQuantity.dart';
 import 'package:manziliapp/widget/product/RatingAndStoreInfo.dart';
 import 'package:manziliapp/widget/product/TabSelector.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
-class ProductDetailView extends StatelessWidget {
+class ProductDetailView extends StatefulWidget {
   final int productId;
   final int storeId;
 
@@ -24,56 +25,91 @@ class ProductDetailView extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Controllers
-    final ProductDetailController controller =
-        Get.put(ProductDetailController());
-    final CartController cartController = Get.put(CartController());
+  State<ProductDetailView> createState() => _ProductDetailViewState();
+}
+
+class _ProductDetailViewState extends State<ProductDetailView> {
+  int _quantity = 1;
+  late final String _prefsKey;
+  late final ProductDetailController controller;
+  late final CartController cartController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controllers
+    controller = Get.put(ProductDetailController());
+    cartController = Get.put(CartController());
+
+    // Prepare SharedPreferences key
+    _prefsKey = 'quantity_${widget.productId}';
+
+    // Load saved quantity and apply to controller
+    _loadSavedQuantity().then((_) {
+      controller.updateQuantity(_quantity);
+    });
 
     // Fetch product details
-    controller.fetchProductDetails(productId);
+    controller.fetchProductDetails(widget.productId);
+  }
 
-    // Toggle cart state (add/remove)
-    Future<void> _toggleCart(int quantity) async {
-      cartController.setLoading(true);
-      cartController.toggleCartState();
-
-      try {
-        final userId = Get.find<UserController>().userId.value;
-        if (cartController.isInCart.value) {
-          // Add to cart
-          final url = Uri.parse(
-            'http://man.runasp.net/api/Cart/add'
-            '?userId=$userId&storeId=$storeId'
-            '&productId=${controller.product.value.id}'
-            '&quantity=$quantity',
-          );
-          final response = await http.post(url);
-          if (!(response.statusCode == 200 &&
-              json.decode(response.body) == true)) {
-            cartController.toggleCartState();
-          }
-        } else {
-          // Remove from cart
-          final url = Uri.parse(
-            'http://man.runasp.net/api/Cart/DeleteCartItem'
-            '?userId=$userId&productId=${controller.product.value.id}',
-          );
-          final response = await http.delete(url);
-          final data = json.decode(response.body);
-          if (!(response.statusCode == 200 && data['isSuccess'] == true)) {
-            cartController.toggleCartState();
-          }
-        }
-      } catch (e) {
-        // Revert state on error
-        cartController.toggleCartState();
-        debugPrint('Error toggling cart: \$e');
-      } finally {
-        cartController.setLoading(false);
-      }
+  Future<void> _loadSavedQuantity() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getInt(_prefsKey);
+    if (!mounted) return;
+    if (saved != null && saved > 0) {
+      setState(() {
+        _quantity = saved;
+      });
     }
+  }
 
+  Future<void> _saveQuantity(int qty) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_prefsKey, qty);
+  }
+
+  Future<void> _toggleCart(int quantity) async {
+    cartController.setLoading(true);
+    cartController.toggleCartState();
+
+    try {
+      final userId = Get.find<UserController>().userId.value;
+      if (cartController.isInCart.value) {
+        // Add to cart
+        final url = Uri.parse(
+          'http://man.runasp.net/api/Cart/add'
+          '?userId=$userId&storeId=${widget.storeId}'
+          '&productId=${controller.product.value.id}'
+          '&quantity=$quantity',
+        );
+        final response = await http.post(url);
+        if (!(response.statusCode == 200 &&
+            json.decode(response.body) == true)) {
+          cartController.toggleCartState();
+        }
+      } else {
+        // Remove from cart
+        final url = Uri.parse(
+          'http://man.runasp.net/api/Cart/DeleteCartItem'
+          '?userId=$userId&productId=${controller.product.value.id}',
+        );
+        final response = await http.delete(url);
+        final data = json.decode(response.body);
+        if (!(response.statusCode == 200 && data['isSuccess'] == true)) {
+          cartController.toggleCartState();
+        }
+      }
+    } catch (e) {
+      cartController.toggleCartState();
+      debugPrint('Error toggling cart: \$e');
+    } finally {
+      cartController.setLoading(false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(() {
@@ -108,53 +144,58 @@ class ProductDetailView extends StatelessWidget {
                   return ProductDetailsViewBody(
                     product: product,
                     storeImage: product.storeImage,
-                    onQuantityChanged: controller.updateQuantity,
+                    onQuantityChanged: (qty) async {
+                      setState(() => _quantity = qty);
+                      controller.updateQuantity(qty);
+                      await _saveQuantity(qty);
+                      print('quantity :   ${qty}     prductId ${_prefsKey}  ');
+                    },
                   );
-                } else if (controller.selectedTabIndex.value == 1) {
+                } else {
                   return ProductRatingsView(productId: product.id);
                 }
-                return const SizedBox();
               }),
             ),
 
-            // Bottom action: add/remove cart button with loader
+            // Bottom action: add/remove cart button with dynamic quantity
             Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  margin: const EdgeInsets.only(right: 25),
-                  child: Obx(() {
-                    if (cartController.isLoading.value) {
-                      return SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            cartController.isInCart.value
-                                ? Colors.red
-                                : const Color(0xFF1548C7),
-                          ),
+              child: Obx(() {
+                final qty = controller.product.value.quantity;
+                if (cartController.isLoading.value) {
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          cartController.isInCart.value
+                              ? Colors.red
+                              : const Color(0xFF1548C7),
                         ),
-                      );
-                    }
-                    return IconButton(
-                      icon: Icon(
-                        cartController.isInCart.value
-                            ? Icons.remove_circle_outline
-                            : Icons.shopping_cart_outlined,
-                        color: cartController.isInCart.value
-                            ? Colors.red
-                            : const Color(0xFF1548C7),
-                        size: 30,
                       ),
-                      onPressed: () => _toggleCart(product.quantity),
-                    );
-                  }),
-                ),
-              ),
+                    ),
+                  );
+                }
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: Icon(
+                      cartController.isInCart.value
+                          ? Icons.remove_circle_outline
+                          : Icons.shopping_cart_outlined,
+                      color: cartController.isInCart.value
+                          ? Colors.red
+                          : const Color(0xFF1548C7),
+                      size: 30,
+                    ),
+                    onPressed: () => _toggleCart(qty),
+                  ),
+                );
+              }),
             ),
           ],
         );
