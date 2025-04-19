@@ -31,23 +31,29 @@ class ProductDetailView extends StatefulWidget {
 class _ProductDetailViewState extends State<ProductDetailView> {
   int _quantity = 1;
   late final String _prefsKey;
+  late final String _cartPrefsKey;
   late final ProductDetailController controller;
   late final CartController cartController;
 
   @override
   void initState() {
     super.initState();
+
     // Initialize controllers
     controller = Get.put(ProductDetailController());
     cartController = Get.put(CartController());
 
-    // Prepare SharedPreferences key
+    // Prepare SharedPreferences keys
     _prefsKey = 'quantity_${widget.productId}';
+    _cartPrefsKey = 'isInCart_${widget.productId}';
 
     // Load saved quantity and apply to controller
     _loadSavedQuantity().then((_) {
       controller.updateQuantity(_quantity);
     });
+
+    // Load saved cart state
+    _loadCartState();
 
     // Fetch product details
     controller.fetchProductDetails(widget.productId);
@@ -69,36 +75,53 @@ class _ProductDetailViewState extends State<ProductDetailView> {
     await prefs.setInt(_prefsKey, qty);
   }
 
+  Future<void> _loadCartState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getBool(_cartPrefsKey) ?? false;
+    if (mounted) cartController.isInCart.value = saved;
+  }
+
+  Future<void> _saveCartState(bool isInCart) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_cartPrefsKey, isInCart);
+  }
+
   Future<void> _toggleCart(int quantity) async {
     cartController.setLoading(true);
     cartController.toggleCartState();
+    final desiredState = cartController.isInCart.value;
 
     try {
       final userId = Get.find<UserController>().userId.value;
-      if (cartController.isInCart.value) {
-        // Add to cart
+      bool success;
+
+      if (desiredState) {
+        // Add to cart with selected quantity
         final url = Uri.parse(
           'http://man.runasp.net/api/Cart/add'
           '?userId=$userId&storeId=${widget.storeId}'
-          '&productId=${controller.product.value.id}'
-          '&quantity=$quantity',
+          '&productId=${widget.productId}&quantity=$quantity',
         );
         final response = await http.post(url);
-        if (!(response.statusCode == 200 &&
-            json.decode(response.body) == true)) {
-          cartController.toggleCartState();
-        }
+        success =
+            (response.statusCode == 200 && json.decode(response.body) == true);
       } else {
         // Remove from cart
         final url = Uri.parse(
           'http://man.runasp.net/api/Cart/DeleteCartItem'
-          '?userId=$userId&productId=${controller.product.value.id}',
+          '?userId=$userId&productId=${widget.productId}',
         );
         final response = await http.delete(url);
         final data = json.decode(response.body);
-        if (!(response.statusCode == 200 && data['isSuccess'] == true)) {
-          cartController.toggleCartState();
-        }
+        success = (response.statusCode == 200 && data['isSuccess'] == true);
+      }
+
+      if (success) {
+        // Persist the new cart state
+        await _saveCartState(desiredState);
+      } else {
+        // Revert on failure
+        cartController.toggleCartState();
       }
     } catch (e) {
       cartController.toggleCartState();
@@ -148,7 +171,6 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                       setState(() => _quantity = qty);
                       controller.updateQuantity(qty);
                       await _saveQuantity(qty);
-                      print('quantity :   ${qty}     prductId ${_prefsKey}  ');
                     },
                   );
                 } else {
@@ -157,12 +179,11 @@ class _ProductDetailViewState extends State<ProductDetailView> {
               }),
             ),
 
-            // Bottom action: add/remove cart button with dynamic quantity
+            // Bottom action: add/remove cart button
             Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
               child: Obx(() {
-                final qty = controller.product.value.quantity;
                 if (cartController.isLoading.value) {
                   return Align(
                     alignment: Alignment.centerLeft,
@@ -192,7 +213,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           : const Color(0xFF1548C7),
                       size: 30,
                     ),
-                    onPressed: () => _toggleCart(qty),
+                    onPressed: () => _toggleCart(_quantity),
                   ),
                 );
               }),
