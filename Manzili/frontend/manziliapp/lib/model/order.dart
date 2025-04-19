@@ -42,6 +42,7 @@ enum OrderStatus {
   new_order,
   in_progress,
   completed,
+  ongoing,
   cancelled,
 }
 
@@ -56,6 +57,9 @@ extension OrderStatusExtension on OrderStatus {
         return 'مكتمل';
       case OrderStatus.cancelled:
         return 'ملغي';
+      case OrderStatus.ongoing:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 
@@ -69,6 +73,9 @@ extension OrderStatusExtension on OrderStatus {
         return Colors.green;
       case OrderStatus.cancelled:
         return Colors.red;
+      case OrderStatus.ongoing:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }

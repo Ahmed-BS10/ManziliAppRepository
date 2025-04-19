@@ -26,7 +26,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   final List<Widget> _pages = [
     const ProfileScreen(),
     const NotificationPage(),
-    const OrdersView(),
+    const OrderView(),
     const StartPage(),
   ];
 

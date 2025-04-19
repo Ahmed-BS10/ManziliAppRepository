@@ -44,12 +44,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       initialRoute: '/sp',
       getPages: [
-        GetPage(
-          name: '/sp',
-
-          page: () => StoreOrdersView(),
-          // middlewares: [AuthMiddleware()]
-        ),
+        GetPage(name: '/sp', page: () => StoreOrdersView()
+            // middlewares: [AuthMiddleware()]
+            ),
         GetPage(
           name: '/login',
           page: () => const LoginView(),

@@ -102,14 +102,14 @@ class InfoRow extends StatelessWidget {
 }
 
 // Main Widget Code (Refactored)
-class OrdersView extends StatefulWidget {
-  const OrdersView({Key? key}) : super(key: key);
+class OrderView extends StatefulWidget {
+  const OrderView({Key? key}) : super(key: key);
 
   @override
-  State<OrdersView> createState() => _OrdersViewState();
+  State<OrderView> createState() => _OrderViewState();
 }
 
-class _OrdersViewState extends State<OrdersView> {
+class _OrderViewState extends State<OrderView> {
   final OrdersController _controller = OrdersController();
   bool _showDelivered = true;
 

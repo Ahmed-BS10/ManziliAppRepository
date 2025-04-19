@@ -105,7 +105,7 @@ class CheckoutView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const OrdersView(),
+                          builder: (context) => const OrderView(),
                         ),
                       );
                     },

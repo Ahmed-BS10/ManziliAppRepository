@@ -265,6 +265,9 @@ class OrderActions extends StatelessWidget {
           onContactCustomer: onContactCustomer,
         );
         break;
+      case OrderStatus.ongoing:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
 
     return actions.buildActions();
