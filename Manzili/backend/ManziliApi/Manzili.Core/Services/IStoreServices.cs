@@ -11,6 +11,7 @@ namespace Manzili.Core.Services
 
         // Get
 
+        Task<OperationResult<GetAnalysisStoreDto>> GetAnalysisStoreAsync(int storeId);
         Task<OperationResult<GetStoreDto>> GetByIdAsync(int id);
         Task<OperationResult<IEnumerable<GetStoreDto>>> GetListAsync();
         Task<OperationResult<IEnumerable<GetStoreDto>>> GetUserFavoriteStores(int userId);

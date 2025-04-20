@@ -2,6 +2,7 @@
 using Manzili.Core.Dto.StoreDto;
 using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Entities;
+using Manzili.Core.Enum;
 using Manzili.Core.Extension;
 using Manzili.Core.Services;
 using Microsoft.AspNetCore.Identity;
@@ -401,6 +402,37 @@ namespace Manzili.EF.Implementaion
             );
 
             return OperationResult<GetInfoStoreDto>.Success(storeInfo);
+        }
+
+        public async Task<OperationResult<GetAnalysisStoreDto>> GetAnalysisStoreAsync(int storeId)
+        {
+            var store = await _db.Stores
+                .Include(s => s.StoreOrders)
+                    .ThenInclude(o => o.OrderProducts)
+                    .ThenInclude(oi => oi.Product)
+                .Select(s => new
+                {
+                    Store = s,
+                    CompletedOrders = s.StoreOrders.Where(o => o.Status == enOrderStatus.Pending),
+                    AllOrders = s.StoreOrders,
+                    InProgressOrders = s.StoreOrders.Where(o => o.Status == enOrderStatus.Processing)
+                })
+                .FirstOrDefaultAsync(s => s.Store.Id == storeId);
+
+            if (store?.Store == null)
+            {
+                return OperationResult<GetAnalysisStoreDto>.Failure("");
+            }
+
+            var analysisStoreDto = new GetAnalysisStoreDto
+            {
+                StoreId = storeId,
+                TotalSales = store.CompletedOrders.Sum(o => o.Total),
+                NumberOfOrders = store.AllOrders.Count(),
+                OrderInProgress = store.InProgressOrders.Count()
+            };
+
+            return OperationResult<GetAnalysisStoreDto>.Success(analysisStoreDto);
         }
 
         #endregion
