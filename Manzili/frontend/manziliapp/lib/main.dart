@@ -5,6 +5,8 @@ import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/controller/category_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/middleware/auth_middelware.dart';
+import 'package:manziliapp/providers/category_providers.dart';
+import 'package:manziliapp/view/add_product_screen.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
 import 'package:manziliapp/view/order_view.dart';
@@ -34,6 +36,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (_) => FavoriteProvider()),
       ChangeNotifierProvider(create: (_) => UserProvider()),
+      ChangeNotifierProvider(create: (_) => CategoryProvider()),
     ],
     child: const MyApp(),
   ));
@@ -49,7 +52,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/sp',
-          page: () => StoreDashboard(),
+          page: () => AddProductScreen(),
           //  middlewares: [AuthMiddleware()]
         ),
         GetPage(
