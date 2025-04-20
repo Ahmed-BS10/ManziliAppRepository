@@ -218,6 +218,8 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 );
               }),
             ),
+
+            Text((product.price * _quantity).toString())
           ],
         );
       }),
