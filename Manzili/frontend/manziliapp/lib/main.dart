@@ -51,10 +51,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/sp',
       getPages: [
         GetPage(
-          name: '/sp',
-          page: () => AddProductScreen(),
-          //  middlewares: [AuthMiddleware()]
-        ),
+            name: '/sp',
+            page: () => SplashsView(),
+            middlewares: [AuthMiddleware()]),
         GetPage(
           name: '/login',
           page: () => const LoginView(),

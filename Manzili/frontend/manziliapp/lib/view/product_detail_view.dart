@@ -48,9 +48,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
     _cartPrefsKey = 'isInCart_${widget.productId}';
 
     // Load saved quantity and apply to controller
-    _loadSavedQuantity().then((_) {
-      controller.updateQuantity(_quantity);
-    });
+    _loadSavedQuantity();
 
     // Load saved cart state
     _loadCartState();
@@ -62,6 +60,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
   Future<void> _loadSavedQuantity() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getInt(_prefsKey);
+
     if (!mounted) return;
     if (saved != null && saved > 0) {
       setState(() {
@@ -114,6 +113,15 @@ class _ProductDetailViewState extends State<ProductDetailView> {
         final response = await http.delete(url);
         final data = json.decode(response.body);
         success = (response.statusCode == 200 && data['isSuccess'] == true);
+
+        // Update quantity and total price
+        if (success) {
+          setState(() {
+            // _quantity = 1; // Reset or update quantity as needed
+            controller.updateQuantity(_quantity);
+          });
+          await _saveQuantity(_quantity);
+        }
       }
 
       if (success) {
@@ -165,6 +173,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
               child: Obx(() {
                 if (controller.selectedTabIndex.value == 0) {
                   return ProductDetailsViewBody(
+                    quantity: _quantity,
                     product: product,
                     storeImage: product.storeImage,
                     onQuantityChanged: (qty) async {
@@ -228,6 +237,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 }
 
 class ProductDetailsViewBody extends StatelessWidget {
+  final int quantity;
   final ProductData product;
   final Function(int) onQuantityChanged;
   final String storeImage;
@@ -237,6 +247,7 @@ class ProductDetailsViewBody extends StatelessWidget {
     required this.product,
     required this.onQuantityChanged,
     required this.storeImage,
+    required this.quantity,
   }) : super(key: key);
 
   @override
@@ -254,11 +265,15 @@ class ProductDetailsViewBody extends StatelessWidget {
         // اسم المنتج والكمية مع زر الزيادة والنقصان
         ProductNameAndQuantity(
           name: product.name,
-          quantity: product.quantity,
-          onIncrement: () => onQuantityChanged(product.quantity + 1),
+          quantity: quantity,
+          onIncrement: () {
+            int newQuantity = quantity + 1;
+            onQuantityChanged(newQuantity);
+          },
           onDecrement: () {
-            if (product.quantity > 1) {
-              onQuantityChanged(product.quantity - 1);
+            if (quantity > 1) {
+              int newQuantity = quantity - 1;
+              onQuantityChanged(newQuantity);
             }
           },
         ),
