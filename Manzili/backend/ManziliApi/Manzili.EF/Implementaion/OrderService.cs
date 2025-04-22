@@ -17,7 +17,36 @@ namespace Manzili.EF.Implementation
             _context = context;
         }
 
+        public async Task<OperationResult<IEnumerable<OrderTracking>>> GetOrderTrackingHistoryAsync(int orderId)
+        {
+            var trackingHistory = await _context.OrderTrackings
+                .Where(t => t.OrderId == orderId)
+                .OrderBy(t => t.Timestamp)
+                .ToListAsync();
 
+            if (!trackingHistory.Any())
+            {
+                return OperationResult<IEnumerable<OrderTracking>>.Failure("No tracking history found for this order.");
+            }
+
+            return OperationResult<IEnumerable<OrderTracking>>.Success(trackingHistory, "Tracking history retrieved successfully.");
+        }
+
+        public async Task<OperationResult<int?>> GetUserIdByOrderIdAsync(int orderId)
+        {
+            // Fix for CS1061: Replace 'Id' with 'OrderId' in the query since the 'Order' class does not have an 'Id' property but has 'OrderId'.
+            var userId = await _context.Orders
+                .Where(o => o.OrderId == orderId) // Changed 'Id' to 'OrderId'
+                .Select(o => o.UserId)
+                .FirstOrDefaultAsync();
+
+            if (userId == 0) // Assuming 0 means no user found
+            {
+                return OperationResult<int?>.Failure("Order not found or no associated user.");
+            }
+
+            return OperationResult<int?>.Success(userId, "User ID retrieved successfully.");
+        }
         public async Task<OperationResult<bool>> AddOrderAsync(CreateOrderDto createOrderDto)
         {
 
@@ -66,6 +95,16 @@ namespace Manzili.EF.Implementation
                 return OperationResult<bool>.Failure("Order not found");
 
             order.Status = status;
+
+            // Log the status change in the tracking table
+            var trackingEntry = new OrderTracking
+            {
+                OrderId = orderId,
+                Status = status,
+                Timestamp = DateTime.UtcNow
+            };
+            _context.OrderTrackings.Add(trackingEntry);
+
             await _context.SaveChangesAsync();
 
             return OperationResult<bool>.Success(true);

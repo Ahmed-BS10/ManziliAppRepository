@@ -3,7 +3,9 @@ using Manzili.Core.Extension;
 using Manzili.Core.Mapper;
 using Manzili.Core.Services;
 using Manzili.EF.Extension;
+using ManziliApi.Hubs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -68,6 +70,10 @@ builder.Services.AddIdentity<User, Role>(options =>
 var jwtSettings = new JwtSettings();
 builder.Configuration.GetSection("Jwt").Bind(jwtSettings);
 builder.Services.AddSingleton(jwtSettings);
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, ManziliApi.Providers.CustomUserIdProvider>();
+
+
 
 var app = builder.Build();
 
@@ -75,6 +81,7 @@ var app = builder.Build();
 app.UseCors(CorsPolicy);
 
 
+app.MapHub<NotificationHub>("/notificationHub");
 
 
 

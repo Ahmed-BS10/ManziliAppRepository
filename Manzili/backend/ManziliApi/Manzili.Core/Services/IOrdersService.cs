@@ -11,5 +11,8 @@ public interface IOrdersService
     Task<OperationResult<IEnumerable<GteBaseOrderDto>>> GetUnDeliveredOrdersByUserIdAsync(int userId);
     Task<OperationResult<bool>> AddOrderAsync(CreateOrderDto createOrderDto);
     Task<OperationResult<bool>> UpdateOrderStatusAsync(int orderId, enOrderStatus status);
+    Task<OperationResult<int?>> GetUserIdByOrderIdAsync(int orderId);
+    Task<OperationResult<IEnumerable<OrderTracking>>> GetOrderTrackingHistoryAsync(int orderId);
+
 }
 
