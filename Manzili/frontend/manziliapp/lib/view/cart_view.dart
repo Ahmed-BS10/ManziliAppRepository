@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import 'package:manziliapp/view/checkout_view.dart';
+import 'package:manziliapp/view/store_details_view.dart';
 import 'package:manziliapp/widget/card/cart_card_widget.dart';
 
 class CartView extends StatefulWidget {
@@ -13,7 +15,6 @@ class CartView extends StatefulWidget {
 }
 
 class _CartViewState extends State<CartView> {
-  // final int count = 10;
   String note = '';
 
   void _showNoteBottomSheet() {
@@ -21,7 +22,7 @@ class _CartViewState extends State<CartView> {
 
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       isScrollControlled: true,
@@ -46,11 +47,18 @@ class _CartViewState extends State<CartView> {
                 ),
                 textInputAction: TextInputAction.done,
                 onSubmitted: (value) {
-                  setState(() => note = value);
+                  setState(() => note = noteController.text.trim());
                   Navigator.pop(context);
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() => note = noteController.text.trim());
+                  Navigator.pop(context);
+                },
+                child: const Text('حفظ'),
+              ),
             ],
           ),
         );
@@ -74,7 +82,7 @@ class _CartViewState extends State<CartView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/image/parcel.png',
+                      'lib/assets/image/parcel.png',
                       width: 100,
                       height: 100,
                     ),
@@ -86,7 +94,12 @@ class _CartViewState extends State<CartView> {
                         height: 51,
                         width: 298,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(
+                                context,
+                                StoreDetailsScreen(
+                                    storeId: widget.cartCardModel.storeId));
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xff1548C7),
                             foregroundColor: Colors.white,
@@ -166,7 +179,7 @@ class _CartViewState extends State<CartView> {
                                   ),
                                   SizedBox(width: 8),
                                   Image.asset(
-                                    'assets/image/Note_Edit.png',
+                                    'lib/assets/image/Note_Edit.png',
                                     width: 15,
                                     height: 15,
                                   ),
