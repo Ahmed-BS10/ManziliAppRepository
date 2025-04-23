@@ -13,7 +13,7 @@ class StartViewBody extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(height: 10),
-          Image.asset('assets/image/startimg.jpg'),
+          Image.asset('Lib/assets/image/startimg.jpg'),
           SizedBox(height: 50),
           Text(
             'اكتشف الكنوز المصنوعة منزليًا \n     ودعم إبداع العائلة مع \n           أعمال العائلة',

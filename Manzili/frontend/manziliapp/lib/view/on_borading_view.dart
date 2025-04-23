@@ -49,19 +49,19 @@ class _OnBoradingViewState extends State<OnBoradingView> {
       controller: pageController,
       children: const [
         IntroPageItem(
-          imagePath: "assets/image/im_one.png",
+          imagePath: "lib/assets/image/im_one.png",
           title: "ابدأ بيع منتجاتك بسهولة",
           description:
               "  افتح متجرك الآن واستقبل طلبات العملاء مباشرة! احصل على فرصة لعرض منتجاتك والتواصل مع المشترين المهتمين بكل سهولة",
         ),
         IntroPageItem(
-          imagePath: "assets/image/im_tow.png",
+          imagePath: "Lib/assets/image/im_tow.png",
           title: " وصل منتجاتك بسرعة وسهولة",
           description:
               "لا تقلق بشأن التوصيل! وفر خيارات مريحة لعملائك لتسليم الطلبات في الوقت المناسب، سواء عبر مندوب توصيل أو الاستلام المباشر",
         ),
         IntroPageItem(
-          imagePath: "assets/image/im_three.png",
+          imagePath: "Lib/assets/image/im_three.png",
           title: " تجربة تسوق آمنة وسهلة",
           description:
               "اكتشف منتجات فريدة من الأسر المنتجة، وتسوّق بكل سهولة مع خيارات دفع آمنة وموثوقة، لضمان تجربة تسوق ممتعة",
