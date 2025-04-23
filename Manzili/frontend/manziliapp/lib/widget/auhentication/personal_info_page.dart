@@ -9,7 +9,6 @@ class PersonalInfoPage extends StatefulWidget {
   final TextEditingController usernameController;
   final TextEditingController phoneController;
   final TextEditingController emailController;
-  final TextEditingController cityController;
   final TextEditingController addressController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
@@ -20,7 +19,6 @@ class PersonalInfoPage extends StatefulWidget {
     required this.usernameController,
     required this.phoneController,
     required this.emailController,
-    required this.cityController,
     required this.addressController,
     required this.passwordController,
     required this.confirmPasswordController,
@@ -74,11 +72,6 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
           const SizedBox(height: 10),
           EmailTextFiled(
             controller: widget.emailController,
-          ),
-          const SizedBox(height: 10),
-          CustomeTextFiled(
-            controller: widget.cityController,
-            hintText: 'المدينة',
           ),
           const SizedBox(height: 10),
           CustomeTextFiled(

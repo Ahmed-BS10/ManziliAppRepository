@@ -38,7 +38,6 @@ class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
     userCreateModel = UserCreateModel(
       image: null,
       email: "",
-      city: "",
       address: "",
       userName: "",
       password: "",
@@ -87,11 +86,6 @@ class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
           const SizedBox(height: 10),
           EmailTextFiled(
             onChanged: (value) => userCreateModel.email = value,
-          ),
-          const SizedBox(height: 10),
-          CustomeTextFiled(
-            onChanged: (value) => userCreateModel.city = value,
-            hintText: 'المدينة',
           ),
           const SizedBox(height: 10),
           CustomeTextFiled(

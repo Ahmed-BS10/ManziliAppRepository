@@ -36,6 +36,7 @@ class CustomPageView extends StatelessWidget {
   final TextEditingController businessNameController;
   final TextEditingController bankAccountController;
   final TextEditingController categoryOfWorkController;
+  final TextEditingController socileMediaAcountController;
   final Function(File) onUserImagePicked;
 
   const CustomPageView({
@@ -52,6 +53,7 @@ class CustomPageView extends StatelessWidget {
     required this.bankAccountController,
     required this.categoryOfWorkController,
     required this.onUserImagePicked,
+    required this.socileMediaAcountController,
   }) : super(key: key);
 
   @override
@@ -64,7 +66,6 @@ class CustomPageView extends StatelessWidget {
           usernameController: usernameController,
           phoneController: phoneController,
           emailController: emailController,
-          cityController: cityController,
           addressController: addressController,
           passwordController: passwordController,
           confirmPasswordController: confirmPasswordController,
@@ -74,6 +75,7 @@ class CustomPageView extends StatelessWidget {
           pageController: pageController,
           businessNameController: businessNameController,
           bankAccountController: bankAccountController,
+          socileMediaAcountController: socileMediaAcountController,
         ),
       ],
     );

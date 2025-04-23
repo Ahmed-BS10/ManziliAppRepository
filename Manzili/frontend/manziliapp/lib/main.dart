@@ -13,6 +13,7 @@ import 'package:manziliapp/view/order_view.dart';
 import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/view/register_view.dart';
 import 'package:manziliapp/view/splash_view.dart';
+import 'package:manziliapp/view/start_view.dart';
 import 'package:manziliapp/view/store_dashboard.dart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
 import 'package:manziliapp/view/store_orders_view.dart';
@@ -51,9 +52,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/sp',
       getPages: [
         GetPage(
-            name: '/sp',
-            page: () => SplashsView(),
-            middlewares: [AuthMiddleware()]),
+          name: '/sp',
+          page: () => StartView(),
+          // middlewares: [AuthMiddleware()]
+        ),
         GetPage(
           name: '/login',
           page: () => const LoginView(),

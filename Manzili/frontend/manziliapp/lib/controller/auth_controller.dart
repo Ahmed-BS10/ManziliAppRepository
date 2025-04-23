@@ -120,7 +120,7 @@ class AuthController extends GetxController {
       'BusinessName': storeData.businessName,
       'Description': storeData.description,
       'Email': storeData.email,
-      'PhoneNumber': storeData.phone,
+      'PhoneNumber': storeData.phonenumber,
       'Address': storeData.address,
       'Password': storeData.password,
       'ConfirmPassword12': storeData.confirmPassword,
@@ -163,14 +163,14 @@ class AuthController extends GetxController {
       request.fields.addAll({
         'UserName': storeData.userName,
         'BusinessName': storeData.businessName,
-        'Description': "hi my ",
+        'Description': storeData.description,
         'Email': storeData.email,
-        'PhoneNumber': storeData.phone,
+        'PhoneNumber': storeData.phonenumber,
         'Address': storeData.address,
         'Password': storeData.password,
         'ConfirmPassword12': storeData.confirmPassword,
         'BankAccount': storeData.bankAccount,
-        'SocileMediaAcount': "good",
+        'SocileMediaAcount': storeData.socileMediaAcount,
       });
 
       // Add image file if provided
