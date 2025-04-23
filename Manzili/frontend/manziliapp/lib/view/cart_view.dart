@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:manziliapp/model/product.dart';
 
 import 'package:manziliapp/view/checkout_view.dart';
 import 'package:manziliapp/widget/card/cart_card_widget.dart';

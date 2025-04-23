@@ -1,18 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'package:manziliapp/controller/product_detail_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
-import 'package:manziliapp/main.dart';
 import 'package:manziliapp/model/full_producta.dart';
-import 'package:manziliapp/view/product_ratings_view.dart';
 import 'package:manziliapp/widget/product/ImageCarousel.dart';
 import 'package:manziliapp/widget/product/ProductDescription.dart';
 import 'package:manziliapp/widget/product/ProductNameAndQuantity.dart';
 import 'package:manziliapp/widget/product/RatingAndStoreInfo.dart';
 import 'package:manziliapp/widget/product/TabSelector.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import 'package:manziliapp/view/product_ratings_view.dart';
 
 class ProductDetailView extends StatefulWidget {
   final int productId;
@@ -30,112 +29,95 @@ class ProductDetailView extends StatefulWidget {
 
 class _ProductDetailViewState extends State<ProductDetailView> {
   int _quantity = 1;
-  late final String _prefsKey;
+  bool _isInCart = false;
+  bool _isLoading = false;
+
+  late final String _qtyPrefsKey;
   late final String _cartPrefsKey;
-  late final ProductDetailController controller;
-  late final CartController cartController;
+  late final ProductDetailController _controller;
 
   @override
   void initState() {
     super.initState();
+    _controller = Get.put(ProductDetailController());
 
-    // Initialize controllers
-    controller = Get.put(ProductDetailController());
-    cartController = Get.put(CartController());
-
-    // Prepare SharedPreferences keys
-    _prefsKey = 'quantity_${widget.productId}';
+    _qtyPrefsKey = 'quantity_${widget.productId}';
     _cartPrefsKey = 'isInCart_${widget.productId}';
 
-    // Load saved quantity and apply to controller
     _loadSavedQuantity();
-
-    // Load saved cart state
     _loadCartState();
-
-    // Fetch product details
-    controller.fetchProductDetails(widget.productId);
+    _controller.fetchProductDetails(widget.productId);
   }
 
   Future<void> _loadSavedQuantity() async {
     final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getInt(_prefsKey);
-
-    if (!mounted) return;
-    if (saved != null && saved > 0) {
-      setState(() {
-        _quantity = saved;
-      });
-    }
+    final saved = prefs.getInt(_qtyPrefsKey) ?? 1;
+    if (mounted) setState(() => _quantity = saved);
   }
 
   Future<void> _saveQuantity(int qty) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_prefsKey, qty);
+    await prefs.setInt(_qtyPrefsKey, qty);
   }
 
   Future<void> _loadCartState() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getBool(_cartPrefsKey) ?? false;
-    if (mounted) cartController.isInCart.value = saved;
+    if (mounted) setState(() => _isInCart = saved);
   }
 
-  Future<void> _saveCartState(bool isInCart) async {
+  Future<void> _saveCartState(bool inCart) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_cartPrefsKey, isInCart);
+    await prefs.setBool(_cartPrefsKey, inCart);
   }
 
-  Future<void> _toggleCart(int quantity) async {
-    cartController.setLoading(true);
-    cartController.toggleCartState();
-    final desiredState = cartController.isInCart.value;
+  Future<void> _clearProductPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_cartPrefsKey);
+    await prefs.remove(_qtyPrefsKey);
+    await prefs.remove('price_${widget.productId}');
+  }
+
+  Future<void> _toggleCart() async {
+    setState(() => _isLoading = true);
+    final wantToAdd = !_isInCart;
+    bool success = false;
 
     try {
       final userId = Get.find<UserController>().userId.value;
-      bool success;
-
-      if (desiredState) {
-        // Add to cart with selected quantity
+      if (wantToAdd) {
+        // Add to cart
         final url = Uri.parse(
           'http://man.runasp.net/api/Cart/add'
           '?userId=$userId&storeId=${widget.storeId}'
-          '&productId=${widget.productId}&quantity=$quantity',
+          '&productId=${widget.productId}&quantity=$_quantity',
         );
-        final response = await http.post(url);
-        success =
-            (response.statusCode == 200 && json.decode(response.body) == true);
+        final resp = await http.post(url);
+        success = resp.statusCode == 200 && json.decode(resp.body) == true;
       } else {
         // Remove from cart
+        debugPrint('Removing from cart...');
         final url = Uri.parse(
-          'http://man.runasp.net/api/Cart/DeleteCartItem'
-          '?userId=$userId&productId=${widget.productId}',
+          'http://man.runasp.net/api/Cart/DeleteCartItemFromStore?storeId=${widget.storeId}&userId=$userId&productId=${widget.productId}',
         );
-        final response = await http.delete(url);
-        final data = json.decode(response.body);
-        success = (response.statusCode == 200 && data['isSuccess'] == true);
-
-        // Update quantity and total price
-        if (success) {
-          setState(() {
-            // _quantity = 1; // Reset or update quantity as needed
-            controller.updateQuantity(_quantity);
-          });
-          await _saveQuantity(_quantity);
+        final resp = await http.delete(url);
+        if (resp.statusCode == 200) {
+          final body = json.decode(resp.body);
+          if (body['isSuccess'] == true) {
+            await _clearProductPrefs();
+            success = true;
+          }
         }
       }
 
       if (success) {
-        // Persist the new cart state
-        await _saveCartState(desiredState);
-      } else {
-        // Revert on failure
-        cartController.toggleCartState();
+        setState(() => _isInCart = wantToAdd);
+        if (wantToAdd) await _saveCartState(true);
       }
     } catch (e) {
-      cartController.toggleCartState();
-      debugPrint('Error toggling cart: \$e');
+      debugPrint('Error toggling cart: $e');
     } finally {
-      cartController.setLoading(false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -144,91 +126,83 @@ class _ProductDetailViewState extends State<ProductDetailView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(() {
-        if (controller.isLoading.value) {
+        if (_controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (controller.errorMessage.isNotEmpty) {
-          return Center(child: Text(controller.errorMessage.value));
+        if (_controller.errorMessage.isNotEmpty) {
+          return Center(child: Text(_controller.errorMessage.value));
         }
 
-        final product = controller.product.value;
-
+        final product = _controller.product.value;
         return Column(
           children: [
-            // Image carousel
             ImageCarousel(
               images: product.images!,
               currentIndex: 0,
-              onPageChanged: (index) {},
+              onPageChanged: (_) {},
             ),
 
-            // Tab selector
             TabSelector(
-              selectedTabIndex: controller.selectedTabIndex.value,
-              onTabSelected: controller.updateTabIndex,
+              selectedTabIndex: _controller.selectedTabIndex.value,
+              onTabSelected: _controller.updateTabIndex,
             ),
 
-            // Tab content
             Expanded(
               child: Obx(() {
-                if (controller.selectedTabIndex.value == 0) {
-                  return ProductDetailsViewBody(
-                    quantity: _quantity,
-                    product: product,
-                    storeImage: product.storeImage,
-                    onQuantityChanged: (qty) async {
-                      setState(() => _quantity = qty);
-                      controller.updateQuantity(qty);
-                      await _saveQuantity(qty);
-                    },
-                  );
-                } else {
-                  return ProductRatingsView(productId: product.id);
-                }
+                return _controller.selectedTabIndex.value == 0
+                    ? ProductDetailsViewBody(
+                        quantity: _quantity,
+                        product: product,
+                        storeImage: product.storeImage,
+                        onQuantityChanged: (qty) async {
+                          setState(() => _quantity = qty);
+                          _controller.updateQuantity(qty);
+                          await _saveQuantity(qty);
+                        },
+                      )
+                    : ProductRatingsView(productId: product.id);
               }),
             ),
 
-            // Bottom action: add/remove cart button
+            // Add/Remove Cart Button & Price
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-              child: Obx(() {
-                if (cartController.isLoading.value) {
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          cartController.isInCart.value
-                              ? Colors.red
-                              : const Color(0xFF1548C7),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _isLoading
+                      ? SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              _isInCart ? Colors.red : const Color(0xFF1548C7),
+                            ),
+                          ),
+                        )
+                      : IconButton(
+                          icon: Icon(
+                            _isInCart
+                                ? Icons.remove_circle_outline
+                                : Icons.shopping_cart_outlined,
+                            color: _isInCart
+                                ? Colors.red
+                                : const Color(0xFF1548C7),
+                            size: 30,
+                          ),
+                          onPressed: _toggleCart,
                         ),
-                      ),
+                  Text(
+                    'السعر: ${(product.price * _quantity).toStringAsFixed(2)} ريال',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
-                  );
-                }
-                return Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: Icon(
-                      cartController.isInCart.value
-                          ? Icons.remove_circle_outline
-                          : Icons.shopping_cart_outlined,
-                      color: cartController.isInCart.value
-                          ? Colors.red
-                          : const Color(0xFF1548C7),
-                      size: 30,
-                    ),
-                    onPressed: () => _toggleCart(_quantity),
                   ),
-                );
-              }),
+                ],
+              ),
             ),
-
-            Text((product.price * _quantity).toString())
           ],
         );
       }),

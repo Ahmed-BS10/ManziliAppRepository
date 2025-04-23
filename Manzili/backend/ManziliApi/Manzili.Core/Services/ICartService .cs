@@ -20,6 +20,9 @@ namespace Manzili.Core.Services
         Task<OperationResult<bool>> IsCartEmptyAsync(int userId);
 
 
+        Task<OperationResult<bool>> DeleteCartItemAsync(int storeId, int userId, int productId);
+
+
         Task<OperationResult<bool>> UpdateProductQuantityAsync(int cartId, int productId, int newQuantity);
 
 
