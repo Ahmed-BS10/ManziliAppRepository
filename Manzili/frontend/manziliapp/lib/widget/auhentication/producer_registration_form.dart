@@ -45,6 +45,7 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
       TextEditingController();
   final TextEditingController socileMediaAcountController =
       TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   File? userImage;
   final AuthController authController = Get.find<AuthController>();
@@ -75,7 +76,7 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
       confirmPassword: confirmPasswordController.text,
       businessName: businessNameController.text,
       bankAccount: bankAccountController.text,
-      description: businessDescriptionController.text,
+      description: descriptionController.text,
       image: userImage,
       socileMediaAcount: socileMediaAcountController.text,
     );
@@ -94,7 +95,6 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
             usernameController: usernameController,
             phoneController: phoneController,
             emailController: emailController,
-            cityController: cityController,
             addressController: addressController,
             passwordController: passwordController,
             confirmPasswordController: confirmPasswordController,
@@ -103,6 +103,7 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
             categoryOfWorkController: businessDescriptionController,
             onUserImagePicked: (image) => setState(() => userImage = image),
             socileMediaAcountController: socileMediaAcountController,
+            descriptionController: descriptionController,
           ),
         ),
         TermsAndPrivacyCheckbox(

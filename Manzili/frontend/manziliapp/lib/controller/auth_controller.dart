@@ -7,6 +7,27 @@ import 'package:manziliapp/model/store_create_model.dart';
 import 'package:manziliapp/model/user_create_model.dart';
 
 class AuthController extends GetxController {
+  void _handleResponse(http.Response response, {bool isLogin = false}) {
+    final jsonResponse = json.decode(response.body);
+
+    if (response.statusCode == 200 && jsonResponse['isSuccess'] == true) {
+      successMessage.value = jsonResponse['message'];
+      errorMessage.value = '';
+
+      if (isLogin) {
+        apiResponseData.value = jsonResponse['data'] ?? {};
+      }
+    } else {
+      errorMessage.value = jsonResponse['message'] ?? 'Unknown error occurred';
+      successMessage.value = '';
+    }
+  }
+
+  void _handleError(String error) {
+    errorMessage.value = 'An unexpected error occurred: $error';
+    successMessage.value = '';
+  }
+
   // Shared state
   var isLoading = false.obs;
   var successMessage = ''.obs;
@@ -17,8 +38,6 @@ class AuthController extends GetxController {
   final String _loginEndpoint = "http://man.runasp.net/api/Auhencation/Login";
   final String _userRegisterEndpoint =
       "http://man.runasp.net/api/Auhencation/RegsiterUser";
-  final String _storeRegisterEndpoint =
-      "http://man.runasp.net/api/Auhencation/RegsiterStore";
 
   // Handle user login
   Future<void> login(LoginModel loginModel) async {
@@ -57,51 +76,6 @@ class AuthController extends GetxController {
     }
   }
 
-  // // Handle store registration
-  // Future<void> registerStore(StoreCreateModel storeData) async {
-  //   isLoading.value = true;
-  //   try {
-  //     final categoryController = Get.find<CategoryController>();
-  //     final selectedCategoryIds = categoryController.categories
-  //         .where((category) => categoryController.selectedCategoryNames
-  //             .contains(category['name']))
-  //         .map((category) => category['id'])
-  //         .toList();
-
-  //     final queryParams = selectedCategoryIds.map((id) => 'categoreis=$id').join('&');
-  //     var request = http.MultipartRequest('POST', Uri.parse('$_storeRegisterEndpoint?$queryParams'));
-
-  //     _buildStoreRequest(request, storeData);
-  //     final response = await request.send();
-  //     _handleResponse(await http.Response.fromStream(response));
-  //   } catch (e) {
-  //     _handleError(e.toString());
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
-
-  void _handleResponse(http.Response response, {bool isLogin = false}) {
-    final jsonResponse = json.decode(response.body);
-
-    if (response.statusCode == 200 && jsonResponse['isSuccess'] == true) {
-      successMessage.value = jsonResponse['message'];
-      errorMessage.value = '';
-
-      if (isLogin) {
-        apiResponseData.value = jsonResponse['data'] ?? {};
-      }
-    } else {
-      errorMessage.value = jsonResponse['message'] ?? 'Unknown error occurred';
-      successMessage.value = '';
-    }
-  }
-
-  void _handleError(String error) {
-    errorMessage.value = 'An unexpected error occurred: $error';
-    successMessage.value = '';
-  }
-
   Future<void> _buildUserRequest(
       http.MultipartRequest request, UserCreateModel user) async {
     request.fields.addAll(
@@ -113,26 +87,12 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> _buildStoreRequest(
-      http.MultipartRequest request, StoreCreateModel storeData) async {
-    request.fields.addAll({
-      'UserName': storeData.userName,
-      'BusinessName': storeData.businessName,
-      'Description': storeData.description,
-      'Email': storeData.email,
-      'PhoneNumber': storeData.phonenumber,
-      'Address': storeData.address,
-      'Password': storeData.password,
-      'ConfirmPassword12': storeData.confirmPassword,
-      'BankAccount': storeData.bankAccount,
-      'SocileMediaAcount': storeData.socileMediaAcount,
-    });
-
-    if (storeData.image != null) {
-      request.files.add(
-          await http.MultipartFile.fromPath('Image', storeData.image!.path));
-    }
-  }
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
   final String registerEndpoint =
       "http://man.runasp.net/api/Auhencation/RegsiterStore";
@@ -168,7 +128,7 @@ class AuthController extends GetxController {
         'PhoneNumber': storeData.phonenumber,
         'Address': storeData.address,
         'Password': storeData.password,
-        'ConfirmPassword12': storeData.confirmPassword,
+        'ConfirmPassword': storeData.confirmPassword,
         'BankAccount': storeData.bankAccount,
         'SocileMediaAcount': storeData.socileMediaAcount,
       });

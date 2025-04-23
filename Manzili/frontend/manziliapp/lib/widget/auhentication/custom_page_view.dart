@@ -29,7 +29,6 @@ class CustomPageView extends StatelessWidget {
   final TextEditingController usernameController;
   final TextEditingController phoneController;
   final TextEditingController emailController;
-  final TextEditingController cityController;
   final TextEditingController addressController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
@@ -37,6 +36,7 @@ class CustomPageView extends StatelessWidget {
   final TextEditingController bankAccountController;
   final TextEditingController categoryOfWorkController;
   final TextEditingController socileMediaAcountController;
+  final TextEditingController descriptionController;
   final Function(File) onUserImagePicked;
 
   const CustomPageView({
@@ -45,7 +45,6 @@ class CustomPageView extends StatelessWidget {
     required this.usernameController,
     required this.phoneController,
     required this.emailController,
-    required this.cityController,
     required this.addressController,
     required this.passwordController,
     required this.confirmPasswordController,
@@ -54,6 +53,7 @@ class CustomPageView extends StatelessWidget {
     required this.categoryOfWorkController,
     required this.onUserImagePicked,
     required this.socileMediaAcountController,
+    required this.descriptionController,
   }) : super(key: key);
 
   @override
@@ -76,6 +76,7 @@ class CustomPageView extends StatelessWidget {
           businessNameController: businessNameController,
           bankAccountController: bankAccountController,
           socileMediaAcountController: socileMediaAcountController,
+          descriptionController: descriptionController,
         ),
       ],
     );

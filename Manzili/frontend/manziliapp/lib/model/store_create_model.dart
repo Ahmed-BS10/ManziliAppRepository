@@ -40,7 +40,7 @@ class StoreCreateModel {
       "BusinessName": businessName,
       "BankAccount": bankAccount,
       "Password": password,
-      "ConfirmPassword12": confirmPassword,
+      "ConfirmPassword": confirmPassword,
       "SocileMediaAcount": socileMediaAcount,
     };
   }
