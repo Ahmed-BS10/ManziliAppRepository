@@ -52,10 +52,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/sp',
       getPages: [
         GetPage(
-          name: '/sp',
-          page: () => StartView(),
-          // middlewares: [AuthMiddleware()]
-        ),
+            name: '/sp',
+            page: () => SplashsView(),
+            middlewares: [AuthMiddleware()]),
         GetPage(
           name: '/login',
           page: () => const LoginView(),

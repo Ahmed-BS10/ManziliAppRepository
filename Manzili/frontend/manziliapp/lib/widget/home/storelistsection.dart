@@ -9,6 +9,7 @@ import 'package:manziliapp/core/helper/text_styles.dart';
 import 'package:manziliapp/view/store_details_view.dart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
 import 'package:manziliapp/model/store_modle.dart';
+import 'package:manziliapp/widget/store/store_image.dart';
 import 'package:provider/provider.dart';
 
 class StoreListSection extends StatefulWidget {
@@ -195,7 +196,7 @@ class StoreListItemState extends State<StoreListItem> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _StoreImage(imageUrl: widget.imageUrl!),
+                  StoreImage(imageUrl: widget.imageUrl),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Row(
@@ -317,29 +318,6 @@ class _CategoryIndicators extends StatelessWidget {
             ),
           )
           .toList(),
-    );
-  }
-}
-
-class _StoreImage extends StatelessWidget {
-  final String imageUrl;
-
-  const _StoreImage({Key? key, required this.imageUrl}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-
-    return Container(
-      width: screenWidth * 0.2,
-      height: 87,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.contain,
-        ),
-      ),
     );
   }
 }

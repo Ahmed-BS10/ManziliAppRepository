@@ -14,7 +14,7 @@ import 'package:http/http.dart' as http;
 class StoreData {
   final int id;
   final String businessName;
-  final String imageUrl;
+  final String? imageUrl;
   final String description;
   final String phoneNumber;
   final List<String> categoryNames;
@@ -27,7 +27,7 @@ class StoreData {
 
   StoreData({
     required this.id,
-    required this.imageUrl,
+    this.imageUrl,
     required this.phoneNumber,
     required this.businessName,
     required this.description,
