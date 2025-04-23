@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class StoreAbout extends StatelessWidget {
-  const StoreAbout({Key? key, required this.description, required this.bookTime}) : super(key: key);
+  const StoreAbout(
+      {Key? key, required this.description, required this.bookTime})
+      : super(key: key);
 
   final String description;
   final String bookTime;

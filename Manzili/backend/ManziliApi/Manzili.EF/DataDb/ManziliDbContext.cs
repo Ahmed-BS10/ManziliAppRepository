@@ -161,12 +161,11 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
 
 
 
-        modelBuilder.Entity<Product>()
-          .HasMany(op => op.OrderProducts)
-          .WithOne(o => o.Product)
-          .HasForeignKey(fk => fk.ProductId)
-          .OnDelete(DeleteBehavior.NoAction);
-
+        modelBuilder.Entity<OrderProduct>()
+        .HasOne(op => op.Product)
+        .WithMany(p => p.OrderProducts)
+        .HasForeignKey(op => op.ProductId)
+        .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Store>()
             .HasMany(o => o.StoreOrders)
@@ -185,119 +184,119 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
 
 
 
-        modelBuilder.Entity<StoreCategory>().HasData(
-                   new StoreCategory { Id = 1, Name = "الإلكترونيات" },
-                   new StoreCategory { Id = 2, Name = "الملابس" },
-                   new StoreCategory { Id = 3, Name = "الأثاث المنزلي" }
-               );
+        //modelBuilder.Entity<StoreCategory>().HasData(
+        //           new StoreCategory { Id = 1, Name = "الإلكترونيات" },
+        //           new StoreCategory { Id = 2, Name = "الملابس" },
+        //           new StoreCategory { Id = 3, Name = "الأثاث المنزلي" }
+        //       );
 
 
-        modelBuilder.Entity<Product>().HasData(
+        //modelBuilder.Entity<Product>().HasData(
 
-             new Product
-             {
-                 Id = 1,
-                 Name = "قميص رجالي",
-                 Price = 199.99,
-                 Description = "قميص قطني عالي الجودة",
-                 Quantity = 50,
-                 Discount = 10,
-                 ProductCategoryId = 1,
-                 StoreId = 6
-             },
-                new Product
-                {
-                    Id = 2,
-                    Name = "هاتف ذكي",
-                    Price = 5999.99,
-                    Description = "أحدث هاتف ذكي بمواصفات عالية",
-                    Quantity = 20,
-                    ProductCategoryId = 3,
-                    StoreId = 7
-                },
-                new Product
-                {
-                    Id = 3,
-                    Name = "كنبة",
-                    Price = 3499.99,
-                    Description = "كنبة فخمة من الجلد الطبيعي",
-                    Quantity = 10,
-                    Discount = 15,
-                    ProductCategoryId = 5,
-                    StoreId = 8
-                },
-                new Product
-                {
-                    Id = 10,
-                    Name = "رواية",
-                    Price = 99.99,
-                    Description = "أحدث الروايات العربية",
-                    Quantity = 100,
-                    ProductCategoryId = 5,
-                    StoreId = 9
-                },
-                new Product
-                {
-                    Id = 4,
-                    Name = "عسل طبيعي",
-                    Price = 149.99,
-                    Description = "عسل نحل طبيعي 100%",
-                    Quantity = 30,
-                    Discount = 5,
-                    ProductCategoryId = 5,
-                    StoreId = 10
-                },
-                new Product
-                {
-                    Id = 5,
-                    Name = "بنطال جينز",
-                    Price = 299.99,
-                    Description = "بنطال جينز رجالي مقاوم للتجاعيد",
-                    Quantity = 40,
-                    ProductCategoryId = 1,
-                    StoreId = 6
-                },
-                new Product
-                { Id = 6,
-                    Name = "لابتوب",
-                    Price = 12999.99,
-                    Description = "لابتوب بمواصفات عالية للألعاب",
-                    Quantity = 15,
-                    Discount = 20,
-                    ProductCategoryId = 4,
-                    StoreId = 7
-                },
-                new Product
-                {
-                    Id = 7,
-                    Name = "طاولة طعام",
-                    Price = 2499.99,
-                    Description = "طاولة طعام خشبية لـ 6 أشخاص",
-                    Quantity = 8,
-                    ProductCategoryId = 5,
-                    StoreId = 8
-                },
-                new Product
-                {
-                    Id = 8,
-                    Name = "كتاب طبخ",
-                    Price = 149.99,
-                    Description = "كتاب يحتوي على وصفات من المطبخ العربي",
-                    Quantity = 25,
-                    ProductCategoryId = 5,
-                    StoreId = 9
-                },
-                new Product
-                {
-                    Id = 9,
-                    Name = "تمر",
-                    Price = 89.99,
-                    Description = "تمر مجدول عالي الجودة",
-                    Quantity = 60,
-                    ProductCategoryId = 5,
-                    StoreId = 10
-                }
-                );
+        //     new Product
+        //     {
+        //         Id = 1,
+        //         Name = "قميص رجالي",
+        //         Price = 199.99,
+        //         Description = "قميص قطني عالي الجودة",
+        //         Quantity = 50,
+        //         Discount = 10,
+        //         ProductCategoryId = 1,
+        //         StoreId = 6
+        //     },
+        //        new Product
+        //        {
+        //            Id = 2,
+        //            Name = "هاتف ذكي",
+        //            Price = 5999.99,
+        //            Description = "أحدث هاتف ذكي بمواصفات عالية",
+        //            Quantity = 20,
+        //            ProductCategoryId = 3,
+        //            StoreId = 7
+        //        },
+        //        new Product
+        //        {
+        //            Id = 3,
+        //            Name = "كنبة",
+        //            Price = 3499.99,
+        //            Description = "كنبة فخمة من الجلد الطبيعي",
+        //            Quantity = 10,
+        //            Discount = 15,
+        //            ProductCategoryId = 5,
+        //            StoreId = 8
+        //        },
+        //        new Product
+        //        {
+        //            Id = 10,
+        //            Name = "رواية",
+        //            Price = 99.99,
+        //            Description = "أحدث الروايات العربية",
+        //            Quantity = 100,
+        //            ProductCategoryId = 5,
+        //            StoreId = 9
+        //        },
+        //        new Product
+        //        {
+        //            Id = 4,
+        //            Name = "عسل طبيعي",
+        //            Price = 149.99,
+        //            Description = "عسل نحل طبيعي 100%",
+        //            Quantity = 30,
+        //            Discount = 5,
+        //            ProductCategoryId = 5,
+        //            StoreId = 10
+        //        },
+        //        new Product
+        //        {
+        //            Id = 5,
+        //            Name = "بنطال جينز",
+        //            Price = 299.99,
+        //            Description = "بنطال جينز رجالي مقاوم للتجاعيد",
+        //            Quantity = 40,
+        //            ProductCategoryId = 1,
+        //            StoreId = 6
+        //        },
+        //        new Product
+        //        { Id = 6,
+        //            Name = "لابتوب",
+        //            Price = 12999.99,
+        //            Description = "لابتوب بمواصفات عالية للألعاب",
+        //            Quantity = 15,
+        //            Discount = 20,
+        //            ProductCategoryId = 4,
+        //            StoreId = 7
+        //        },
+        //        new Product
+        //        {
+        //            Id = 7,
+        //            Name = "طاولة طعام",
+        //            Price = 2499.99,
+        //            Description = "طاولة طعام خشبية لـ 6 أشخاص",
+        //            Quantity = 8,
+        //            ProductCategoryId = 5,
+        //            StoreId = 8
+        //        },
+        //        new Product
+        //        {
+        //            Id = 8,
+        //            Name = "كتاب طبخ",
+        //            Price = 149.99,
+        //            Description = "كتاب يحتوي على وصفات من المطبخ العربي",
+        //            Quantity = 25,
+        //            ProductCategoryId = 5,
+        //            StoreId = 9
+        //        },
+        //        new Product
+        //        {
+        //            Id = 9,
+        //            Name = "تمر",
+        //            Price = 89.99,
+        //            Description = "تمر مجدول عالي الجودة",
+        //            Quantity = 60,
+        //            ProductCategoryId = 5,
+        //            StoreId = 10
+        //        }
+        //        );
             
 
             

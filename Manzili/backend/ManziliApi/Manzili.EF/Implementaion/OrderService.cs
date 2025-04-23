@@ -2,6 +2,7 @@
 using Manzili.Core.Entities;
 using Manzili.Core.Enum;
 using Manzili.Core.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,10 +19,11 @@ namespace Manzili.EF.Implementation
         }
 
 
+        
+
         public async Task<OperationResult<bool>> AddOrderAsync(CreateOrderDto createOrderDto)
         {
-
-
+            // 1. بناء كائن الـ Order الأساسي
             var order = new Order
             {
                 UserId = createOrderDto.UserId,
@@ -29,35 +31,45 @@ namespace Manzili.EF.Implementation
                 DeliveryAddress = createOrderDto.DeliveryAddress,
                 Note = createOrderDto.Note,
                 CreatedAt = DateTime.UtcNow,
-                Status = enOrderStatus.Pending,
-
+                Status = enOrderStatus.Pending
             };
 
-            foreach (var orderProductDto in createOrderDto.OrderProducts)
+            // 2. إذا أرفق المستخدم ملف PDF، نقرأه ونخزنه في الخاصية PdfFile
+            if (createOrderDto.PdfFile != null && createOrderDto.PdfFile.Length > 0)
             {
-                var product = await _context.Products.FindAsync(orderProductDto.ProductId);
-                if (product == null)
-                {
-                    return OperationResult<bool>.Failure($"Product with ID {orderProductDto.ProductId} not found.");
-                }
-                var orderProduct = new OrderProduct
-                {
-                    ProductId = orderProductDto.ProductId,
-                    Quantity = orderProductDto.Quantity,
-                    Price = product.Price,
-                    TotlaPrice = product.Price * orderProductDto.Quantity
-                };
-                order.OrderProducts.Add(orderProduct);
+                using var ms = new MemoryStream();
+                await createOrderDto.PdfFile.CopyToAsync(ms);
+                order.PdfFile = ms.ToArray();
             }
 
+            // 3. معالجة منتجات الطلب
+            foreach (var dto in createOrderDto.OrderProducts)
+            {
+                var product = await _context.Products.FindAsync(dto.ProductId);
+                if (product == null)
+                    return OperationResult<bool>.Failure($"Product with ID {dto.ProductId} not found.");
+
+                var op = new OrderProduct
+                {
+                    ProductId = dto.ProductId,
+                    Quantity = dto.Quantity,
+                    Price = product.Price,
+                    TotlaPrice = product.Price * dto.Quantity
+                };
+                order.OrderProducts.Add(op);
+            }
+
+            // 4. حساب المجاميع
             order.Total = order.OrderProducts.Sum(op => op.TotlaPrice);
             order.NumberOfProducts = order.OrderProducts.Count;
 
+            // 5. الحفظ في قاعدة البيانات
             await _context.Orders.AddAsync(order);
             await _context.SaveChangesAsync();
 
             return OperationResult<bool>.Success(true);
         }
+
 
         public async Task<OperationResult<bool>> UpdateOrderStatusAsync(int orderId, enOrderStatus status)
         {

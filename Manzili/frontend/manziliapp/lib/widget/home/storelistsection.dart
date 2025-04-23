@@ -195,8 +195,7 @@ class StoreListItemState extends State<StoreListItem> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _StoreImage(
-                      imageUrl: widget.imageUrl ?? 'assets/image/ad1.jpeg'),
+                  _StoreImage(imageUrl: widget.imageUrl!),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Row(
@@ -337,8 +336,7 @@ class _StoreImage extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         image: DecorationImage(
-          // image: NetworkImage(imageUrl),
-          image: AssetImage('assets/image/ad1.jpeg'),
+          image: NetworkImage(imageUrl),
           fit: BoxFit.contain,
         ),
       ),

@@ -47,6 +47,17 @@ class StoreContact extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
+          const Text(
+            ':أو متابعتنا على',
+            style: TextStyle(
+              color: Color(0xFF1548C7),
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+            textAlign: TextAlign.right,
+          ),
+          const SizedBox(height: 12),
+
           // Instagram
           _buildContactItem(
             icon: Icons.camera_alt,

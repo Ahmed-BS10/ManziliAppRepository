@@ -85,7 +85,7 @@ class StoreHeader extends StatelessWidget {
               ),
               child: ClipOval(
                 child: Image.network(
-                  imageUrl,
+                  'http://man.runasp.net/${imageUrl}',
                   fit: BoxFit.fill,
                   errorBuilder: (context, error, stackTrace) {
                     return const CircleAvatar(

@@ -16,7 +16,7 @@ class StoreData {
   final String businessName;
   final String imageUrl;
   final String description;
-  final String PhoneNumber;
+  final String phoneNumber;
   final List<String> categoryNames;
   final String bookTime;
   final String bankAccount;
@@ -28,7 +28,7 @@ class StoreData {
   StoreData({
     required this.id,
     required this.imageUrl,
-    required this.PhoneNumber,
+    required this.phoneNumber,
     required this.businessName,
     required this.description,
     required this.categoryNames,
@@ -43,17 +43,17 @@ class StoreData {
   factory StoreData.fromJson(Map<String, dynamic> json) {
     return StoreData(
       id: json['id'],
-      imageUrl: json['imageUrl'] ?? 'aa',
-      businessName: json['businessName'] ?? 'aa',
-      PhoneNumber: json['PhoneNumber'] ?? 'aa',
-      description: json['description'] ?? 'aa',
-      categoryNames: List<String>.from(json['categoryNames'] ?? []),
-      bookTime: json['bookTime'] ?? 'aa',
-      bankAccount: json['bankAccount'] ?? 'aa',
-      address: json['address'] ?? 'aa',
-      socileMediaAcount: json['socileMediaAcount'] ?? 'aa',
+      imageUrl: json['imageUrl'],
+      businessName: json['businessName'],
+      phoneNumber: json['phoneNumber'],
+      description: json['description'],
+      categoryNames: List<String>.from(json['categoryNames']),
+      bookTime: json['bookTime'],
+      bankAccount: json['bankAccount'],
+      address: json['address'],
+      socileMediaAcount: json['socileMediaAcount'],
       rate: json['rate'].toDouble() ?? 0.0,
-      status: json['status'] ?? 'aa',
+      status: json['status'],
     );
   }
 }
@@ -165,7 +165,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
               ),
               StoreContact(
                 socileMediaAcount: storeData.socileMediaAcount,
-                phoneNumberl: storeData.PhoneNumber,
+                phoneNumberl: storeData.phoneNumber,
               ),
             ],
           ),
