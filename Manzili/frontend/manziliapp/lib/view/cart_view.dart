@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:manziliapp/view/checkout_view.dart';
 import 'package:manziliapp/view/store_details_view.dart';
 import 'package:manziliapp/widget/card/cart_card_widget.dart';
+import 'package:flutter/material.dart';
 
 class CartView extends StatefulWidget {
   const CartView({super.key, required this.cartCardModel});
@@ -71,7 +72,7 @@ class _CartViewState extends State<CartView> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text('السلة'),
+        title: const Text('السلة'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -87,7 +88,7 @@ class _CartViewState extends State<CartView> {
                       height: 100,
                     ),
                     const SizedBox(height: 8),
-                    Text('السلة فارغة'),
+                    const Text('السلة فارغة'),
                     const SizedBox(height: 16),
                     SafeArea(
                       child: SizedBox(
@@ -101,15 +102,15 @@ class _CartViewState extends State<CartView> {
                                     storeId: widget.cartCardModel.storeId));
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff1548C7),
+                            backgroundColor: const Color(0xff1548C7),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'إستكشف التصنيفات',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -130,6 +131,9 @@ class _CartViewState extends State<CartView> {
                         return CartCardWidget(
                           cartCardModel: widget.cartCardModel,
                           index: index,
+                          onQuantityChanged: () {
+                            setState(() {}); // إعادة بناء الواجهة
+                          },
                         );
                       },
                     ),
@@ -138,7 +142,7 @@ class _CartViewState extends State<CartView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'المجموع الكلي',
                         style: TextStyle(
                           fontSize: 14,
@@ -146,8 +150,8 @@ class _CartViewState extends State<CartView> {
                         ),
                       ),
                       Text(
-                        '\$60.00',
-                        style: TextStyle(
+                        '${_calculateTotalPrice()} ريال',
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -161,11 +165,10 @@ class _CartViewState extends State<CartView> {
                     child: SizedBox(
                       width: 298,
                       child: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16),
                         decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Color(0xff1548C7), width: 1),
+                          border: Border.all(color: const Color(0xff1548C7), width: 1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: note.isEmpty
@@ -173,11 +176,11 @@ class _CartViewState extends State<CartView> {
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'اكتب ملاحظة',
                                     style: TextStyle(color: Colors.black),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Image.asset(
                                     'lib/assets/image/Note_Edit.png',
                                     width: 15,
@@ -193,7 +196,7 @@ class _CartViewState extends State<CartView> {
                                     note,
                                     maxLines: 5,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: Colors.black),
+                                    style: const TextStyle(color: Colors.black),
                                   ),
                                 ],
                               ),
@@ -215,15 +218,15 @@ class _CartViewState extends State<CartView> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xff1548C7),
+                          backgroundColor: const Color(0xff1548C7),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'الدفع',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -236,6 +239,13 @@ class _CartViewState extends State<CartView> {
       ),
     );
   }
+
+  int _calculateTotalPrice() {
+    return widget.cartCardModel.getProductCard.fold(
+      0,
+      (sum, item) => sum + (item.price * item.quantity),
+    );
+  }
 }
 
 class CartCardModel {
@@ -245,12 +255,13 @@ class CartCardModel {
   final String note;
   final List<GetProductCard> getProductCard;
 
-  CartCardModel(
-      {required this.cartId,
-      required this.userId,
-      required this.storeId,
-      required this.note,
-      required this.getProductCard});
+  CartCardModel({
+    required this.cartId,
+    required this.userId,
+    required this.storeId,
+    required this.note,
+    required this.getProductCard,
+  });
 }
 
 class GetProductCard {
@@ -258,12 +269,13 @@ class GetProductCard {
   final String name;
   final String imageUrl;
   final int price;
-  final int quantity;
+  int quantity;
 
-  GetProductCard(
-      {required this.productId,
-      required this.name,
-      required this.imageUrl,
-      required this.price,
-      required this.quantity});
+  GetProductCard({
+    required this.productId,
+    required this.name,
+    required this.imageUrl,
+    required this.price,
+    required this.quantity,
+  });
 }
