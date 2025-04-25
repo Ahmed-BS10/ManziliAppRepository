@@ -63,6 +63,19 @@ namespace Manzili.API.Controllers
         }
 
 
+
+        [HttpDelete("DeleteCartItemFromStore")]
+        public async Task<IActionResult> DeleteCartItem(int storeId, int userId ,int productId)
+        {
+            var result = await _cartService.DeleteCartItemAsync(storeId, userId,productId);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+
         [HttpPut("UpdateProductQuantityAsync")]
         public async Task<IActionResult> UpdateProductQuantity(int cartId , int productId , int newQuantity)
         {

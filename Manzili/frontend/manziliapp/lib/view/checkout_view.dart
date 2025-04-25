@@ -5,8 +5,9 @@ import 'package:manziliapp/widget/card/payment_receipt_widget.dart';
 import 'package:manziliapp/widget/card/shipment_address_widget.dart';
 
 class CheckoutView extends StatelessWidget {
-  const CheckoutView({super.key});
+  const CheckoutView({super.key, this.note});
 
+  final String? note;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

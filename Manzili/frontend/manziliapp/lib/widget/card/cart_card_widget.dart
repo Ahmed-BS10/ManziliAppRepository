@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/main.dart';
 import 'package:manziliapp/view/cart_view.dart';
 import 'package:manziliapp/widget/card/quantity_selector_widget.dart';
@@ -12,10 +13,12 @@ class CartCardWidget extends StatefulWidget {
     Key? key,
     required this.cartCardModel,
     required this.index,
+    required this.onQuantityChanged,
   }) : super(key: key);
 
   final CartCardModel cartCardModel;
   final int index;
+  final Function() onQuantityChanged;
 
   @override
   State<CartCardWidget> createState() => _CartCardWidgetState();
@@ -25,17 +28,25 @@ class _CartCardWidgetState extends State<CartCardWidget> {
   int _quantity = 1;
   late final String _prefsKey;
   bool _isLoading = false;
-  final CartController cartController = Get.find<CartController>();
+  bool _isInCart = false;
+  late final CartController cartController;
+  late GetProductCard product;
 
   @override
   void initState() {
     super.initState();
+    if (!Get.isRegistered<CartController>()) {
+      Get.put(CartController());
+    }
+    cartController = Get.find<CartController>();
+
     if (widget.cartCardModel.getProductCard.isNotEmpty &&
         widget.index >= 0 &&
         widget.index < widget.cartCardModel.getProductCard.length) {
-      final product = widget.cartCardModel.getProductCard[widget.index];
+      product = widget.cartCardModel.getProductCard[widget.index];
       _prefsKey = 'quantity_${product.productId}';
       _loadSavedQuantity();
+      _loadCartState(product.productId);
     } else {
       debugPrint('Invalid index or empty product list.');
     }
@@ -49,6 +60,7 @@ class _CartCardWidgetState extends State<CartCardWidget> {
     if (saved != null && saved > 0) {
       setState(() {
         _quantity = saved;
+        product.quantity = saved; // تحديث الكمية في المودل
       });
     }
   }
@@ -57,6 +69,17 @@ class _CartCardWidgetState extends State<CartCardWidget> {
     final prefs = await SharedPreferences.getInstance();
     final success = await prefs.setInt(_prefsKey, qty);
     debugPrint('[_saveQuantity] key=$_prefsKey qty=$qty success=$success');
+  }
+
+  Future<void> _loadCartState(int productId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getBool('isInCart_$productId') ?? false;
+    if (mounted) setState(() => _isInCart = saved);
+  }
+
+  Future<void> _saveCartState(bool isInCart, int productId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isInCart_$productId', isInCart);
   }
 
   Future<void> _deleteCartItem(int cartId, int productId) async {
@@ -70,7 +93,6 @@ class _CartCardWidgetState extends State<CartCardWidget> {
         final responseData = json.decode(response.body);
         if (responseData['isSuccess'] == true) {
           final prefs = await SharedPreferences.getInstance();
-          // Remove isInCart, quantity, and price from SharedPreferences
           await prefs.remove('isInCart_$productId');
           await prefs.remove('quantity_$productId');
           await prefs.remove('price_$productId');
@@ -79,7 +101,7 @@ class _CartCardWidgetState extends State<CartCardWidget> {
             setState(() {
               widget.cartCardModel.getProductCard.removeAt(widget.index);
             });
-            cartController.removeFromCart(); // Notify ProductCard
+            cartController.removeFromCart();
           }
         }
       }
@@ -88,17 +110,56 @@ class _CartCardWidgetState extends State<CartCardWidget> {
     }
   }
 
+  Future<void> _toggleCart(int productId, int quantity) async {
+    setState(() => _isLoading = true);
+    final bool desiredState = !_isInCart;
+    try {
+      final userId = Get.find<UserController>().userId.value;
+      bool success;
+      if (desiredState) {
+        final url = Uri.parse(
+            'http://man.runasp.net/api/Cart/add?userId=$userId&storeId=${widget.cartCardModel.storeId}&productId=$productId&quantity=$quantity');
+        final response = await http.post(url);
+        success =
+            response.statusCode == 200 && json.decode(response.body) == true;
+      } else {
+        final url = Uri.parse(
+            'http://man.runasp.net/api/Cart/DeleteCartItem?cartId=${widget.cartCardModel.cartId}&productId=$productId');
+        final response = await http.delete(url);
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          success = data['isSuccess'] == true;
+          if (success) {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.remove('isInCart_$productId');
+            await prefs.remove('quantity_$productId');
+            await prefs.remove('price_$productId');
+          }
+        } else {
+          success = false;
+        }
+      }
+
+      if (success) {
+        setState(() => _isInCart = desiredState);
+        await _saveCartState(desiredState, productId);
+      }
+    } catch (e) {
+      debugPrint('Error toggling cart: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.cartCardModel.getProductCard.isEmpty ||
         widget.index < 0 ||
         widget.index >= widget.cartCardModel.getProductCard.length) {
-      return const Center(
-        child: CartEmpty(),
-      );
+      return const Center();
     }
 
-    final product = widget.cartCardModel.getProductCard[widget.index];
+    product = widget.cartCardModel.getProductCard[widget.index];
     final cartId = widget.cartCardModel.cartId;
     final totalPrice = product.price * _quantity;
 
@@ -171,8 +232,12 @@ class _CartCardWidgetState extends State<CartCardWidget> {
                         QuantitySelectorWidget(
                           initialQuantity: _quantity,
                           onQuantityChanged: (newQty) {
-                            setState(() => _quantity = newQty);
+                            setState(() {
+                              _quantity = newQty;
+                              product.quantity = newQty; // تحديث المودل
+                            });
                             _saveQuantity(newQty);
+                            widget.onQuantityChanged(); // إشعار الـ CartView
                           },
                         ),
                         Padding(
@@ -217,14 +282,14 @@ class CartEmpty extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             Image.asset(
               'assets/image/parcel.png',
               width: 100,
               height: 100,
             ),
             const SizedBox(height: 8),
-            Text('السلة فارغة'),
+            const Text('السلة فارغة'),
             const SizedBox(height: 16),
             SafeArea(
               child: SizedBox(
@@ -233,15 +298,15 @@ class CartEmpty extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xff1548C7),
+                    backgroundColor: const Color(0xff1548C7),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'إستكشف التصنيفات',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),

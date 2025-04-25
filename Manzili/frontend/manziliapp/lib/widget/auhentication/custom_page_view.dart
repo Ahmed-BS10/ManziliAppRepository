@@ -29,13 +29,14 @@ class CustomPageView extends StatelessWidget {
   final TextEditingController usernameController;
   final TextEditingController phoneController;
   final TextEditingController emailController;
-  final TextEditingController cityController;
   final TextEditingController addressController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
   final TextEditingController businessNameController;
   final TextEditingController bankAccountController;
   final TextEditingController categoryOfWorkController;
+  final TextEditingController socileMediaAcountController;
+  final TextEditingController descriptionController;
   final Function(File) onUserImagePicked;
 
   const CustomPageView({
@@ -44,7 +45,6 @@ class CustomPageView extends StatelessWidget {
     required this.usernameController,
     required this.phoneController,
     required this.emailController,
-    required this.cityController,
     required this.addressController,
     required this.passwordController,
     required this.confirmPasswordController,
@@ -52,6 +52,8 @@ class CustomPageView extends StatelessWidget {
     required this.bankAccountController,
     required this.categoryOfWorkController,
     required this.onUserImagePicked,
+    required this.socileMediaAcountController,
+    required this.descriptionController,
   }) : super(key: key);
 
   @override
@@ -64,7 +66,6 @@ class CustomPageView extends StatelessWidget {
           usernameController: usernameController,
           phoneController: phoneController,
           emailController: emailController,
-          cityController: cityController,
           addressController: addressController,
           passwordController: passwordController,
           confirmPasswordController: confirmPasswordController,
@@ -74,6 +75,8 @@ class CustomPageView extends StatelessWidget {
           pageController: pageController,
           businessNameController: businessNameController,
           bankAccountController: bankAccountController,
+          socileMediaAcountController: socileMediaAcountController,
+          descriptionController: descriptionController,
         ),
       ],
     );

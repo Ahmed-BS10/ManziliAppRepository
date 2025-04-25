@@ -1,8 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:manziliapp/controller/user_controller.dart';
-import 'package:manziliapp/main.dart';
 import 'package:manziliapp/model/product.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -24,9 +24,9 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
-  final CartController cartController =
-      Get.put<CartController>(CartController());
   late final String _prefsKey;
+  bool _isInCart = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -38,49 +38,67 @@ class _ProductCardState extends State<ProductCard> {
   Future<void> _loadCartState() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getBool(_prefsKey) ?? false;
-    if (mounted) cartController.isInCart.value = saved;
+    if (mounted) setState(() => _isInCart = saved);
   }
 
-  Future<void> _saveCartState(bool isInCart) async {
+  Future<void> _saveCartState(bool inCart) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_prefsKey, isInCart);
+    await prefs.setBool(_prefsKey, inCart);
   }
 
-  Future<void> _toggleCart(int productId, int quantity) async {
-    cartController.setLoading(true);
-    cartController.toggleCartState();
-    final bool desiredState = cartController.isInCart.value;
+  /// Removes all stored prefs for this product
+  Future<void> _clearProductPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_prefsKey);
+    await prefs.remove('quantity_${widget.product.id}');
+    await prefs.remove('price_${widget.product.id}');
+  }
+
+  Future<void> _toggleCart(int productId) async {
+    setState(() => _isLoading = true);
+    final wantToAdd = !_isInCart;
+
     try {
       final userId = Get.find<UserController>().userId.value;
-      bool success;
-      if (desiredState) {
-        // Add to cart
+      bool success = false;
+
+      if (wantToAdd) {
+        // ----- ADD TO CART -----
         final url = Uri.parse(
-            'http://man.runasp.net/api/Cart/add?userId=$userId&storeId=${widget.storeId}&productId=${widget.product.id}&quantity=1');
-        final response = await http.post(url);
-        success =
-            response.statusCode == 200 && json.decode(response.body) == true;
+          'http://man.runasp.net/api/Cart/add'
+          '?userId=$userId&storeId=${widget.storeId}'
+          '&productId=$productId&quantity=1',
+        );
+        final resp = await http.post(url);
+        success = resp.statusCode == 200 && json.decode(resp.body) == true;
       } else {
-        // Remove from cart
+        // ----- REMOVE FROM CART -----
+        debugPrint('Removing from cart...');
         final url = Uri.parse(
-            'http://man.runasp.net/api/Cart/DeleteCartItem?userId=$userId&productId=${widget.product.id}');
-        final response = await http.delete(url);
-        final data = json.decode(response.body);
-        success = response.statusCode == 200 && data['isSuccess'] == true;
+          'http://man.runasp.net/api/Cart/DeleteCartItemFromStore?storeId=${widget.storeId}&userId=$userId&productId=$productId',
+        );
+        final resp = await http.delete(url);
+        if (resp.statusCode == 200) {
+          final body = json.decode(resp.body);
+          if (body['isSuccess'] == true) {
+            // clear exactly the same prefs as in CartCardWidget
+            await _clearProductPrefs();
+            success = true;
+          }
+        }
       }
 
       if (success) {
-        // Persist the new state
-        await _saveCartState(desiredState);
-      } else {
-        // Revert on failure
-        cartController.toggleCartState();
+        // persist & update UI
+        setState(() => _isInCart = wantToAdd);
+        if (wantToAdd) {
+          await _saveCartState(true);
+        }
       }
     } catch (e) {
-      cartController.toggleCartState();
       debugPrint('Error toggling cart: $e');
     } finally {
-      cartController.setLoading(false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -94,57 +112,39 @@ class _ProductCardState extends State<ProductCard> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Price and cart icon
+          // Price + cart icon
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 5),
-                  child: Text(
-                    '${widget.product.price.toInt()} ريال',
-                    style: const TextStyle(
-                      color: Color(0xFF1548C7),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                    ),
-                    textAlign: TextAlign.right,
+                Text(
+                  '${widget.product.price.toInt()} ريال',
+                  style: const TextStyle(
+                    color: Color(0xFF1548C7),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
                   ),
+                  textAlign: TextAlign.right,
                 ),
-                const SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Obx(() {
-                    if (cartController.isLoading.value) {
-                      return SizedBox(
+                const SizedBox(height: 12),
+                _isLoading
+                    ? const SizedBox(
                         width: 30,
                         height: 30,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            cartController.isInCart.value
-                                ? Colors.red
-                                : const Color(0xFF1548C7),
-                          ),
+                        child: CircularProgressIndicator(strokeWidth: 2.5),
+                      )
+                    : IconButton(
+                        icon: Icon(
+                          _isInCart
+                              ? Icons.remove_circle_outline
+                              : Icons.shopping_cart_outlined,
+                          color:
+                              _isInCart ? Colors.red : const Color(0xFF1548C7),
+                          size: 30,
                         ),
-                      );
-                    }
-                    return IconButton(
-                      icon: Icon(
-                        cartController.isInCart.value
-                            ? Icons.remove_circle_outline
-                            : Icons.shopping_cart_outlined,
-                        color: cartController.isInCart.value
-                            ? Colors.red
-                            : const Color(0xFF1548C7),
-                        size: 30,
+                        onPressed: () => _toggleCart(widget.product.id),
                       ),
-                      onPressed: () => _toggleCart(widget.product.id, 1),
-                    );
-                  }),
-                ),
               ],
             ),
           ),
@@ -152,93 +152,43 @@ class _ProductCardState extends State<ProductCard> {
           // Product details
           Expanded(
             flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 11),
-                    child: Text(
-                      widget.product.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                        color: Color(0xFF1548C7),
-                      ),
-                      textAlign: TextAlign.right,
-                    ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  widget.product.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                    color: Color(0xFF1548C7),
                   ),
-                  const SizedBox(height: 4),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      widget.product.description,
-                      style: const TextStyle(fontSize: 14),
-                      textAlign: TextAlign.right,
-                    ),
-                  ),
-                ],
-              ),
+                  textAlign: TextAlign.right,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.product.description,
+                  style: const TextStyle(fontSize: 14),
+                  textAlign: TextAlign.right,
+                ),
+              ],
             ),
           ),
 
-          // Product image and rating
-          Stack(
-            alignment: Alignment.topRight,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  'http://man.runasp.net${widget.product.image}',
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.fastfood, color: Colors.grey),
-                  ),
-                ),
+          // Image + rating
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              'http://man.runasp.net${widget.product.image}',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                width: 100,
+                height: 100,
+                color: Colors.grey.shade300,
+                child: const Icon(Icons.fastfood, color: Colors.grey),
               ),
-              Positioned(
-                top: 0,
-                left: 0,
-                child: Container(
-                  margin: const EdgeInsets.all(4),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1548C7),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.white, width: 1),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        widget.product.rating.toStringAsFixed(1),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 2),
-                      const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 14,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),

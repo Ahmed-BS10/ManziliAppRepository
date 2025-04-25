@@ -2,8 +2,6 @@
 using Manzili.Core.Services;
 using System.Threading.Tasks;
 using Manzili.Core.Enum;
-using Microsoft.AspNetCore.SignalR;
-using ManziliApi.Hubs;
 
 namespace Manzili.API.Controllers
 {
@@ -12,13 +10,10 @@ namespace Manzili.API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrdersService _orderService;
-        private readonly IHubContext<NotificationHub> _hubContext;
 
-
-        public OrdersController(IOrdersService orderService, IHubContext<NotificationHub> hubContext)
+        public OrdersController(IOrdersService orderService)
         {
             _orderService = orderService;
-            _hubContext = hubContext;
         }
 
 
@@ -58,18 +53,33 @@ namespace Manzili.API.Controllers
             return BadRequest(result);
         }
 
+        // هذه التعليمة تخبر ASP.NET أن هذا الأكشن يتوقع body من نوع multipart/form-data
         [HttpPost("AddOrder")]
-        public async Task<IActionResult> AddOrderAsync(CreateOrderDto createOrderDto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> AddOrderAsync([FromForm] CreateOrderDto createOrderDto)
         {
+            // 1. التحقق من صحة البيانات المجلوبة
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // 2. (اختياري) التحقق من نوع وحجم الملف قبل الإرسال للـ Service
+            if (createOrderDto.PdfFile != null)
+            {
+                if (createOrderDto.PdfFile.ContentType != "application/pdf")
+                    return BadRequest("الملف المرفوع ليس PDF.");
+                if (createOrderDto.PdfFile.Length > 5 * 1024 * 1024) // مثلاً 5 ميغا كحد أقصى
+                    return BadRequest("حجم الملف يتجاوز 5 ميغا.");
+            }
+
+            // 3. تمرير الـ DTO للـ Service لمعالجة المنطق وحفظه
             var result = await _orderService.AddOrderAsync(createOrderDto);
 
+            // 4. إرجاع الاستجابة المناسبة
             if (result.IsSuccess)
-            {
-                await _hubContext.Clients.User(createOrderDto.StoreId.ToString())
-               .SendAsync("ReceiveNotification", "New order received!");
+                // - يمكنك استخدام CreatedAtAction إذا كان لديك GetById لترجيع URI للموارد الجديدة
                 return Ok(result);
-            }
-            return BadRequest(result);
+            else
+                return BadRequest(result);
         }
 
         [HttpPut("UpdateOrderStatus")]
@@ -77,42 +87,12 @@ namespace Manzili.API.Controllers
         {
             var result = await _orderService.UpdateOrderStatusAsync(orderId, status);
             if (result.IsSuccess)
-            {
-                var userIdResult = await _orderService.GetUserIdByOrderIdAsync(orderId);
-                if (userIdResult.IsSuccess)
-                {
-                    if (userIdResult.Data.HasValue)
-                    {
-                        await _hubContext.Clients.User(userIdResult.Data.Value.ToString())
-                            .SendAsync("ReceiveNotification", $"Your order status has been updated to {status}");
-                    }
-                    else
-                    {
-                        // Log or handle the case where UserId is null
-                        Console.WriteLine($"UserId not found for OrderId: {orderId}");
-                    }
-                }
-                else
-                {
-                    // Log or handle the failure of GetUserIdByOrderIdAsync
-                    Console.WriteLine($"Failed to retrieve UserId for OrderId: {orderId}. Reason: {userIdResult.Message}");
-                }
-
                 return Ok(result);
-            }
 
             return BadRequest(result);
+
+
         }
 
-        [HttpGet("GetOrderTrackingHistory")]
-        public async Task<IActionResult> GetOrderTrackingHistoryAsync(int orderId)
-        {
-            var result = await _orderService.GetOrderTrackingHistoryAsync(orderId);
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
     }
 }

@@ -23,6 +23,10 @@ namespace Manzili.Core.Entities
         public int NumberOfProducts { get; set; }
         public int ?  DeliveryFees {  get; set; }
 
+
+
+        public byte[]? PdfFile { get; set; }
+
         // Navigation properties
 
         public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();

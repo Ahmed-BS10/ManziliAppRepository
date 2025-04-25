@@ -388,14 +388,14 @@ namespace Manzili.EF.Implementaion
 
             var storeInfo = new GetInfoStoreDto(
                 store.Id,
-                store.ImageUrl ?? "/Profile/383ba157cb9f4367b67f7baeea98097d.jpg",
+                store.ImageUrl!,
                 store.BusinessName,
                 store.Description,
                 store.storeCategoryStores!.Select(x => x.StoreCategory.Name).ToList(),
                 store.BookTime,
                 store.BankAccount,
                 store.Address,
-                store.PhoneNumber ?? "99999",
+                store.PhoneNumber!,
                 store.SocileMediaAcount,
                 store.Rate ?? 0,
                 store.Status

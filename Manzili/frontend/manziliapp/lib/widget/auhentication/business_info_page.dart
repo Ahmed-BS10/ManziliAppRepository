@@ -8,12 +8,16 @@ class BusinessInfoPage extends StatelessWidget {
   final PageController pageController;
   final TextEditingController businessNameController;
   final TextEditingController bankAccountController;
+  final TextEditingController socileMediaAcountController;
+  final TextEditingController descriptionController;
 
   const BusinessInfoPage({
     super.key,
     required this.pageController,
     required this.businessNameController,
     required this.bankAccountController,
+    required this.socileMediaAcountController,
+    required this.descriptionController,
   });
 
   @override
@@ -47,8 +51,18 @@ class BusinessInfoPage extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         CustomeTextFiled(
+          controller: descriptionController,
+          hintText: 'Business Name',
+        ),
+        const SizedBox(height: 10),
+        CustomeTextFiled(
           controller: bankAccountController,
           hintText: 'Bank',
+        ),
+        const SizedBox(height: 10),
+        CustomeTextFiled(
+          controller: socileMediaAcountController,
+          hintText: 'Social Media Account',
         ),
         const SizedBox(height: 10),
         SizedBox(

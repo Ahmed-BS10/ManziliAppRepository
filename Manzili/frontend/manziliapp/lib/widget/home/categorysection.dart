@@ -133,11 +133,7 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     String rawImageUrl = json["imageUrl"] as String;
-    if (rawImageUrl.startsWith("/")) {
-      // rawImageUrl = "http://man.runasp.net" + rawImageUrl;
 
-      rawImageUrl = 'assets/image/ad1.jpeg';
-    }
     return Category(
       id: json["id"] as int,
       name: json["name"] as String,
@@ -217,14 +213,9 @@ class CategoryCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 21.5,
-            backgroundImage:
-                // imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
-                imageUrl.isNotEmpty
-                    ? AssetImage('assets/image/ad1.jpeg')
-                    : null,
-            child: imageUrl.isEmpty
-                ? Icon(Icons.category, color: AppColors.primaryColor)
-                : null,
+            backgroundImage: imageUrl.isNotEmpty
+                ? NetworkImage('http://man.runasp.net/${imageUrl}')
+                : AssetImage('lib/assets/image/burger.jpg'),
           ),
           const SizedBox(height: 8),
           Text(

@@ -5,17 +5,95 @@ import 'package:manziliapp/view/cart_view.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class StoreHeader extends StatelessWidget {
-  const StoreHeader(
-      {Key? key,
-      required this.imageUrl,
-      required this.storeId,
-      required this.userId})
-      : super(key: key);
+/// A reusable circular image widget with translation, border, loading, and error handling.
+class TranslatedStoreImage extends StatelessWidget {
+  /// Raw image path or full URL. If it doesn’t start with 'http', it's prefixed by [baseUrl].
+  final String? imageUrl;
+  final double size;
+  final Offset offset;
+  final Color borderColor;
 
+  /// Border width used when there is no image (placeholder state).
+  final double placeholderBorderWidth;
+  final String baseUrl;
+  final Widget placeholder;
+
+  const TranslatedStoreImage({
+    Key? key,
+    this.imageUrl,
+    this.size = 100.0,
+    this.offset = const Offset(10, 15),
+    this.borderColor = const Color(0xFF1548C7),
+    this.placeholderBorderWidth = 4.4,
+    this.baseUrl = 'http://man.runasp.net/',
+    this.placeholder = const Icon(
+      Icons.storefront_outlined,
+      size: 48,
+      color: Colors.grey,
+    ),
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final hasUrl = imageUrl?.isNotEmpty == true;
+    final fullUrl = hasUrl && imageUrl!.startsWith('http')
+        ? imageUrl!
+        : '$baseUrl${imageUrl ?? ''}';
+    // Use border only when showing placeholder (no image or network error)
+    final borderWidth = hasUrl ? 0.0 : placeholderBorderWidth;
+
+    return Transform.translate(
+      offset: offset,
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: ClipOval(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              shape: BoxShape.circle,
+              border: Border.all(color: borderColor, width: borderWidth),
+            ),
+            child: hasUrl
+                ? Image.network(
+                    fullUrl,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (ctx, child, progress) {
+                      if (progress == null) return child;
+                      return Center(
+                        child: SizedBox(
+                          width: size * 0.5,
+                          height: size * 0.5,
+                          child: const CircularProgressIndicator(),
+                        ),
+                      );
+                    },
+                    errorBuilder: (_, __, ___) => _buildPlaceholder(),
+                  )
+                : _buildPlaceholder(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Center(child: placeholder);
+  }
+}
+
+/// Header widget for a store page: back button, store logo, and cart icon.
+class StoreHeader extends StatelessWidget {
   final int storeId;
   final int userId;
-  final String imageUrl;
+  final String? imageUrl;
+
+  const StoreHeader({
+    Key? key,
+    this.imageUrl,
+    required this.storeId,
+    required this.userId,
+  }) : super(key: key);
 
   Future<CartCardModel?> _fetchCartData(int userId, int storeId) async {
     try {
@@ -24,10 +102,10 @@ class StoreHeader extends StatelessWidget {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        if (responseData['isSuccess'] == true) {
-          final data = responseData['data'];
-          final cart = CartCardModel(
+        final jsonBody = json.decode(response.body);
+        if (jsonBody['isSuccess'] == true) {
+          final data = jsonBody['data'];
+          return CartCardModel(
             cartId: data['cartId'],
             userId: data['userId'],
             storeId: data['storeId'],
@@ -42,11 +120,10 @@ class StoreHeader extends StatelessWidget {
                     ))
                 .toList(),
           );
-          return cart;
         }
       }
     } catch (e) {
-      print('Error fetching cart data: $e');
+      debugPrint('Error fetching cart data: $e');
     }
     return null;
   }
@@ -58,45 +135,23 @@ class StoreHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Back button (إزاحة لليمين)
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0), // إزاحة لليمين
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
+          // Back button
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, size: 18),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ),
 
-          //Store logo
-          Transform.translate(
+          // Store logo
+          TranslatedStoreImage(
+            imageUrl: imageUrl,
+            size: 100,
             offset: const Offset(10, 15),
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Color(0xFF1548C7), width: 4),
-              ),
-              child: ClipOval(
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.fill,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child:
-                          Icon(Icons.restaurant, color: Colors.amber, size: 35),
-                    );
-                  },
-                ),
-              ),
-            ),
           ),
 
           // Shopping cart

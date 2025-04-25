@@ -167,5 +167,37 @@ namespace Manzili.Services
             return OperationResult<bool>.Success(true, "Product quantity updated successfully.");
         }
 
+        public async Task<OperationResult<bool>> DeleteCartItemAsync(int storeId, int userId, int productId)
+        {
+            // Retrieve the cart based on userId and storeId
+            var cart = await _context.Carts
+                .Include(c => c.CartProducts)
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.StoreId == storeId);
+
+            // Check if the cart exists
+            if (cart == null)
+            {
+                return OperationResult<bool>.Failure("Cart not found.");
+            }
+
+            // Find the product in the cart
+            var cartProduct = cart.CartProducts.FirstOrDefault(cp => cp.ProductId == productId);
+
+            // Check if the product exists in the cart
+            if (cartProduct == null)
+            {
+                return OperationResult<bool>.Failure("Product not found in the cart.");
+            }
+
+            // Remove the product from the cart
+            cart.CartProducts.Remove(cartProduct);
+
+            // Update the cart in the database
+            _context.Carts.Update(cart);
+            await _context.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true, "Product removed from cart successfully.");
+        }
+
     }
 }

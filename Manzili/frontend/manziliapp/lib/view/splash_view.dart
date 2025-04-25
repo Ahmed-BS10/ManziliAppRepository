@@ -15,7 +15,7 @@ class SplashsView extends StatelessWidget {
       circleHeight: 200,
       text: const Text(""),
       child: Image.asset(
-        "assets/image/startimg.jpg",
+        "Lib/assets/image/startimg.jpg",
         fit: BoxFit.fill,
       ),
     );

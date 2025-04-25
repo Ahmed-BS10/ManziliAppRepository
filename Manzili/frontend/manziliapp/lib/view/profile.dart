@@ -5,7 +5,9 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/model/profile.dart';
 import 'package:manziliapp/view/edit_profile.dart';
+import 'package:manziliapp/view/start_view.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ================ USER PROVIDER ================
 class UserProvider with ChangeNotifier {
@@ -181,9 +183,14 @@ class ProfileScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TextButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            // Clear all data in SharedPreferences
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.clear();
+
+                            // Clear user data and navigate to StartView
                             Get.find<UserController>().clearUserData();
-                            Get.offAllNamed('/');
+                            Get.offAll(() => StartView());
                           },
                           child: const Text(
                             'تسجيل الخروج',

@@ -43,6 +43,9 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
   final TextEditingController bankAccountController = TextEditingController();
   final TextEditingController businessDescriptionController =
       TextEditingController();
+  final TextEditingController socileMediaAcountController =
+      TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   File? userImage;
   final AuthController authController = Get.find<AuthController>();
@@ -59,22 +62,23 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
     businessNameController.dispose();
     bankAccountController.dispose();
     businessDescriptionController.dispose();
+    socileMediaAcountController.dispose();
     super.dispose();
   }
 
   void _submitForm() {
     final storeData = StoreCreateModel(
       userName: usernameController.text,
-      phone: phoneController.text,
+      phonenumber: phoneController.text,
       email: emailController.text,
       address: addressController.text,
       password: passwordController.text,
       confirmPassword: confirmPasswordController.text,
       businessName: businessNameController.text,
       bankAccount: bankAccountController.text,
-      description: businessDescriptionController.text,
+      description: descriptionController.text,
       image: userImage,
-      socileMediaAcount: '',
+      socileMediaAcount: socileMediaAcountController.text,
     );
 
     authController.registerStore(storeData);
@@ -91,7 +95,6 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
             usernameController: usernameController,
             phoneController: phoneController,
             emailController: emailController,
-            cityController: cityController,
             addressController: addressController,
             passwordController: passwordController,
             confirmPasswordController: confirmPasswordController,
@@ -99,6 +102,8 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
             bankAccountController: bankAccountController,
             categoryOfWorkController: businessDescriptionController,
             onUserImagePicked: (image) => setState(() => userImage = image),
+            socileMediaAcountController: socileMediaAcountController,
+            descriptionController: descriptionController,
           ),
         ),
         TermsAndPrivacyCheckbox(
