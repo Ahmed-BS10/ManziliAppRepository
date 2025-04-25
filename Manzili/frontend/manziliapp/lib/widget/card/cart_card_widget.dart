@@ -7,10 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'package:get/get.dart';
 
 class CartCardWidget extends StatefulWidget {
   const CartCardWidget({
@@ -160,9 +156,7 @@ class _CartCardWidgetState extends State<CartCardWidget> {
     if (widget.cartCardModel.getProductCard.isEmpty ||
         widget.index < 0 ||
         widget.index >= widget.cartCardModel.getProductCard.length) {
-      return const Center(
-        child: CartEmpty(),
-      );
+      return const Center();
     }
 
     product = widget.cartCardModel.getProductCard[widget.index];
