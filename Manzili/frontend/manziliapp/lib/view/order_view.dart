@@ -1,69 +1,85 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:http/http.dart' as http;
+import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/view/order_detalis_view.dart';
 
 // Order Model
 class Order {
-  final String id;
+  final int id;
+  final String numberOrder;
   final String storeName;
-  final String orderDate;
-  final bool isDelivered;
-  final int productCount;
-  final double price;
+  final String createdAt;
+  final String status;
+  final int totalPrice;
+  final int numberOfProducts;
 
   Order({
     required this.id,
+    required this.numberOrder,
     required this.storeName,
-    required this.orderDate,
-    required this.isDelivered,
-    required this.productCount,
-    required this.price,
+    required this.createdAt,
+    required this.status,
+    required this.totalPrice,
+    required this.numberOfProducts,
   });
+
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return Order(
+      id: json['id'],
+      numberOrder: json['numberOrder'],
+      storeName: json['storeName'],
+      createdAt: json['createdAt'],
+      status: json['statu'],
+      totalPrice: json['totlaPrice'],
+      numberOfProducts: json['numberOfProducts'],
+    );
+  }
 }
 
 // Orders Controller
 class OrdersController {
-  // Sample data for delivered orders
-  List<Order> getDeliveredOrders() {
-    return [
-      Order(
-        id: 'SDG1525KJD',
-        storeName: 'متجر لولي',
-        orderDate: '1 مارس 2025',
-        isDelivered: true,
-        productCount: 5,
-        price: 500.43,
-      ),
-      Order(
-        id: 'SDG5679KJD',
-        storeName: 'متجر لولي',
-        orderDate: '1 مارس 2025',
-        isDelivered: true,
-        productCount: 4,
-        price: 250.00,
-      ),
-    ];
+  Future<List<Order>> fetchOrders(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        if (responseData['isSuccess'] == true) {
+          final List<dynamic> data = responseData['data'];
+          if (data.isEmpty) {
+            debugPrint('No orders found.');
+            return [];
+          }
+          return data.map((json) => Order.fromJson(json)).toList();
+        } else if (responseData['message'] == 'there are no Order') {
+          debugPrint('No orders found: ${responseData['message']}');
+          return [];
+        } else {
+          debugPrint('Error: ${responseData['message']}');
+          return [];
+        }
+      } else {
+        debugPrint('Failed to load orders: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+      return [];
+    }
   }
 
-  // Sample data for in-progress orders
-  List<Order> getInProgressOrders() {
-    return [
-      Order(
-        id: 'SDG1345KJD',
-        storeName: 'متجر لولي',
-        orderDate: '1 مارس 2025',
-        isDelivered: false,
-        productCount: 2,
-        price: 299.43,
-      ),
-      Order(
-        id: 'SDG1345KJD',
-        storeName: 'متجر لولي',
-        orderDate: '1 مارس 2025',
-        isDelivered: false,
-        productCount: 2,
-        price: 299.43,
-      ),
-    ];
+  Future<List<Order>> getDeliveredOrders(int userId) async {
+    final url =
+        'http://man.runasp.net/api/Orders/GetDeliveredOrdersByUserId?userId=$userId';
+    return await fetchOrders(url);
+  }
+
+  Future<List<Order>> getInProgressOrders(int userId) async {
+    final url =
+        'http://man.runasp.net/api/Orders/GetUnDeliveredOrdersByUserId?userId=$userId';
+    return await fetchOrders(url);
   }
 }
 
@@ -101,7 +117,7 @@ class InfoRow extends StatelessWidget {
   }
 }
 
-// Main Widget Code (Refactored)
+// Main Widget Code
 class OrderView extends StatefulWidget {
   const OrderView({Key? key}) : super(key: key);
 
@@ -110,15 +126,44 @@ class OrderView extends StatefulWidget {
 }
 
 class _OrderViewState extends State<OrderView> {
+ 
   final OrdersController _controller = OrdersController();
   bool _showDelivered = true;
+  List<Order> _orders = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint('User ID: '); // Print the userId
+    _fetchOrders();
+  }
+
+  Future<void> _fetchOrders() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      _orders = _showDelivered
+          ? await _controller.getDeliveredOrders(Get.find<UserController>().userId.value)
+          : await _controller.getInProgressOrders(Get.find<UserController>().userId.value);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+      setState(() {
+        _orders = []; // Clear the orders list if there's an error
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final orders = _showDelivered
-        ? _controller.getDeliveredOrders()
-        : _controller.getInProgressOrders();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -137,13 +182,25 @@ class _OrderViewState extends State<OrderView> {
               _buildTabToggle(),
               const SizedBox(height: 20),
               Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: orders.length,
-                  itemBuilder: (context, index) {
-                    return OrderCard(order: orders[index]);
-                  },
-                ),
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _orders.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'لا توجد طلبات حالياً',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: _orders.length,
+                            itemBuilder: (context, index) {
+                              return OrderCard(order: _orders[index]);
+                            },
+                          ),
               ),
             ],
           ),
@@ -159,10 +216,16 @@ class _OrderViewState extends State<OrderView> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildTab('تم توصيلها', _showDelivered, () {
-            setState(() => _showDelivered = true);
+            setState(() {
+              _showDelivered = true;
+            });
+            _fetchOrders();
           }),
           _buildTab('قيد المعالجة', !_showDelivered, () {
-            setState(() => _showDelivered = false);
+            setState(() {
+              _showDelivered = false;
+            });
+            _fetchOrders();
           }),
         ],
       ),
@@ -201,6 +264,11 @@ class OrderCard extends StatelessWidget {
 
   const OrderCard({Key? key, required this.order}) : super(key: key);
 
+  String _formatDate(String date) {
+    final parsedDate = DateTime.parse(date);
+    return '${parsedDate.year}/${parsedDate.month}/${parsedDate.day}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -226,23 +294,29 @@ class OrderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InfoRow(label: ' رقم الطلب', value: order.id, isBold: true),
+            InfoRow(
+                label: ' رقم الطلب', value: order.numberOrder, isBold: true),
             const SizedBox(height: 4),
             Text(
-              'تم الطلب من متجر ${order.storeName}: ${order.orderDate}',
+              'تم الطلب من متجر ${order.storeName}: ${_formatDate(order.createdAt)}',
               style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const Divider(height: 24),
-            _buildStatusRow(order),
+            InfoRow(
+              label: ' الحالة',
+              value: order.status,
+              valueColor:
+                  order.status == 'Delivered' ? Colors.green : Colors.orange,
+            ),
             const SizedBox(height: 8),
             InfoRow(
               label: ' المنتجات',
-              value: 'تم شراء ${order.productCount} منتج',
+              value: 'تم شراء ${order.numberOfProducts} منتج',
             ),
             const SizedBox(height: 8),
             InfoRow(
               label: ' السعر',
-              value: '\$${order.price.toStringAsFixed(2)}',
+              value: '\$${order.totalPrice.toStringAsFixed(2)}',
               isBold: true,
               valueColor: Colors.blue,
             ),
@@ -251,50 +325,4 @@ class OrderCard extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildStatusRow(Order order) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          ' حالة الطلب',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-        Row(
-          children: [
-            order.isDelivered
-                ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
-                : const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-                    ),
-                  ),
-            const SizedBox(width: 8),
-            Text(
-              order.isDelivered ? 'تم التوصيل' : 'جاري التحضير',
-              style: TextStyle(
-                fontSize: 14,
-                color: order.isDelivered ? Colors.green : Colors.grey,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
 }
-
-// class OrderDetailsScreen extends StatelessWidget {
-//   const OrderDetailsScreen({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('تفاصيل الطلب')),
-//       body: const Center(child: Text('تفاصيل الطلب هنا')),
-//     );
-//   }
-// }
