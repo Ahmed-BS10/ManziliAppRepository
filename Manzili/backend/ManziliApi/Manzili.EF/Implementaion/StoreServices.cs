@@ -392,6 +392,7 @@ namespace Manzili.EF.Implementaion
                 store.BusinessName,
                 store.Description,
                 store.storeCategoryStores!.Select(x => x.StoreCategory.Name).ToList(),
+                store.DeliveryFees,
                 store.BookTime,
                 store.BankAccount,
                 store.Address,

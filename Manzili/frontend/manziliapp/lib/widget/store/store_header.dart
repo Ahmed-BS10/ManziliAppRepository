@@ -87,12 +87,14 @@ class StoreHeader extends StatelessWidget {
   final int storeId;
   final int userId;
   final String? imageUrl;
+  final int deliveryFee;
 
   const StoreHeader({
     Key? key,
     this.imageUrl,
     required this.storeId,
     required this.userId,
+    required this.deliveryFee,
   }) : super(key: key);
 
   Future<CartCardModel?> _fetchCartData(int userId, int storeId) async {
@@ -166,7 +168,8 @@ class StoreHeader extends StatelessWidget {
               onPressed: () async {
                 final cartData = await _fetchCartData(userId, storeId);
                 if (cartData != null) {
-                  Get.to(() => CartView(cartCardModel: cartData));
+                  Get.to(() => CartView(
+                      deliveryFee: deliveryFee, cartCardModel: cartData));
                 } else {
                   Get.snackbar('Error', 'Failed to load cart data');
                 }

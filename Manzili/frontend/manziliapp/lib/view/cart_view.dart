@@ -4,11 +4,13 @@ import 'package:manziliapp/controller/cart_controller2.dart';
 import 'package:manziliapp/view/checkout_view.dart';
 import 'package:manziliapp/view/store_details_view.dart';
 import 'package:manziliapp/widget/card/cart_card_widget.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartView extends StatefulWidget {
-  const CartView({super.key, required this.cartCardModel});
+  const CartView(
+      {super.key, required this.cartCardModel, required this.deliveryFee});
 
+  final int deliveryFee;
   final CartCardModel cartCardModel;
 
   @override
@@ -227,12 +229,32 @@ class _CartViewState extends State<CartView> {
         height: 51,
         width: 298,
         child: ElevatedButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CheckoutView(note: note),
-            ),
-          ),
+          onPressed: () async {
+            // Load saved quantities for all products
+            for (var product in widget.cartCardModel.getProductCard) {
+              await _loadSavedQuantity(product);
+            }
+
+            // Map products to cartItems with updated quantities
+            final cartItems = widget.cartCardModel.getProductCard
+                .map((product) =>
+                    {'id': product.productId, 'quantity': product.quantity})
+                .toList();
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CheckoutView(
+                  userid: widget.cartCardModel.userId,
+                  note: note,
+                  cartItems: cartItems,
+                  totalPrice: _cartController.getTotalPrice(_cartId),
+                  storeId: widget.cartCardModel.storeId,
+                  deliveryFee: widget.deliveryFee,
+                ),
+              ),
+            );
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xff1548C7),
             foregroundColor: Colors.white,
@@ -247,6 +269,16 @@ class _CartViewState extends State<CartView> {
         ),
       ),
     );
+  }
+
+  Future<void> _loadSavedQuantity(GetProductCard product) async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getInt('quantity_${product.productId}');
+    if (saved != null && saved > 0) {
+      setState(() {
+        product.quantity = saved; // Update the quantity in the model
+      });
+    }
   }
 }
 

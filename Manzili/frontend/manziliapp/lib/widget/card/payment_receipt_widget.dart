@@ -2,7 +2,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 class PaymentReceipt extends StatefulWidget {
-  const PaymentReceipt({super.key});
+  const PaymentReceipt({
+    super.key,
+    required this.onPdfUploaded,
+  });
+
+  final Function(String) onPdfUploaded;
 
   @override
   State<PaymentReceipt> createState() => _PaymentReceiptState();
@@ -18,6 +23,7 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
       setState(() {
         pickedFile = result.files.first;
       });
+      widget.onPdfUploaded(pickedFile!.path!); // Notify parent widget
     }
   }
 
@@ -68,7 +74,7 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
         GestureDetector(
           onTap: _pickFile,
           child: Image.asset(
-            'assets/image/Upload icon.png',
+            'Lib/assets/image/Upload icon.png',
             width: 80,
             height: 80,
           ),

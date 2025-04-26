@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 class ShipmentAddress extends StatefulWidget {
   const ShipmentAddress({
     super.key,
+    required this.onAddressSelected,
   });
+
+  final Function(String) onAddressSelected;
 
   @override
   State<ShipmentAddress> createState() => _ShipmentAddressState();
@@ -12,6 +15,7 @@ class ShipmentAddress extends StatefulWidget {
 class _ShipmentAddressState extends State<ShipmentAddress> {
   TextEditingController addressController = TextEditingController();
   String address = '';
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,32 +27,25 @@ class _ShipmentAddressState extends State<ShipmentAddress> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Icon(Icons.arrow_back_ios),
-          SizedBox(width: 5),
+          const Icon(Icons.arrow_back_ios),
+          const SizedBox(width: 5),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'عنوان الشحن',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 12,
                   ),
                 ),
-                SizedBox(height: 5),
-                // Text(
-                //   'اضف عنوان الشحن',
-                //   style: TextStyle(
-                //     fontWeight: FontWeight.bold,
-                //     fontSize: 16,
-                //   ),
-                // ),
+                const SizedBox(height: 5),
                 TextField(
                   controller: addressController,
                   decoration: InputDecoration(
                     hintText: address.isEmpty ? 'اضف عنوان الشحن' : address,
-                    hintStyle: TextStyle(
+                    hintStyle: const TextStyle(
                       fontSize: 16,
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -57,9 +54,10 @@ class _ShipmentAddressState extends State<ShipmentAddress> {
                   ),
                   textInputAction: TextInputAction.done,
                   onSubmitted: (value) {
-                    setState(
-                      () => address = value,
-                    );
+                    setState(() {
+                      address = value;
+                    });
+                    widget.onAddressSelected(value); // Notify parent widget
                   },
                 ),
               ],

@@ -6,6 +6,7 @@
         string BusinessName,
         string Description,
         List<string> CategoryNames,
+        int deliveryFee,
         string BookTime,
         string BankAccount,
         string Address,

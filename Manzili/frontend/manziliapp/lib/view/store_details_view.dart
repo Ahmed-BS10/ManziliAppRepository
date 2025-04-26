@@ -18,6 +18,7 @@ class StoreData {
   final String description;
   final String phoneNumber;
   final List<String> categoryNames;
+  final int deliveryFee;
   final String bookTime;
   final String bankAccount;
   final String address;
@@ -32,6 +33,7 @@ class StoreData {
     required this.businessName,
     required this.description,
     required this.categoryNames,
+    required this.deliveryFee,
     required this.bookTime,
     required this.bankAccount,
     required this.address,
@@ -48,6 +50,7 @@ class StoreData {
       phoneNumber: json['phoneNumber'],
       description: json['description'],
       categoryNames: List<String>.from(json['categoryNames']),
+      deliveryFee: json['deliveryFee'],
       bookTime: json['bookTime'],
       bankAccount: json['bankAccount'],
       address: json['address'],
@@ -115,6 +118,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                 children: [
                   // Header with back button, logo, and cart
                   StoreHeader(
+                    deliveryFee: storeData.deliveryFee,
                     storeId: storeData.id,
                     userId: Get.find<UserController>().userId.value,
                     imageUrl: storeData
