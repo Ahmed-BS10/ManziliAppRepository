@@ -17,7 +17,6 @@ namespace Manzili.API.Controllers
         }
 
 
-
         [HttpGet("GetDeliveredOrdersByUserId")]
         public async Task<IActionResult> GetDeliveredOrdersByUserIdAsync(int userId)
         {
@@ -25,10 +24,8 @@ namespace Manzili.API.Controllers
             if (result.IsSuccess)
                 return Ok(result);
 
-
             return BadRequest(result);
         }
-
 
         [HttpGet("GetUnDeliveredOrdersByUserId")]
         public async Task<IActionResult> GetUnDeliveredOrdersByUserIdAsync(int userId)
@@ -37,46 +34,37 @@ namespace Manzili.API.Controllers
             if (result.IsSuccess)
                 return Ok(result);
 
-
             return BadRequest(result);
         }
 
-
-        [HttpGet("GetOrderDetailsByUserAsync")]
-        public async Task<IActionResult> GetOrderDetailsByUserAsync(int userId)
+        [HttpGet("GetOrderDetails")]
+        public async Task<IActionResult> GetOrderDetailsAsync(int orderId)
         {
-            var result = await _orderService.GetOrderDetailsByUserAsync(userId);
+            var result = await _orderService.GetOrderDetailsAsync(orderId);
             if (result.IsSuccess)
                 return Ok(result);
 
-
             return BadRequest(result);
         }
 
-        // هذه التعليمة تخبر ASP.NET أن هذا الأكشن يتوقع body من نوع multipart/form-data
         [HttpPost("AddOrder")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> AddOrderAsync([FromForm] CreateOrderDto createOrderDto)
         {
-            // 1. التحقق من صحة البيانات المجلوبة
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // 2. (اختياري) التحقق من نوع وحجم الملف قبل الإرسال للـ Service
             if (createOrderDto.PdfFile != null)
             {
                 if (createOrderDto.PdfFile.ContentType != "application/pdf")
                     return BadRequest("الملف المرفوع ليس PDF.");
-                if (createOrderDto.PdfFile.Length > 5 * 1024 * 1024) // مثلاً 5 ميغا كحد أقصى
+                if (createOrderDto.PdfFile.Length > 5 * 1024 * 1024)
                     return BadRequest("حجم الملف يتجاوز 5 ميغا.");
             }
 
-            // 3. تمرير الـ DTO للـ Service لمعالجة المنطق وحفظه
             var result = await _orderService.AddOrderAsync(createOrderDto);
 
-            // 4. إرجاع الاستجابة المناسبة
             if (result.IsSuccess)
-                // - يمكنك استخدام CreatedAtAction إذا كان لديك GetById لترجيع URI للموارد الجديدة
                 return Ok(result);
             else
                 return BadRequest(result);
@@ -90,9 +78,8 @@ namespace Manzili.API.Controllers
                 return Ok(result);
 
             return BadRequest(result);
-
-
         }
-
     }
+
+   
 }
