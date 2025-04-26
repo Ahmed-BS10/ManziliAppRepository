@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:manziliapp/view/order_view.dart';
 import 'package:manziliapp/widget/card/payment_receipt_widget.dart';
 import 'package:manziliapp/widget/card/shipment_address_widget.dart';
@@ -26,9 +30,9 @@ class CheckoutView extends StatefulWidget {
 }
 
 class _CheckoutViewState extends State<CheckoutView> {
-  int deliveryCost = 10;
-  String? selectedAddress; // Holds the address from ShipmentAddress
-  String? uploadedPdfPath; // Holds the PDF path from PaymentReceipt
+  String? selectedAddress;
+  String? uploadedPdfPath;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -37,116 +41,148 @@ class _CheckoutViewState extends State<CheckoutView> {
         'Cart Items: ${widget.cartItems}, totalPrice: ${widget.totalPrice}, note: ${widget.note}');
   }
 
-  // Callback to receive the address from ShipmentAddress
   void _onAddressSelected(String address) {
-    setState(() {
-      selectedAddress = address;
-    });
+    setState(() => selectedAddress = address);
     debugPrint('Selected Address: $selectedAddress');
   }
 
-  // Callback to receive the PDF path from PaymentReceipt
   void _onPdfUploaded(String pdfPath) {
-    setState(() {
-      uploadedPdfPath = pdfPath;
-    });
+    setState(() => uploadedPdfPath = pdfPath);
     debugPrint('Uploaded PDF Path: $uploadedPdfPath');
+  }
+
+  Future<void> _submitOrder() async {
+    if (selectedAddress == null || uploadedPdfPath == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('يرجى تحديد العنوان ورفع إيصال الدفع')),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final uri = Uri.parse('http://man.runasp.net/api/Orders/AddOrder');
+      final request = http.MultipartRequest('POST', uri);
+
+      // 1. الحقول البسيطة
+      request.fields['UserId'] = widget.userid.toString();
+      request.fields['StoreId'] = widget.storeId.toString();
+      request.fields['DeliveryAddress'] = selectedAddress!;
+      request.fields['Note'] = widget.note ?? '';
+
+      // 2. العناصر المفهرسة من OrderProducts
+      for (var i = 0; i < widget.cartItems.length; i++) {
+        final item = widget.cartItems[i];
+        final productId = item['id'] ?? item['productId'];
+        request.fields['OrderProducts[$i].ProductId'] = productId.toString();
+        request.fields['OrderProducts[$i].Quantity'] =
+            item['quantity'].toString();
+      }
+
+      // 3. إضافة ملف PDF
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'PdfFile',
+          uploadedPdfPath!,
+          contentType: MediaType('application', 'pdf'),
+        ),
+      );
+
+      // 4. إرسال الطلب والحصول على Response عادي
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      debugPrint('HTTP ${response.statusCode} — Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['isSuccess'] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('تم إرسال الطلب بنجاح')),
+          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (_) => const OrderView()),
+          // );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(data['message'] ?? 'حدث خطأ أثناء إرسال الطلب'),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'فشل الاتصال بالخادم (كود: ${response.statusCode})',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error submitting order: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('حدث خطأ أثناء إرسال الطلب')),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'الدفع',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title:
+            const Text('الدفع', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // UI Part 2: ShipmentAddress
-              ShipmentAddress(
-                onAddressSelected: _onAddressSelected, // Pass callback
-              ),
+              ShipmentAddress(onAddressSelected: _onAddressSelected),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
-                  Text(
-                    'قم برفع إيصال الدفع',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text('قم برفع إيصال الدفع',
+                    style: TextStyle(color: Colors.grey, fontSize: 12)),
               ),
               const SizedBox(height: 10),
-              // UI Part 3: PaymentReceipt
-              PaymentReceipt(
-                onPdfUploaded: _onPdfUploaded, // Pass callback
-              ),
+              PaymentReceipt(onPdfUploaded: _onPdfUploaded),
               const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'الإجمالي الفرعي',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  Text(
-                    widget.totalPrice.toString(),
-                    style: const TextStyle(fontSize: 16),
-                  ),
+                  const Text('الإجمالي الفرعي',
+                      style: TextStyle(fontSize: 16, color: Colors.grey)),
+                  Text(widget.totalPrice.toString(),
+                      style: const TextStyle(fontSize: 16)),
                 ],
               ),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'تكلفة التوصيل',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  Text(
-                    widget.deliveryFee.toString(),
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
+                  const Text('تكلفة التوصيل',
+                      style: TextStyle(fontSize: 16, color: Colors.grey)),
+                  Text(widget.deliveryFee.toString(),
+                      style: const TextStyle(fontSize: 16)),
                 ],
               ),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'الإجمالي الكلي',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  Text(
-                    '\$${widget.totalPrice + deliveryCost}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  const Text('الإجمالي الكلي',
+                      style: TextStyle(fontSize: 16, color: Colors.grey)),
+                  Text('\$${widget.totalPrice + widget.deliveryFee}',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
                 ],
               ),
               const SizedBox(height: 60),
@@ -155,63 +191,29 @@ class _CheckoutViewState extends State<CheckoutView> {
                   height: 51,
                   width: 298,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Ensure both address and PDF are provided
-                      if (selectedAddress == null || uploadedPdfPath == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text('يرجى تحديد العنوان ورفع إيصال الدفع'),
-                          ),
-                        );
-                        return;
-                      }
-
-                      // Debugging: Print all order details
-                      debugPrint('Order Details:');
-                      debugPrint('User ID: ${widget.userid}');
-                      debugPrint('Store ID: ${widget.storeId}');
-                      debugPrint(
-                          'Total Price: ${widget.totalPrice + deliveryCost}');
-                      debugPrint('Note: ${widget.note}');
-                      debugPrint('Cart Items: ${widget.cartItems}');
-                      debugPrint('Address: $selectedAddress');
-                      debugPrint('PDF Path: $uploadedPdfPath');
-
-                      // Proceed to the next screen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const OrderView(),
-                        ),
-                      );
-                    },
+                    onPressed: isLoading ? null : _submitOrder,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff1548C7),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
+                          borderRadius: BorderRadius.circular(25)),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'إتمام الطلب',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                    child: isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('إتمام الطلب',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
+                              Text(
+                                  '\$${widget.totalPrice + widget.deliveryFee}',
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                            ],
                           ),
-                        ),
-                        Text(
-                          '\$${widget.totalPrice + deliveryCost}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),

@@ -15,13 +15,16 @@ namespace Manzili.Core.Entities
         public DateTime CreatedAt { get; set; }
         public double Total { get; set; }
         public string? Note { get; set; }
-        public ICollection<OrderTracking> TrackingHistory { get; set; }
+       // public ICollection<OrderTracking> TrackingHistory { get; set; }
 
 
         public string DeliveryAddress { get; set; }
         public string? DeliveryTime { get; set; }
+        public int? DeliveryFees { get; set; }
+
+
         public int NumberOfProducts { get; set; }
-        public int ?  DeliveryFees {  get; set; }
+        
 
 
 

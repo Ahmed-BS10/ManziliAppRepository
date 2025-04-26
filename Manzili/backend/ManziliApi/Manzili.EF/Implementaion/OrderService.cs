@@ -23,6 +23,9 @@ namespace Manzili.EF.Implementation
 
         public async Task<OperationResult<bool>> AddOrderAsync(CreateOrderDto createOrderDto)
         {
+
+            var store = await _context.Stores.FindAsync(createOrderDto.StoreId);
+
             // 1. بناء كائن الـ Order الأساسي
             var order = new Order
             {
@@ -30,6 +33,7 @@ namespace Manzili.EF.Implementation
                 StoreId = createOrderDto.StoreId,
                 DeliveryAddress = createOrderDto.DeliveryAddress,
                 Note = createOrderDto.Note,
+                DeliveryFees = store.DeliveryFees,
                 CreatedAt = DateTime.UtcNow,
                 Status = enOrderStatus.Pending
             };
@@ -61,6 +65,7 @@ namespace Manzili.EF.Implementation
 
             // 4. حساب المجاميع
             order.Total = order.OrderProducts.Sum(op => op.TotlaPrice);
+            order.Total = order.Total + store.DeliveryFees;
             order.NumberOfProducts = order.OrderProducts.Count;
 
             // 5. الحفظ في قاعدة البيانات
