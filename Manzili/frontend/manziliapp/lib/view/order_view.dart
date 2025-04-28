@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/view/order_detalis_view.dart';
 
+
+
+
 // Order Model
 class Order {
   final int id;
@@ -274,7 +277,9 @@ class OrderCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const OrderDetailsView()),
+        MaterialPageRoute(builder: (context) => OrderDetailsView(
+          orderId: order.id,
+        )),
       ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),

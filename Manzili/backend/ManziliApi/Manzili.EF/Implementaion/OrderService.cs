@@ -19,7 +19,7 @@ namespace Manzili.EF.Implementation
         }
 
 
-        
+
 
         public async Task<OperationResult<bool>> AddOrderAsync(CreateOrderDto createOrderDto)
         {
@@ -34,8 +34,10 @@ namespace Manzili.EF.Implementation
                 DeliveryAddress = createOrderDto.DeliveryAddress,
                 Note = createOrderDto.Note,
                 DeliveryFees = store.DeliveryFees,
+                DeliveryTime = store.BookTime,
                 CreatedAt = DateTime.UtcNow,
                 Status = enOrderStatus.Pending
+
             };
 
             // 2. إذا أرفق المستخدم ملف PDF، نقرأه ونخزنه في الخاصية PdfFile

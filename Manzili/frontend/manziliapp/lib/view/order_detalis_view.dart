@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
+
+
+
 class OrderDetailsView extends StatelessWidget {
-  const OrderDetailsView({super.key});
+  const OrderDetailsView({super.key, required this.orderId});
+
+  final int orderId;
 
   @override
   Widget build(BuildContext context) {
