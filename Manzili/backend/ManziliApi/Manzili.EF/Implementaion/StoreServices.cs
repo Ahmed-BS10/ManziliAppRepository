@@ -414,9 +414,9 @@ namespace Manzili.EF.Implementaion
                 .Select(s => new
                 {
                     Store = s,
-                    CompletedOrders = s.StoreOrders.Where(o => o.Status == enOrderStatus.Pending),
+                    CompletedOrders = s.StoreOrders.Where(o => o.Status == enOrderStatus.تم_التسليم),
                     AllOrders = s.StoreOrders,
-                    InProgressOrders = s.StoreOrders.Where(o => o.Status == enOrderStatus.Processing)
+                    InProgressOrders = s.StoreOrders.Where(o => o.Status != enOrderStatus.تم_التسليم)
                 })
                 .FirstOrDefaultAsync(s => s.Store.Id == storeId);
 

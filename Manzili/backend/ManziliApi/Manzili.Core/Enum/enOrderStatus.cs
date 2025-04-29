@@ -2,10 +2,11 @@
 {
     public enum enOrderStatus
     {
-        Pending=1,
-        Processing=2,
-        Shipped=3,
-        Delivered=4,
-        Cancelled=5
+        التجهيز = 1,
+        الشحن = 2,
+        في_الطريق = 3, // Fixed duplicate constant value and added an underscore to make the name unique  
+        تم_التسليم = 4, // Added underscores to maintain consistency in naming  
     }
 }
+
+

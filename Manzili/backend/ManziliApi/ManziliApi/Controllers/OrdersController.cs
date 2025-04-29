@@ -49,7 +49,7 @@ namespace Manzili.API.Controllers
 
         [HttpPost("AddOrder")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> AddOrderAsync([FromForm] CreateOrderDto createOrderDto)
+        public async Task<IActionResult> AddOrderAsync([FromForm    ] CreateOrderDto createOrderDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

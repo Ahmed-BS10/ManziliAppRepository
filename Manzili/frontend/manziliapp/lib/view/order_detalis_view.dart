@@ -1,12 +1,62 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:manziliapp/widget/order_details/order_info.dart';
+import 'package:manziliapp/widget/order_details/order_info_card.dart';
+import 'package:manziliapp/widget/order_details/payment_details.dart';
+import 'package:manziliapp/widget/order_details/payment_details_card.dart';
+import 'package:manziliapp/widget/order_details/section_title.dart';
 
-
-
-
-class OrderDetailsView extends StatelessWidget {
+class OrderDetailsView extends StatefulWidget {
   const OrderDetailsView({super.key, required this.orderId});
 
   final int orderId;
+
+  @override
+  State<OrderDetailsView> createState() => _OrderDetailsViewState();
+}
+
+class _OrderDetailsViewState extends State<OrderDetailsView> {
+  late Future<OrderDetails> _orderDetailsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _orderDetailsFuture = _fetchOrderDetails();
+  }
+
+  Future<OrderDetails> _fetchOrderDetails() async {
+    final response = await http.get(
+      Uri.parse(
+          'http://man.runasp.net/api/Orders/GetOrderDetails?orderId=${widget.orderId}'),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      if (jsonResponse['isSuccess'] == true) {
+        return OrderDetails.fromJson(jsonResponse['data'][0]);
+      } else {
+        throw Exception('Error: ${jsonResponse['message']}');
+      }
+    } else {
+      throw Exception('Failed to load order details: ${response.statusCode}');
+    }
+  }
+
+  List<OrderStep> _buildSteps(String status) {
+    List<String> stepTitles = ['التجهيز', 'الشحن', 'في الطريق', 'تم التسليم'];
+
+    String normalizedStatus = status.replaceAll('_', ' ');
+    int currentIndex = stepTitles.indexOf(normalizedStatus);
+    if (currentIndex == -1) currentIndex = -1;
+
+    return stepTitles.asMap().entries.map((entry) {
+      return OrderStep(
+        title: entry.value,
+        isCompleted: entry.key <= currentIndex,
+      );
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,53 +69,57 @@ class OrderDetailsView extends StatelessWidget {
           centerTitle: true,
           backgroundColor: Colors.white,
         ),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            OrderProgressStepper(
-              steps: [
-                OrderStep(title: 'التجهيز', isCompleted: true),
-                OrderStep(title: 'الشحن', isCompleted: true),
-                OrderStep(title: 'في الطريق', isCompleted: true),
-                OrderStep(title: 'تم التسليم', isCompleted: false),
-              ],
-            ),
-            const SizedBox(height: 24),
-            const SectionTitle(title: 'المنتجات'),
-            const SizedBox(height: 8),
-            ProductCard(
-              product: ProductModel(
-                name: 'برجر لحم',
-                imageUrl:
-                    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/product%20page-5mxJx9Ctvq0XS0mGDi3HUrcubIWSdo.png',
-                quantity: 5,
-                price: 299,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ProductCard(
-              product: ProductModel(
-                name: 'كيك منزلي',
-                imageUrl:
-                    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/product%20page-5mxJx9Ctvq0XS0mGDi3HUrcubIWSdo.png',
-                quantity: 20,
-                price: 299,
-              ),
-            ),
-            const SizedBox(height: 24),
-            OrderInfoCard(
-              info: OrderInfo(
-                date: '16 يناير, 2025',
-                deliveryAddress: 'المكلا - فوة ابن سينا',
-                storeName: 'متجر الأسر المنتجة',
-                deliveryTimeEstimate: 'من 1 إلى 2 أيام عمل',
-              ),
-            ),
-            const SizedBox(height: 24),
-            PaymentDetailsCard(
-              payment: PaymentDetails(productsTotal: 200, deliveryFee: 8),
-            ),
-          ],
+        body: FutureBuilder<OrderDetails>(
+          future: _orderDetailsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData) {
+              return const Center(child: Text('No data available.'));
+            } else {
+              final orderDetails = snapshot.data!;
+              return ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  OrderProgressStepper(
+                    steps: _buildSteps(orderDetails.status),
+                  ),
+                  const SizedBox(height: 24),
+                  const SectionTitle(title: 'المنتجات'),
+                  const SizedBox(height: 8),
+                  ...orderDetails.orderProducts.map((product) {
+                    return ProductCard(
+                      product: ProductModel(
+                        name: product.name,
+                        imageUrl: 'http://man.runasp.net${product.imageUrl}',
+                        quantity: product.count,
+                        price: product.total.toDouble(),
+                      ),
+                    );
+                  }).toList(),
+                  const SizedBox(height: 24),
+                  OrderInfoCard(
+                    info: OrderInfo(
+                      date: orderDetails.createdAt,
+                      deliveryAddress: orderDetails.deliveryAddress,
+                      storeName: orderDetails.storeName,
+                      deliveryTimeEstimate: 'من 1 إلى 2 أيام عمل',
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  PaymentDetailsCard(
+                    payment: PaymentDetails(
+                      productsTotal: orderDetails.totalPrice.toDouble(),
+                      deliveryFee: orderDetails.deliveryFees.toDouble(),
+                    ),
+                    numberOfProducts: orderDetails.numberOfProducts,
+                  ),
+                ],
+              );
+            }
+          },
         ),
       ),
     );
@@ -164,160 +218,73 @@ class ProductCard extends StatelessWidget {
   }
 }
 
-class OrderInfo {
-  final String date;
-  final String deliveryAddress;
+// Models for API response
+
+class OrderDetails {
+  final int id;
+  final String numberOrder;
   final String storeName;
-  final String deliveryTimeEstimate;
-  OrderInfo({
-    required this.date,
-    required this.deliveryAddress,
+  final String createdAt;
+  final String status;
+  final int totalPrice;
+  final int numberOfProducts;
+  final String deliveryAddress;
+  final int deliveryFees;
+  final List<OrderProduct> orderProducts;
+
+  OrderDetails({
+    required this.id,
+    required this.numberOrder,
     required this.storeName,
-    required this.deliveryTimeEstimate,
+    required this.createdAt,
+    required this.status,
+    required this.totalPrice,
+    required this.numberOfProducts,
+    required this.deliveryAddress,
+    required this.deliveryFees,
+    required this.orderProducts,
   });
-}
 
-class OrderInfoCard extends StatelessWidget {
-  final OrderInfo info;
-  const OrderInfoCard({super.key, required this.info});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SectionTitle(title: 'تفاصيل الطلب:'),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InfoRow(
-                label: 'تاريخ الطلب',
-                value: info.date,
-              ),
-              InfoRow(
-                label: 'عنوان التوصيل',
-                value: info.deliveryAddress,
-              ),
-              InfoRow(label: 'اسم المتجر', value: info.storeName),
-              InfoRow(
-                label: 'الوقت المتوقع للتسليم',
-                value: info.deliveryTimeEstimate,
-              ),
-            ],
-          ),
-        )
-      ],
+  factory OrderDetails.fromJson(Map<String, dynamic> json) {
+    return OrderDetails(
+      id: json['id'],
+      numberOrder: json['numberOrder'],
+      storeName: json['storeName'],
+      createdAt: json['createdAt'],
+      status: json['status'],
+      totalPrice: json['totlaPrice'],
+      numberOfProducts: json['numberOfProducts'],
+      deliveryAddress: json['deliveryAddress'],
+      deliveryFees: json['deliveryFees'],
+      orderProducts: (json['ordeProducts'] as List)
+          .map((product) => OrderProduct.fromJson(product))
+          .toList(),
     );
   }
 }
 
-class PaymentDetails {
-  final double productsTotal;
-  final double deliveryFee;
-  double get total => productsTotal + deliveryFee;
-  PaymentDetails({required this.productsTotal, required this.deliveryFee});
-}
+class OrderProduct {
+  final int id;
+  final String name;
+  final String imageUrl;
+  final int total;
+  final int count;
 
-class PaymentDetailsCard extends StatelessWidget {
-  final PaymentDetails payment;
-  const PaymentDetailsCard({super.key, required this.payment});
+  OrderProduct({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.total,
+    required this.count,
+  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SectionTitle(title: 'تفاصيل الدفع'),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InfoRow(
-                label: 'إجمالي المنتجات (2)',
-                value: '\$${payment.productsTotal.toStringAsFixed(2)}',
-              ),
-              InfoRow(
-                label: 'رسوم التوصيل',
-                value: '\$${payment.deliveryFee.toStringAsFixed(2)}',
-              ),
-              const Divider(),
-              InfoRow(
-                label: 'الإجمالي',
-                lableColor: Colors.black,
-                value: '\$${payment.total.toStringAsFixed(2)}',
-                isBold: true,
-                valueColor: Colors.blue,
-              ),
-            ],
-          ),
-        )
-      ],
-    );
-  }
-}
-
-class InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool isBold;
-
-  final Color? valueColor;
-  final Color? lableColor;
-
-  const InfoRow(
-      {super.key,
-      required this.label,
-      required this.value,
-      this.isBold = false,
-      this.valueColor,
-      this.lableColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(color: lableColor ?? Colors.blueGrey),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              color: valueColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SectionTitle extends StatelessWidget {
-  final String title;
-  const SectionTitle({super.key, required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+  factory OrderProduct.fromJson(Map<String, dynamic> json) {
+    return OrderProduct(
+      id: json['id'],
+      name: json['name'],
+      imageUrl: json['imageUrl'],
+      total: json['total'],
+      count: json['count'],
     );
   }
 }

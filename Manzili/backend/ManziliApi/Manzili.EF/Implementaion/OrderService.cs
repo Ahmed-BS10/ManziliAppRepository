@@ -36,7 +36,7 @@ namespace Manzili.EF.Implementation
                 DeliveryFees = store.DeliveryFees,
                 DeliveryTime = store.BookTime,
                 CreatedAt = DateTime.UtcNow,
-                Status = enOrderStatus.Pending
+                Status = enOrderStatus.التجهيز
 
             };
 

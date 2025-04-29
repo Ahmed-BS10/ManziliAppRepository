@@ -11,7 +11,7 @@ namespace Manzili.Core.Entities
         public int StoreId { get; set; } // FK
 
 
-        public enOrderStatus Status { get; set; } = enOrderStatus.Pending;
+        public enOrderStatus Status { get; set; } = enOrderStatus.التجهيز;
         public DateTime CreatedAt { get; set; }
         public double Total { get; set; }
         public string? Note { get; set; }
