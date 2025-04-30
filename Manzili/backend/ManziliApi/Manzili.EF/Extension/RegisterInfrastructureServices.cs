@@ -54,6 +54,7 @@ public static class ServiceRegistrationExtensions
         services.AddScoped(typeof(AuthenticationServices));
         services.AddScoped(typeof(FileService));
         services.AddScoped(typeof(ProductCategoryServices));
+       
 
         return services;
     }

@@ -3,6 +3,7 @@ using Manzili.Core.Extension;
 using Manzili.Core.Mapper;
 using Manzili.Core.Services;
 using Manzili.EF.Extension;
+using Manzili.EF.Implementaion;
 using ManziliApi.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -31,6 +32,10 @@ builder.Services.AddDbContext<ManziliDbContext>(options =>
 // ≈÷«›… «·Œœ„«  (Dependency Injection)
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices();
+
+
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
 
 // ≈⁄œ«œ CORS
 const string CorsPolicy = "AllowAll";

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/core/helper/app_colors.dart';
 import 'package:manziliapp/view/order_view.dart';

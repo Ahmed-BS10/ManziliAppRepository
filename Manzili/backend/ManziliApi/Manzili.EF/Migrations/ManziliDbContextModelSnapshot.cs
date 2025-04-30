@@ -156,6 +156,37 @@ namespace Manzili.EF.Migrations
                     b.ToTable("Favorites");
                 });
 
+            modelBuilder.Entity("Manzili.Core.Entities.Nofiy", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Payload")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Nofiys");
+                });
+
             modelBuilder.Entity("Manzili.Core.Entities.Order", b =>
                 {
                     b.Property<int>("OrderId")
@@ -908,7 +939,7 @@ namespace Manzili.EF.Migrations
             modelBuilder.Entity("OrderTracking", b =>
                 {
                     b.HasOne("Manzili.Core.Entities.Order", "Order")
-                        .WithMany("TrackingHistory")
+                        .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -952,8 +983,6 @@ namespace Manzili.EF.Migrations
             modelBuilder.Entity("Manzili.Core.Entities.Order", b =>
                 {
                     b.Navigation("OrderProducts");
-
-                    b.Navigation("TrackingHistory");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.ProductCategory", b =>

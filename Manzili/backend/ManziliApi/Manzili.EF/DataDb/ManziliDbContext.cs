@@ -27,11 +27,19 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
     public DbSet<OrderProduct> OrderProducts { get; set; }
     public DbSet<OrderTracking> OrderTrackings { get; set; }
 
+    public DbSet<Nofiy> Nofiys {  get; set; }
+  
+
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
         base.OnModelCreating(modelBuilder);
+
+
+              
 
 
         modelBuilder.Entity<User>().ToTable("Users");
