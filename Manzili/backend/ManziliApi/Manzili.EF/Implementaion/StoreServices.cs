@@ -41,7 +41,7 @@ namespace Manzili.EF.Implementaion
 
         #region Methods
 
-      
+
 
         // Get List
 
@@ -140,7 +140,7 @@ namespace Manzili.EF.Implementaion
         }
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetListToPageinationAsync(int page, int pageSize)
         {
-            var stores =  _dbSet.ToPageination(page, pageSize);
+            var stores = _dbSet.ToPageination(page, pageSize);
 
             if (!stores.Any())
             {
@@ -161,7 +161,7 @@ namespace Manzili.EF.Implementaion
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> SearchStoreByNameAsync(string BusinessName)
         {
             var stores = await _dbSet.Where(x => x.BusinessName.Contains(BusinessName)).ToListAsync();
-            if(!stores.Any())
+            if (!stores.Any())
                 return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
 
 
@@ -215,10 +215,10 @@ namespace Manzili.EF.Implementaion
 
 
         // Anther
-        public async Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto , List<int> categoriesIds)
+        public async Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto, List<int> categoriesIds)
         {
 
-            if(categoriesIds is null || !categoriesIds.Any())
+            if (categoriesIds is null || !categoriesIds.Any())
                 return OperationResult<CreateStoreDto>.Failure("يجب تحديد فئات المتجر");
 
             var storeCategories = await _db.StoreCategories.Where(x => categoriesIds.Contains(x.Id)).ToListAsync();
@@ -289,7 +289,7 @@ namespace Manzili.EF.Implementaion
 
                 }
 
-                else if(storeDto.Image == null)
+                else if (storeDto.Image == null)
                 {
                     var result = await _userManager.CreateAsync(store, storeDto.Password);
                     if (!result.Succeeded)
@@ -357,9 +357,9 @@ namespace Manzili.EF.Implementaion
             return OperationResult<UpdateStoreDto>.Success(newStore);
         }
         public async Task<OperationResult<int>> UpdateToRateAsync(int storeId, int valueRate)
-        {   
+        {
 
-            var store = await _dbSet.Include("RatingsReceived").FirstOrDefaultAsync( x => x.Id == storeId);
+            var store = await _dbSet.Include("RatingsReceived").FirstOrDefaultAsync(x => x.Id == storeId);
             double avg = store.RatingsReceived.Average(x => x.RatingValue);
             store.Rate = avg;
             _dbSet.Update(store);
@@ -407,33 +407,41 @@ namespace Manzili.EF.Implementaion
 
         public async Task<OperationResult<GetAnalysisStoreDto>> GetAnalysisStoreAsync(int storeId)
         {
-            var store = await _db.Stores
-                .Include(s => s.StoreOrders)
-                    .ThenInclude(o => o.OrderProducts)
-                    .ThenInclude(oi => oi.Product)
-                .Select(s => new
-                {
-                    Store = s,
-                    CompletedOrders = s.StoreOrders.Where(o => o.Status == enOrderStatus.تم_التسليم),
-                    AllOrders = s.StoreOrders,
-                    InProgressOrders = s.StoreOrders.Where(o => o.Status != enOrderStatus.تم_التسليم)
-                })
-                .FirstOrDefaultAsync(s => s.Store.Id == storeId);
+            // التأكد من وجود المتجر
+            var exists = await _db.Stores
+                .AnyAsync(s => s.Id == storeId);
+            if (!exists)
+                return OperationResult<GetAnalysisStoreDto>
+                    .Failure("المتجر غير موجود");
 
-            if (store?.Store == null)
-            {
-                return OperationResult<GetAnalysisStoreDto>.Failure("");
-            }
+            // جلب جميع الطلبات الخاصة بالمتجر
+            var ordersQuery = _db.Orders
+                .Where(o => o.StoreId == storeId);
 
-            var analysisStoreDto = new GetAnalysisStoreDto
+            // عدد الطلبات
+            var numberOfOrders = await ordersQuery.CountAsync();
+
+            // مجموع المبيعات (نجمع قيمة Total لكل الطلبات المنتهية أو الجارية)
+            var totalSales = await ordersQuery
+                .SumAsync(o => (double?)o.Total) ?? 0.0;
+
+            // عدد الطلبات قيد التنفيذ (الحالات: التجهيز، الشحن، في_الطريق)
+            var inProgressCount = await ordersQuery
+                .CountAsync(o =>
+                    o.Status == enOrderStatus.التجهيز ||
+                    o.Status == enOrderStatus.الشحن ||
+                    o.Status == enOrderStatus.في_الطريق);
+
+            // تجهيز DTO
+            var dto = new GetAnalysisStoreDto
             {
                 StoreId = storeId,
-                TotalSales = store.CompletedOrders.Sum(o => o.Total),
-                NumberOfOrders = store.AllOrders.Count(),
-                OrderInProgress = store.InProgressOrders.Count()
+                NumberOfOrders = numberOfOrders,
+                TotalSales = totalSales,
+                OrderInProgress = inProgressCount
             };
 
-            return OperationResult<GetAnalysisStoreDto>.Success(analysisStoreDto);
+            return OperationResult<GetAnalysisStoreDto>.Success(dto);
         }
 
         #endregion
