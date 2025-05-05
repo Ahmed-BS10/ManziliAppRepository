@@ -15,7 +15,15 @@ namespace ManziliApi.Controllers
             _storeServices = storeServices;
         }
 
+        [HttpGet("GetTotalSales")]
+        public async Task<IActionResult> GetTotalSalesAsync(int storeId, int month)
+        {
+            var result = await _storeServices.GetTotalSalesAsync(storeId, month);
+            if (result.IsSuccess)
+                return Ok(result);
 
+            return BadRequest(result);
+        }
 
         [HttpGet("GetAnalysisStore")]
         public async Task<IActionResult> GetAnalysisStoreAsync(int storeId)

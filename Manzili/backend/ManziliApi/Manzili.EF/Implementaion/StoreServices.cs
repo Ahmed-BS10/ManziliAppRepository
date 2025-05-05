@@ -444,6 +444,21 @@ namespace Manzili.EF.Implementaion
             return OperationResult<GetAnalysisStoreDto>.Success(dto);
         }
 
+        public async Task<OperationResult<double>> GetTotalSalesAsync(int storeId, int month)
+        {
+            var exists = await _db.Stores.AnyAsync(s => s.Id == storeId);
+            if (!exists)
+                return OperationResult<double>.Failure("المتجر غير موجود");
+
+            var totalSales = await _db.Orders
+                .Where(o => o.StoreId == storeId && o.CreatedAt.Month == month)
+                .SumAsync(o => (double?)o.Total) ?? 0.0;
+
+            return OperationResult<double>.Success(totalSales);
+        }
+
+
+
         #endregion
     }
 }
