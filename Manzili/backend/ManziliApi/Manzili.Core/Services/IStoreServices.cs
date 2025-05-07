@@ -13,7 +13,7 @@ namespace Manzili.Core.Services
 
         Task<OperationResult<GetAnalysisStoreDto>> GetAnalysisStoreAsync(int storeId);
         Task<OperationResult<double>> GetTotalSalesAsync(int storeId, int month);
-
+        Task<OperationResult<IEnumerable<CompletedOrderDto>>> GetLastTwoCompletedOrdersAsync(int storeId);
 
         Task<OperationResult<GetStoreDto>> GetByIdAsync(int id);
         Task<OperationResult<IEnumerable<GetStoreDto>>> GetListAsync();
