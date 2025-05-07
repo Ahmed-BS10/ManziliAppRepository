@@ -37,14 +37,22 @@ namespace Manzili.EF.Implementaion
             _storeCategoryServices = storeCategoryServices;
         }
 
-        #endregion
+        public async Task<OperationResult<IEnumerable<CompletedOrderDto>>> GetLastTwoCompletedOrdersAsync(int storeId)
+        {
+            var orders = await _db.Orders
+                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.تم_التسليم) 
+                .OrderByDescending(o => o.CreatedAt) 
+                .Take(2)
+                .Select(o => new CompletedOrderDto
+                {
+                    BuyerName = o.User.UserName, 
+                    Price = o.Total, 
+                    Date = o.CreatedAt 
+                })
+                .ToListAsync();
 
-        #region Methods
-
-
-
-        // Get List
-
+            return OperationResult<IEnumerable<CompletedOrderDto>>.Success(orders);
+        }
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetUserFavoriteStores(int userId)
         {
             var storesWithUserFavorite = await _dbSet

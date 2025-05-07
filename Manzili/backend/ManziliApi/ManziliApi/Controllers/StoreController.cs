@@ -15,6 +15,16 @@ namespace ManziliApi.Controllers
             _storeServices = storeServices;
         }
 
+        [HttpGet("GetLastTwoCompletedOrders")]
+        public async Task<IActionResult> GetLastTwoCompletedOrdersAsync(int storeId)
+        {
+            var result = await _storeServices.GetLastTwoCompletedOrdersAsync(storeId);
+            if (result.IsSuccess)
+                return Ok(result.Data);
+
+            return BadRequest(result.Message);
+        }
+
         [HttpGet("GetTotalSales")]
         public async Task<IActionResult> GetTotalSalesAsync(int storeId, int month)
         {
