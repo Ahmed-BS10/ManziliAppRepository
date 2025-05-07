@@ -30,7 +30,7 @@ class CheckoutView extends StatefulWidget {
 }
 
 class _CheckoutViewState extends State<CheckoutView> {
-  String? selectedAddress;
+  String? selectedAddress = 'rcrc7rcr5';
   String? uploadedPdfPath;
   bool isLoading = false;
 

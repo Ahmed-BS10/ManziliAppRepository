@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:manziliapp/model/product_store.dart';
 import 'package:manziliapp/widget/store_dashbord/analytics_card.dart';
 import 'package:manziliapp/widget/store_dashbord/bottom_navigation.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StoreDashboard extends StatefulWidget {
   const StoreDashboard({super.key});
@@ -14,6 +16,7 @@ class _StoreDashboardState extends State<StoreDashboard> {
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
   bool isFabVisible = false;
+  bool isLoading = true; // Add a loading state
   final List<ProductStore> products = [
     ProductStore(
       id: '1',
@@ -23,62 +26,7 @@ class _StoreDashboardState extends State<StoreDashboard> {
       imageUrl: 'assets/images/burger.jpg',
       isFavorite: true,
     ),
-    ProductStore(
-      id: '2',
-      name: 'برجر لحم',
-      price: 2000,
-      rating: 4.6,
-      imageUrl: 'assets/images/burger.jpg',
-      isFavorite: true,
-    ),
-    ProductStore(
-      id: '3',
-      name: 'برجر لحم',
-      price: 2000,
-      rating: 4.6,
-      imageUrl: 'assets/images/burger.jpg',
-      isFavorite: true,
-    ),
-    ProductStore(
-      id: '4',
-      name: 'برجر لحم',
-      price: 2000,
-      rating: 4.6,
-      imageUrl: 'assets/images/burger.jpg',
-      isFavorite: true,
-    ),
-    ProductStore(
-      id: '5',
-      name: 'برجر لحم',
-      price: 2000,
-      rating: 4.6,
-      imageUrl: 'assets/images/burger.jpg',
-      isFavorite: true,
-    ),
-    ProductStore(
-      id: '6',
-      name: 'برجر لحم',
-      price: 2000,
-      rating: 4.6,
-      imageUrl: 'assets/images/burger.jpg',
-      isFavorite: true,
-    ),
-    ProductStore(
-      id: '7',
-      name: 'برجر لحم',
-      price: 2000,
-      rating: 4.6,
-      imageUrl: 'assets/images/burger.jpg',
-      isFavorite: true,
-    ),
-    ProductStore(
-      id: '8',
-      name: 'برجر لحم',
-      price: 2000,
-      rating: 4.6,
-      imageUrl: 'assets/images/burger.jpg',
-      isFavorite: true,
-    ),
+    
   ];
 
   String selectedMonth = 'مارس';
@@ -111,16 +59,40 @@ class _StoreDashboardState extends State<StoreDashboard> {
     'نوفمبر': 50000,
     'ديسمبر': 55000,
   };
+
+  int numberOfOrders = 0;
+  int totalSales = 0;
+  int orderInProgress = 0;
+
   @override
   void initState() {
     super.initState();
     _sheetController.addListener(_updateFabVisibility);
+    _fetchAnalyticsData(); // Ensure this is called
   }
 
-  @override
-  void dispose() {
-    _sheetController.removeListener(_updateFabVisibility);
-    super.dispose();
+  Future<void> _fetchAnalyticsData() async {
+    const String apiUrl = 'http://man.runasp.net/api/Store/GetAnalysisStore?storeId=1';
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['isSuccess'] == true) {
+          setState(() {
+            numberOfOrders = data['data']['numberOfOrders'];
+            totalSales = data['data']['totalSales'];
+            orderInProgress = data['data']['orderInProgress'];
+            isLoading = false; // Set loading to false after data is fetched
+          });
+        } else {
+          print('Error: ${data['message']}');
+        }
+      } else {
+        print('Failed to fetch data. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
   }
 
   void _updateFabVisibility() {
@@ -136,74 +108,71 @@ class _StoreDashboardState extends State<StoreDashboard> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: Colors.grey[100],
-        body: Stack(
-          children: [
-            // Main dashboard content
-            SafeArea(
-              child: Column(
+        body: isLoading
+            ? Center(child: CircularProgressIndicator()) // Show loading indicator
+            : Stack(
                 children: [
-                  _buildHeader(),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 16),
-                          _buildAnalyticsCards(),
-                          const SizedBox(height: 24),
-                          _buildProfitSection(),
-                          const SizedBox(height: 24),
-                          _buildTransactionSection(),
-                          // Add extra space for the draggable sheet
-                          const SizedBox(height: 100),
-                        ],
+                  // Main dashboard content
+                  SafeArea(
+                    child: Column(
+                      children: [
+                        _buildHeader(),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const SizedBox(height: 16),
+                                _buildAnalyticsCards(numberOfOrders, totalSales, orderInProgress),
+                                const SizedBox(height: 24),
+                                _buildProfitSection(),
+                                const SizedBox(height: 24),
+                                _buildTransactionSection(),
+                                const SizedBox(height: 100), // Extra space for the draggable sheet
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Simple draggable sheet for products
+                  _buildProductsSheet(),
+                  if (isFabVisible)
+                    Positioned(
+                      bottom: 50 + (100 * _sheetController.size),
+                      right: 20,
+                      child: SizedBox(
+                        width: 65,
+                        height: 65,
+                        child: FloatingActionButton(
+                          onPressed: () {},
+                          backgroundColor: const Color(0xFF1548C7),
+                          elevation: 8,
+                          shape: const CircleBorder(),
+                          child: const Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 45,
+                          ),
+                        ),
                       ),
+                    ),
+                  // Bottom navigation
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: BottomNavigation(
+                      currentIndex: 3,
+                      onTap: (index) {
+                        print('تم النقر على التبويب: $index');
+                      },
                     ),
                   ),
                 ],
               ),
-            ),
-
-            // Simple draggable sheet for products
-            _buildProductsSheet(),
-
-            if (isFabVisible)
-              Positioned(
-                bottom: 50 + (100 * _sheetController.size),
-                right: 20,
-                child: SizedBox(
-                  width: 65, // تحديد العرض المطلوب
-                  height: 65, // تحديد الارتفاع المطلوب
-                  child: FloatingActionButton(
-                    onPressed: () {},
-                    backgroundColor: const Color(0xFF1548C7),
-                    elevation: 8,
-                    shape: const CircleBorder(),
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
-                      size: 45, // حجم الأيقونة
-                    ),
-                  ),
-                ),
-              ),
-
-            // Bottom navigation
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: BottomNavigation(
-                currentIndex: 3, // تغيير إلى الفهرس 3 للرئيسية
-                onTap: (index) {
-                  // أضف منطق تغيير الصفحات هنا
-                  print('تم النقر على التبويب: $index');
-                },
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -253,7 +222,7 @@ class _StoreDashboardState extends State<StoreDashboard> {
     );
   }
 
-  Widget _buildAnalyticsCards() {
+  Widget _buildAnalyticsCards(int numberOfOrders, int totalSales, int orderInProgress) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -269,10 +238,10 @@ class _StoreDashboardState extends State<StoreDashboard> {
           children: [
             Expanded(
               child: SizedBox(
-                height: 120, // يمكنك تغيير الرقم حسب الحاجة
+                height: 120,
                 child: AnalyticsCard(
                   title: 'إجمالي الطلبات',
-                  value: '70',
+                  value: numberOfOrders.toString(),
                   color: Color(0xFF1548C7),
                 ),
               ),
@@ -280,10 +249,10 @@ class _StoreDashboardState extends State<StoreDashboard> {
             const SizedBox(width: 12),
             Expanded(
               child: SizedBox(
-                height: 120, // يمكنك تغيير الرقم حسب الحاجة
+                height: 120,
                 child: AnalyticsCard(
                   title: 'إجمالي الارباح',
-                  value: '700000',
+                  value: totalSales.toString(),
                   color: Color(0xFF1548C7),
                 ),
               ),
@@ -291,10 +260,10 @@ class _StoreDashboardState extends State<StoreDashboard> {
             const SizedBox(width: 12),
             Expanded(
               child: SizedBox(
-                height: 120, // يمكنك تغيير الرقم حسب الحاجة
+                height: 120,
                 child: AnalyticsCard(
-                  title: 'أفضل منتج مبيعاً',
-                  value: 'كيك منزلي',
+                  title: 'منتجات قيد التحضير',
+                  value: orderInProgress.toString(),
                   color: Color(0xFF1548C7),
                 ),
               ),
@@ -524,7 +493,7 @@ class _StoreDashboardState extends State<StoreDashboard> {
           child: ListView(
             controller: scrollController,
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.only(top: 8), // تقليل التباعد العلوي
+            padding: const EdgeInsets.only(top: 8), // تقليل التباعد العلوية
             children: [
               Column(
                 children: [
