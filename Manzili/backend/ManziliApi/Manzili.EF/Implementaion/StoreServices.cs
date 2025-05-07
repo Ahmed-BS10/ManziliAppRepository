@@ -407,38 +407,37 @@ namespace Manzili.EF.Implementaion
 
         public async Task<OperationResult<GetAnalysisStoreDto>> GetAnalysisStoreAsync(int storeId)
         {
-            // التأكد من وجود المتجر
-            var exists = await _db.Stores
-                .AnyAsync(s => s.Id == storeId);
-            if (!exists)
-                return OperationResult<GetAnalysisStoreDto>
-                    .Failure("المتجر غير موجود");
+            // Ensure the ordersQuery is defined and properly initialized
+            var ordersQuery = _db.Orders.Where(o => o.StoreId == storeId);
 
-            // جلب جميع الطلبات الخاصة بالمتجر
-            var ordersQuery = _db.Orders
-                .Where(o => o.StoreId == storeId);
+            var result = await ordersQuery
+                .GroupBy(o => 1)
+                .Select(g => new
+                {
+                    TotalOrders = g.Count(),
+                    TotalSales = g.Sum(o => (double?)o.Total) ?? 0.0,
+                    InProgress = g.Count(o =>
+                        o.Status == enOrderStatus.التجهيز ||
+                        o.Status == enOrderStatus.الشحن ||
+                        o.Status == enOrderStatus.في_الطريق)
+                })
+                .FirstOrDefaultAsync();
 
-            // عدد الطلبات
-            var numberOfOrders = await ordersQuery.CountAsync();
+            if (result == null)
+                return OperationResult<GetAnalysisStoreDto>.Success(new GetAnalysisStoreDto
+                {
+                    StoreId = storeId,
+                    NumberOfOrders = 0,
+                    TotalSales = 0.0,
+                    OrderInProgress = 0
+                });
 
-            // مجموع المبيعات (نجمع قيمة Total لكل الطلبات المنتهية أو الجارية)
-            var totalSales = await ordersQuery
-                .SumAsync(o => (double?)o.Total) ?? 0.0;
-
-            // عدد الطلبات قيد التنفيذ (الحالات: التجهيز، الشحن، في_الطريق)
-            var inProgressCount = await ordersQuery
-                .CountAsync(o =>
-                    o.Status == enOrderStatus.التجهيز ||
-                    o.Status == enOrderStatus.الشحن ||
-                    o.Status == enOrderStatus.في_الطريق);
-
-            // تجهيز DTO
             var dto = new GetAnalysisStoreDto
             {
                 StoreId = storeId,
-                NumberOfOrders = numberOfOrders,
-                TotalSales = totalSales,
-                OrderInProgress = inProgressCount
+                NumberOfOrders = result.TotalOrders,
+                TotalSales = result.TotalSales,
+                OrderInProgress = result.InProgress
             };
 
             return OperationResult<GetAnalysisStoreDto>.Success(dto);
