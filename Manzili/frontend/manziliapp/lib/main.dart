@@ -24,15 +24,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 SharedPreferences? sharedPreferences;
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+//final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+   // FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
   // 1. تأكد من تهيئة الـ Binding قبل أي استدعاء async
   WidgetsFlutterBinding.ensureInitialized();
 
   // 2. تهيئة إشعارات النظام
-  await _initLocalNotifications();
+  //await _initLocalNotifications();
 
   // 3. سجل الـ UserController أولاً وحمّل بيانات المستخدم
   Get.put(UserController());
@@ -46,8 +46,8 @@ Future<void> main() async {
   Get.put(CategoryController());
 
   // 6. ابدأ خدمة الـ SignalR للإشعارات
-  final notificationService = NotificationService();
-  await notificationService.init(userId);
+  //final notificationService = NotificationService();
+  //await notificationService.init(userId);
 
   // 7. شغّل التطبيق
   runApp(
@@ -62,27 +62,27 @@ Future<void> main() async {
   );
 }
 
-Future<void> _initLocalNotifications() async {
-  const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-  const initSettings = InitializationSettings(android: androidSettings);
-  await flutterLocalNotificationsPlugin.initialize(initSettings);
-}
+//Future<void> _initLocalNotifications() async {
+//  const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+//  const initSettings = InitializationSettings(android: androidSettings);
+//  await flutterLocalNotificationsPlugin.initialize(initSettings);
+//}
 
-Future<void> showLocalNotification(String title, String body) async {
-  const androidDetails = AndroidNotificationDetails(
-    'channel_id',
-    'channel_name',
-    importance: Importance.max,
-    priority: Priority.high,
-  );
-  const platformDetails = NotificationDetails(android: androidDetails);
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    title,
-    body,
-    platformDetails,
-  );
-}
+// Future<void> showLocalNotification(String title, String body) async {
+//   const androidDetails = AndroidNotificationDetails(
+//     'channel_id',
+//     'channel_name',
+//     importance: Importance.max,
+//     priority: Priority.high,
+//   );
+//   const platformDetails = NotificationDetails(android: androidDetails);
+//   await flutterLocalNotificationsPlugin.show(
+//     0,
+//     title,
+//     body,
+//     platformDetails,
+//   );
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -94,8 +94,8 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/sp',
-          page: () => const SplashsView(),
-          middlewares: [AuthMiddleware()],
+          page: () => const StoreDashboard(),
+         // middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/login',
