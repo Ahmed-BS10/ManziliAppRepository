@@ -463,9 +463,44 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<double>.Success(totalSales);
         }
-
-
-
         #endregion
+
+
+
+        public async Task<OperationResult<IEnumerable<GetStoreDashbord>>> GetAllStoresWithPaginationAsync(int page, int pageSize)
+        {
+
+         
+
+            var storesQuery = _db.Stores
+                .Include(s => s.StoreOrders) // Include related orders to calculate TotalSale
+                .AsNoTracking();
+
+            // Apply pagination
+            var paginatedStores = await storesQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(s => new GetStoreDashbord
+                {
+                    Id = s.Id,
+                    Name = s.BusinessName,
+                    CreateAt = s.CreateAt,
+                    Statu = s.Status,
+                    Location = s.Address, // Assuming `Address` represents the location
+                    TotalSale = s.StoreOrders != null
+                        ? s.StoreOrders.Sum(o => o.Total)
+                        : 0 // Calculate total sales from orders
+                })
+                .ToListAsync();
+
+            // Check if no stores were found
+            if (!paginatedStores.Any())
+            {
+                return OperationResult<IEnumerable<GetStoreDashbord>>.Failure("No stores found.");
+            }
+
+            return OperationResult<IEnumerable<GetStoreDashbord>>.Success(paginatedStores);
+        }
+
     }
 }
