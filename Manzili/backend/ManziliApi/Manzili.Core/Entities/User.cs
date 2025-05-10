@@ -8,7 +8,6 @@ namespace Manzili.Core.Entities
        
         public string ? ImageUrl { get; set; }
         public string Address { get; set; }
-        public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
 
 
