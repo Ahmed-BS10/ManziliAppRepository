@@ -9,6 +9,7 @@ namespace Manzili.Core.Entities
         public string BankAccount { get; set; }
         public string BookTime { get; set; }
 
+        public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
 
 

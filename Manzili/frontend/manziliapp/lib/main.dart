@@ -94,8 +94,8 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/sp',
-          page: () => const StoreDashboard(),
-         // middlewares: [AuthMiddleware()],
+          page: () => const SplashsView(),
+         middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/login',
