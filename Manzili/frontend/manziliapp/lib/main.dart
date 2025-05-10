@@ -20,7 +20,7 @@ import 'package:manziliapp/widget/home/favorite_provider.dart';
 import 'package:manziliapp/view/store_orders_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+//import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 SharedPreferences? sharedPreferences;
 
