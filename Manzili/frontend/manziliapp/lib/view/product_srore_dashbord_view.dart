@@ -1,6 +1,8 @@
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:manziliapp/view/add_product_screen.dart';
 
 class ProductSroreDashbordView extends StatefulWidget {
   @override
@@ -9,14 +11,29 @@ class ProductSroreDashbordView extends StatefulWidget {
 
 class _ProductSroreDashbordViewState extends State<ProductSroreDashbordView>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  final List<String> tabs = ['الكل', 'ماكولات', 'حلويات', 'مشروبات'];
+  List<dynamic> products = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: tabs.length, vsync: this);
+    fetchProducts();
+  }
+
+  Future<void> fetchProducts() async {
+    final url = 'http://man.runasp.net/api/Product/All?storeId=1';
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['isSuccess']) {
+          setState(() {
+            products = data['data'];
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching products: $e');
+    }
   }
 
   @override
@@ -34,51 +51,77 @@ class _ProductSroreDashbordViewState extends State<ProductSroreDashbordView>
           ),
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            Container(
-              child: TabBar(
-                controller: _tabController,
-                indicatorColor: Colors.blue,
-                labelColor: Colors.blue,
-                unselectedLabelColor: Colors.black,
-                tabs: tabs.map((e) => Tab(text: e)).toList(),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('مجموع المنتجات: ٣', style: TextStyle(fontSize: 14)),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('مجموع المنتجات: ${products.length}', style: TextStyle(fontSize: 14)),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AddProductScreen()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                      ),
+                      child: Text('إضافة منتج'),
                     ),
-                    child: Text('إضافة منتج'),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              child: ListView.builder(
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                itemCount: 3,
+                itemCount: products.length,
                 itemBuilder: (context, index) {
-                  return ProductItem();
+                  final product = products[index];
+                  return ProductItem(
+                    name: product['name'],
+                    price: product['price'],
+                    description: product['description'],
+                    rate: product['rate'],
+                    imageUrl: 'http://man.runasp.net${product['imageUrl']}',
+                  );
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class ProductItem extends StatelessWidget {
+class ProductItem extends StatefulWidget {
+  final String name;
+  final int price;
+  final String description;
+  final int rate;
+  final String imageUrl;
+
+  ProductItem({
+    required this.name,
+    required this.price,
+    required this.description,
+    required this.rate,
+    required this.imageUrl,
+  });
+
+  @override
+  _ProductItemState createState() => _ProductItemState();
+}
+
+class _ProductItemState extends State<ProductItem> {
+  bool isExpanded = false;
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -88,7 +131,7 @@ class ProductItem extends StatelessWidget {
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: Image.network(
-            'https://cdn.pixabay.com/photo/2014/10/23/18/05/burger-500054_1280.jpg',
+            widget.imageUrl,
             width: 70,
             height: 70,
             fit: BoxFit.cover,
@@ -97,7 +140,7 @@ class ProductItem extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('برجر لحم', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(widget.name, style: TextStyle(fontWeight: FontWeight.bold)),
             PopupMenuButton<String>(
               icon: Icon(Icons.more_vert),
               onSelected: (value) {
@@ -107,30 +150,39 @@ class ProductItem extends StatelessWidget {
                   // Delete action
                 }
               },
-              itemBuilder:
-                  (context) => [
-                    PopupMenuItem(value: 'edit', child: Text('تعديل المنتج')),
-                    PopupMenuItem(value: 'delete', child: Text('حذف المنتج')),
-                  ],
+              itemBuilder: (context) => [
+                PopupMenuItem(value: 'edit', child: Text('تعديل المنتج')),
+                PopupMenuItem(value: 'delete', child: Text('حذف المنتج')),
+              ],
             ),
           ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('ريال 2000', style: TextStyle(color: Colors.blue)),
+            Text('ريال ${widget.price}', style: TextStyle(color: Colors.blue)),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isExpanded = !isExpanded;
+                });
+              },
+              child: Text(
+                isExpanded
+                    ? widget.description
+                    : (widget.description.length > 50
+                        ? '${widget.description.substring(0, 50)}...'
+                        : widget.description),
+                style: TextStyle(fontSize: 12),
+              ),
+            ),
+            SizedBox(height: 8),
             Row(
               children: [
-                Text('ماكولات', style: TextStyle(fontSize: 12)),
-                SizedBox(width: 8),
-                Row(
-                  children: [
-                    Icon(Icons.star, size: 16, color: Colors.blue),
-                    Text('4.9', style: TextStyle(fontSize: 12)),
-                    SizedBox(width: 4),
-                    Text('(10 مراجعات)', style: TextStyle(fontSize: 12)),
-                  ],
-                ),
+                Icon(Icons.star, size: 16, color: Colors.blue),
+                Text('${widget.rate}', style: TextStyle(fontSize: 12)),
+                SizedBox(width: 4),
+                Text('(10 مراجعات)', style: TextStyle(fontSize: 12)),
               ],
             ),
           ],

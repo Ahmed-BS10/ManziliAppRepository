@@ -11,6 +11,7 @@ import 'package:manziliapp/view/add_product_screen.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
 import 'package:manziliapp/view/order_view.dart';
+import 'package:manziliapp/view/product_srore_dashbord_view.dart';
 import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/view/register_view.dart';
 import 'package:manziliapp/view/splash_view.dart';
@@ -90,12 +91,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/sp',
+      initialRoute: '/pds',
       getPages: [
         GetPage(
           name: '/sp',
           page: () => const SplashsView(),
-         middlewares: [AuthMiddleware()],
+        // middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/login',
@@ -108,6 +109,10 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: '/home',
           page: () => const HomeView(),
+        ),
+         GetPage(
+          name: '/pds',
+          page: () => ProductSroreDashbordView(),
         ),
       ],
     );
