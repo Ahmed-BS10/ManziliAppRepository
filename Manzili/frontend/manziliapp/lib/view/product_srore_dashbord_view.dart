@@ -20,7 +20,7 @@ class _ProductSroreDashbordViewState extends State<ProductSroreDashbordView>
   }
 
   Future<void> fetchProducts() async {
-    final url = 'http://man.runasp.net/api/Product/All?storeId=1';
+    final url = 'http://man.runasp.net/api/Product/All?storeId=2';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -134,7 +134,7 @@ class _ProductItemState extends State<ProductItem> {
             widget.imageUrl,
             width: 70,
             height: 70,
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
           ),
         ),
         title: Row(
