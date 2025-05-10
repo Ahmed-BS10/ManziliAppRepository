@@ -10,12 +10,14 @@ public class UserServices
 {
     private readonly UserManager<User> _userManager;
     private readonly IFileService _fileService;
+    readonly IStoreServices _storeServices;
 
 
-    public UserServices(UserManager<User> userManager, IFileService fileService)
+    public UserServices(UserManager<User> userManager, IFileService fileService, IStoreServices storeServices)
     {
         _userManager = userManager;
         _fileService = fileService;
+        _storeServices = storeServices;
     }
 
     public async Task<OperationResult<GetUserDto>> GetByIdAsync(int id)
@@ -25,19 +27,19 @@ public class UserServices
 
         return OperationResult<GetUserDto>.Success(new GetUserDto
         {
-            UserName = user.UserName, 
-           
-            Email = user.Email,
+            Id = user.Id,
+            UserName = user.UserName,
+            CreateAt = user.CreateAt,
             PhoneNumber = user.PhoneNumber,
             Address = user.Address,
         });
-        
+
 
     }
     public async Task<OperationResult<CreateUserDto>> CreateAsync(CreateUserDto userDto)
     {
 
-      
+
         if (await _userManager.FindByEmailAsync(userDto.Email) != null)
             return OperationResult<CreateUserDto>.Failure("Email already exists");
 
@@ -49,10 +51,10 @@ public class UserServices
         {
             PhoneNumber = userDto.PhoneNumber,
             UserName = userDto.UserName,
-           
+
             Email = userDto.Email,
             Address = userDto.Address
-            
+
         };
 
 
@@ -62,7 +64,7 @@ public class UserServices
         if (!result.Succeeded)
             return OperationResult<CreateUserDto>.Failure(string.Join("; ", result.Errors.Select(e => e.Description)));
 
-        if(userDto.Image != null)
+        if (userDto.Image != null)
         {
 
             if (!ImageValidator.IsValidImage(userDto.Image, out string errorMessage))
@@ -81,28 +83,26 @@ public class UserServices
             user.ImageUrl = imagePath;
             await _userManager.UpdateAsync(user);
         }
-           
 
-      
+
+
         return OperationResult<CreateUserDto>.Success(userDto);
     }
-    public async Task<OperationResult<IEnumerable<GetUserDto>>> GetListAsync()
+    public async Task<OperationResult<IEnumerable<GetUserDto>>> GetUsersWithoutStoresAsync()
     {
-        var users = await _userManager.Users.AsNoTracking().ToListAsync();
-        if(users is null)
-             return OperationResult<IEnumerable<GetUserDto>>.Failure(message: "Users not found");
+        var usersWithoutStores = await _userManager.Users
+            .AsNoTracking()
+            .Where(user => !_db.Stores.Any(store => store.Id == user.Id)) // Check if the user has no associated store
+            .ToListAsync();
 
+        if (!usersWithoutStores.Any())
+            return OperationResult<IEnumerable<GetUserDto>>.Failure("No users without stores found.");
 
         return OperationResult<IEnumerable<GetUserDto>>.Success(
-
-
-            users.Adapt<IEnumerable<GetUserDto>>()
-
-            );
-        
-           
-
+            usersWithoutStores.Adapt<IEnumerable<GetUserDto>>()
+        );
     }
+
     public async Task<OperationResult<UpdateUserDto>> UpdateAsync(UpdateUserDto newUser, int id)
     {
         var oldUser = await _userManager.FindByIdAsync(id.ToString());
@@ -128,7 +128,7 @@ public class UserServices
 
 
         oldUser.UserName = newUser.UserName;
-       
+
         oldUser.PhoneNumber = newUser.PhoneNumber;
         oldUser.Address = newUser.Address;
         oldUser.Email = newUser.Email;
@@ -148,13 +148,5 @@ public class UserServices
         await _userManager.DeleteAsync(user);
         return OperationResult<User>.Success(user);
     }
-
-
-
-
-
-
-
-   
 
 }

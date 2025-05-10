@@ -20,8 +20,7 @@ namespace Manzili.Core.Entities
         public double ? Rate {  get; set; }
 
         public string Status = enStoreStatus.Open.ToString();
-        public DateTime CreateAt { get; set; } = DateTime.UtcNow;
-
+       
 
 
 

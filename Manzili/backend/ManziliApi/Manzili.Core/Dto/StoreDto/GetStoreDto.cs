@@ -23,3 +23,5 @@ public class GetStoreDashbord
     public double TotalSale { get; set; }
 
 }
+
+
