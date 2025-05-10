@@ -92,7 +92,7 @@ public class UserServices
     {
         var usersWithoutStores = await _userManager.Users
             .AsNoTracking()
-            .Where(user => !_db.Stores.Any(store => store.Id == user.Id)) // Check if the user has no associated store
+           // .Where(user => !_db.Stores.Any(store => store.Id == user.Id)) // Check if the user has no associated store
             .ToListAsync();
 
         if (!usersWithoutStores.Any())

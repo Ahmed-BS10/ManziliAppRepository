@@ -26,15 +26,15 @@ namespace ManziliApi.Controllers
         #region Methods
 
 
-        [HttpGet(UserRouting.List)]
-        public async Task<IActionResult> GetList()
-        {
-            var result = await _userServices.GetListAsync();
-            if (result.IsSuccess)
-                return Ok(result);
+        //[HttpGet(UserRouting.List)]
+        //public async Task<IActionResult> GetList()
+        //{
+        //    var result = await _userServices.GetListAsync();
+        //    if (result.IsSuccess)
+        //        return Ok(result);
 
-            return NotFound(result);
-        }
+        //    return NotFound(result);
+        //}
 
         [HttpGet(UserRouting.GetById)]
         public async Task<IActionResult> GetById(int id)
