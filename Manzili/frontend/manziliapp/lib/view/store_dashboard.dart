@@ -64,11 +64,14 @@ class _StoreDashboardState extends State<StoreDashboard> {
   int totalSales = 0;
   int orderInProgress = 0;
 
+  List<Map<String, dynamic>> lastTwoOrders = []; // Store fetched orders
+
   @override
   void initState() {
     super.initState();
     _sheetController.addListener(_updateFabVisibility);
-    _fetchAnalyticsData(); // Ensure this is called
+    _fetchAnalyticsData();
+    _fetchLastTwoCompletedOrders(); // Fetch last two orders
   }
 
   Future<void> _fetchAnalyticsData() async {
@@ -92,6 +95,29 @@ class _StoreDashboardState extends State<StoreDashboard> {
       }
     } catch (e) {
       print('Error fetching data: $e');
+    }
+  }
+
+  Future<void> _fetchLastTwoCompletedOrders() async {
+    const String apiUrl = 'http://man.runasp.net/api/Store/GetLastTwoCompletedOrders?storeId=2';
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as List;
+        setState(() {
+          lastTwoOrders = data.map((order) {
+            return {
+              'buyerName': order['buyerName'],
+              'price': order['price'],
+              'date': order['date'],
+            };
+          }).toList();
+        });
+      } else {
+        print('Failed to fetch orders. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching orders: $e');
     }
   }
 
@@ -425,9 +451,18 @@ class _StoreDashboardState extends State<StoreDashboard> {
           ),
         ),
         const SizedBox(height: 16),
-        _buildTransactionItem('أحمد بن شملان', 20.00, 'الجمعة 3 مارس'),
-        const Divider(),
-        _buildTransactionItem('أحمد بن شملان', 20.00, 'الجمعة 3 مارس'),
+        if (lastTwoOrders.isEmpty)
+          const Text('لا توجد طلبات مكتملة.', style: TextStyle(fontSize: 18)),
+        if (lastTwoOrders.isNotEmpty)
+          ...lastTwoOrders.map((order) {
+            final formattedDate = DateTime.parse(order['date']).toLocal().toString().split(' ')[0];
+            return Column(
+              children: [
+                _buildTransactionItem(order['buyerName'], order['price'].toDouble(), formattedDate),
+                const Divider(),
+              ],
+            );
+          }).toList(),
       ],
     );
   }
