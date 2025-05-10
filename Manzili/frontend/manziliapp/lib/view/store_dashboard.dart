@@ -291,7 +291,7 @@ class _StoreDashboardState extends State<StoreDashboard> {
             Transform.translate(
               offset: const Offset(0, 45), // تحريك للأسفل بمقدار 10
               child: Text(
-                '900,000',
+                totalSales.toString(),
                 style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
