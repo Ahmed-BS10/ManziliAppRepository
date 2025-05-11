@@ -8,6 +8,4 @@ public class CreateProductDto
     public string? Description { get; set; }
     public int Quantity { get; set; } = 0;
     public List<IFormFile> formImages { get; set; }
-
-   
 }
