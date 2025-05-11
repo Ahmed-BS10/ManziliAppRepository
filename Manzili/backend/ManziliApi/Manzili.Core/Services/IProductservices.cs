@@ -13,10 +13,8 @@ namespace Manzili.Core.Services
         Task<OperationResult<string>> AddProductToStoreAsync(int storeId, CreateProductDto productDto);
         Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndCategoriesAsync(int storeId, int storeCategoryId, int productCategoryId);
         Task<OperationResult<IEnumerable<GetAllProduct>>> GetProductsByStoreAndProductCategoriesAsync(int storeId, int productCategoryId);
-
-
-
-
+        Task<OperationResult<bool>> UpdateProductAsync(int productId, CreateProductDto productDto);
+        Task<OperationResult<bool>> DeleteProductAsync(int productId);
         Task<OperationResult<IEnumerable<GetProductRatingsAndCommentsDto>>> GetAllRatingsAndCommentsAsync(int productId);
 
 

@@ -181,6 +181,17 @@ namespace Manzili.Core.Services
 
             return OperationResult<IEnumerable<GetAllProduct>>.Success(productDto, "Products retrieved successfully.");
         }
+        public async Task<OperationResult<bool>> DeleteProductAsync(int productId)
+        {
+            var product = await _db.Products.FindAsync(productId);
+            if (product == null)
+                return OperationResult<bool>.Failure("Product not found.");
+
+            _db.Products.Remove(product);
+            await _db.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true, "Product deleted successfully.");
+        }
         public async Task<OperationResult<string>> AddProductToStoreAsync(int storeId, CreateProductDto productDto)
         {
             var store = await _db.Stores
@@ -297,6 +308,60 @@ namespace Manzili.Core.Services
             // Return the result
             return OperationResult<IEnumerable<GetProductRatingsAndCommentsDto>>.Success(result);
         }
+        public async Task<OperationResult<bool>> UpdateProductAsync(int productId, CreateProductDto productDto)
+        {
+            var product = await _db.Products.Include(p => p.Images).FirstOrDefaultAsync(p => p.Id == productId);
+            if (product == null)
+                return OperationResult<bool>.Failure("Product not found.");
+
+            // Update product details
+            product.Name = productDto.Name;
+            product.Price = productDto.Price;
+            product.ProductCategoryId = productDto.ProductCategoryId;
+            product.Description = productDto.Description;
+
+            // Handle image updates
+            if (productDto.formImages != null && productDto.formImages.Any())
+            {
+                // Validate and upload new images
+                foreach (var imageFrom in productDto.formImages)
+                {
+                    if (!ImageValidator.IsValidImage(imageFrom, out string errorMessage))
+                        return OperationResult<bool>.Failure(message: errorMessage);
+
+                    string imagePath = await _fileService.UploadImageAsync("Product", imageFrom);
+                    if (imagePath == "FailedToUploadImage")
+                        return OperationResult<bool>.Failure("Failed to upload image");
+
+                    // Add the new image to the product
+                    product.Images.Add(new Image
+                    {
+                        ImageUrl = imagePath,
+                        ProductId = product.Id
+                    });
+
+                }
+
+                // Delete old images if necessary
+                if (product.Images != null && product.Images.Any())
+                {
+                    foreach (var oldImage in product.Images.ToList())
+                    {
+                        var deleteResult = await _fileService.Delete(oldImage.ImageUrl);
+                        if (!deleteResult.IsSuccess)
+                            return OperationResult<bool>.Failure(deleteResult.Message);
+
+                        product.Images.Remove(oldImage);
+                    }
+                }
+            }
+
+            _db.Products.Update(product);
+            await _db.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true, "Product updated successfully.");
+        }
+
 
 
     }

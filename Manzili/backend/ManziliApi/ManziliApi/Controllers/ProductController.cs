@@ -100,6 +100,24 @@ namespace ManziliApi.Controllers
             return NotFound(result);
         }
 
+        [HttpDelete("DeleteProduct")]
+        public async Task<IActionResult> DeleteProductAsync(int productId)
+        {
+            var result = await _productservices.DeleteProductAsync(productId);
+            if (result.IsSuccess)
+                return Ok(result.Message);
+
+            return BadRequest(result.Message);
+        }
+        [HttpPut("UpdateProduct")]
+        public async Task<IActionResult> UpdateProductAsync(int productId, [FromForm] CreateProductDto productDto)
+        {
+            var result = await _productservices.UpdateProductAsync(productId, productDto);
+            if (result.IsSuccess)
+                return Ok(result.Message);
+
+            return BadRequest(result.Message);
+        }
 
 
 
