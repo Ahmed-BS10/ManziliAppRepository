@@ -13,7 +13,7 @@ public interface IOrdersService
     Task<OperationResult<bool>> UpdateOrderStatusAsync(int orderId, enOrderStatus status);
     Task<OperationResult<int?>> GetUserIdByOrderIdAsync(int orderId);
     Task<OperationResult<IEnumerable<OrderTracking>>> GetOrderTrackingHistoryAsync(int orderId);
-    Task<OperationResult<IEnumerable<GteOrdersDashbordDto>>> GetAllOrderDashbordAsync();
+    Task<OperationResult<IEnumerable<GteOrdersDashbordDto>>> GetAllOrderDashbordAsync(int pageNumber, int size);
 
 }
 

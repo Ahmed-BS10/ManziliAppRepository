@@ -9,7 +9,7 @@ namespace Manzili.Core.Services
     {
 
 
-        Task<OperationResult<IEnumerable<GetStoreDashbord>>> GetAllStoresWithPaginationAsync(int page, int pageSize);
+        Task<OperationResult<IEnumerable<GetStoreDashbord>>> GetUnBlockeStores(int page, int pageSize);
 
         // Get
         Task<OperationResult<GetAnalysisStoreDto>> GetAnalysisStoreAsync(int storeId);
@@ -34,5 +34,8 @@ namespace Manzili.Core.Services
 
         Task<OperationResult<UpdateStoreDto>> UpdateAsync(UpdateStoreDto newStore, int storeId);
         Task<OperationResult<int>> UpdateToRateAsync(int storeId, int valueRate);
+        Task<OperationResult<IEnumerable<GetStoreDashbord>>> GetBlockeStores(int pageNumber, int size);
+        Task<OperationResult<bool>> MakeBloke(int Id);
+        Task<OperationResult<bool>> UnBloke(int Id);
     }
 }

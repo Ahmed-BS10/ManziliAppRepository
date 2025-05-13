@@ -34,7 +34,6 @@ namespace Manzili.Core.Entities
 
 
 
-        public bool IsBlocked { get; set; } = false;
 
         public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
         public Store Store { get; set; }

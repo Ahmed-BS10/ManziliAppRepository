@@ -6,6 +6,7 @@ using Manzili.EF.Implementaion;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Threading.Tasks;
 
 namespace Manzili.EF.Implementation
@@ -198,10 +199,12 @@ namespace Manzili.EF.Implementation
 
 
 
-        public async Task<OperationResult<IEnumerable<GteOrdersDashbordDto>>> GetAllOrderDashbordAsync()
+        public async Task<OperationResult<IEnumerable<GteOrdersDashbordDto>>> GetAllOrderDashbordAsync(int pageNumber, int size)
         {
             var orders = await _context.Orders
                 .Include(s => s.Store)
+                .Skip((pageNumber - 1) * size)
+                .Take(size)
                 .Select(x => new GteOrdersDashbordDto
                 {
                     Id = x.OrderId,

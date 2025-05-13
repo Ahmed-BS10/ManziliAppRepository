@@ -19,15 +19,6 @@ namespace Manzili.API.Controllers
 
 
 
-        [HttpGet("GetAllOrderDashbord")]
-        public async Task<IActionResult> GetAllOrderDashbord()
-        {
-            var result = await _orderService.GetAllOrderDashbordAsync();
-            if (result.IsSuccess)
-                return Ok(result);
-
-            return BadRequest(result);
-        }
 
         [HttpGet("GetDeliveredOrdersByUserId")]
         public async Task<IActionResult> GetDeliveredOrdersByUserIdAsync(int userId)

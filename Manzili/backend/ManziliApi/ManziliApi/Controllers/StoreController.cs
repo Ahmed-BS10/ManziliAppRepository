@@ -16,19 +16,6 @@ namespace ManziliApi.Controllers
         }
 
 
-
-        [HttpGet("GetAllStoresWithPagination")]
-        public async Task<IActionResult> GetAllStoresWithPagination(int page =  1, int pageSize = 10)
-        {
-            var result = await _storeServices.GetAllStoresWithPaginationAsync(page , pageSize);
-            if (result.IsSuccess)
-                return Ok(result.Data);
-
-            return BadRequest(result.Message);
-        }
-
-
-
         [HttpGet("GetLastTwoCompletedOrders")]
         public async Task<IActionResult> GetLastTwoCompletedOrdersAsync(int storeId)
         {

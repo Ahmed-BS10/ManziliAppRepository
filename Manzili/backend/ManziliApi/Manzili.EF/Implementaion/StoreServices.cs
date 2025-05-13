@@ -1,5 +1,4 @@
-﻿using Azure;
-using Manzili.Core.Dto.StoreDto;
+﻿using Manzili.Core.Dto.StoreDto;
 using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Entities;
 using Manzili.Core.Enum;
@@ -7,11 +6,6 @@ using Manzili.Core.Extension;
 using Manzili.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Manzili.EF.Implementaion
 {
@@ -465,16 +459,14 @@ namespace Manzili.EF.Implementaion
         }
         #endregion
 
-
-
-        public async Task<OperationResult<IEnumerable<GetStoreDashbord>>> GetAllStoresWithPaginationAsync(int page, int pageSize)
+        public async Task<OperationResult<IEnumerable<GetStoreDashbord>>> GetUnBlockeStores(int page, int pageSize)
         {
 
-         
-
+        
             var storesQuery = await _db.Stores
                // .Include(s => s.StoreOrders) // Include related orders to calculate TotalSale
                 .AsNoTracking()
+                .Where(x => x.IsBlocked == false)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(s => new GetStoreDashbord
@@ -489,6 +481,53 @@ namespace Manzili.EF.Implementaion
                 .ToListAsync();
 
             if (storesQuery is null )
+            {
+                return OperationResult<IEnumerable<GetStoreDashbord>>.Failure("No stores found.");
+            }
+
+            return OperationResult<IEnumerable<GetStoreDashbord>>.Success(storesQuery);
+        }
+        public async Task<OperationResult<bool>> MakeBloke(int Id)
+        {
+            var user = await _db.Users.FindAsync(Id);
+            if (user == null) return OperationResult<bool>.Failure("User not found");
+            user.IsBlocked = true;
+          
+
+            await _db.SaveChangesAsync();
+            return OperationResult<bool>.Success(true);
+        }
+        public async Task<OperationResult<bool>> UnBloke(int Id)
+        {
+            var user = await _db.Users.FindAsync(Id);
+            if (user == null) return OperationResult<bool>.Failure("User not found");
+            user.IsBlocked = false;
+
+
+            await _db.SaveChangesAsync();
+            return OperationResult<bool>.Success(true);
+        }
+        public async Task<OperationResult<IEnumerable<GetStoreDashbord>>> GetBlockeStores(int pageNumber, int size)
+        {
+
+            var storesQuery = await _db.Stores
+                // .Include(s => s.StoreOrders) // Include related orders to calculate TotalSale
+                .AsNoTracking()
+                .Where(s => s.IsBlocked == true) // Filter for blocked stores
+                .Skip((pageNumber - 1) * size)
+                .Take(size)
+                .Select(s => new GetStoreDashbord
+                {
+                    Id = s.Id,
+                    Name = s.BusinessName,
+                    CreateAt = s.CreateAt,
+                    Statu = s.Status,
+                    Location = s.Address, // Assuming `Address` represents the location
+                                          // Calculate total sales from orders
+                })
+                .ToListAsync();
+
+            if (storesQuery is null)
             {
                 return OperationResult<IEnumerable<GetStoreDashbord>>.Failure("No stores found.");
             }

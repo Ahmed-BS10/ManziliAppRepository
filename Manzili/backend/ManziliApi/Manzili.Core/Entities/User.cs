@@ -5,7 +5,9 @@ namespace Manzili.Core.Entities
 {
     public class User : IdentityUser<int>
     {
-       
+
+        public bool IsBlocked { get; set; } = false;
+
         public string ? ImageUrl { get; set; }
         public string Address { get; set; }
 

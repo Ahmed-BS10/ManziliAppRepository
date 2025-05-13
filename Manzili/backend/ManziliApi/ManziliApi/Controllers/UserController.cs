@@ -82,15 +82,6 @@ namespace ManziliApi.Controllers
         }
 
 
-        [HttpGet("GetUserDashbord")]
-        public async Task<IActionResult> GetUserDashbord()
-        {
-            var result = await _userServices.GetGetUserDashbord();
-            if(result.IsSuccess)
-                return Ok(result);
-
-            return BadRequest(result);
-        }
 
         #endregion
     }

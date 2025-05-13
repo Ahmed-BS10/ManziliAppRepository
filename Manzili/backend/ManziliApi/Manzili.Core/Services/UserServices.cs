@@ -4,6 +4,7 @@ using Manzili.Core.Services;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 using static System.Formats.Asn1.AsnWriter;
 
 public class UserServices
@@ -147,7 +148,7 @@ public class UserServices
         await _userManager.DeleteAsync(user);
         return OperationResult<User>.Success(user);
     }
-    public async Task<OperationResult<IEnumerable<GetUserDashbordDto>>> GetGetUserDashbord()
+    public async Task<OperationResult<IEnumerable<GetUserDashbordDto>>> GetUnBlockeUser(int pageNumber, int size)
     {
         // Get all store user IDs
         var storeUserIds = await _storeServices.GetListAsync();
@@ -157,7 +158,38 @@ public class UserServices
 
         // Filter users who are not stores
         var users = await _userManager.Users
-            .Where(u => !storeIds.Contains(u.Id))
+            .Where(u => !storeIds.Contains(u.Id) && u.IsBlocked == false)
+             .Skip((pageNumber - 1) * size)
+             .Take(size)
+            .Select(x => new GetUserDashbordDto
+            {
+                Id = x.Id,
+                UserName = x.UserName,
+                PhoneNumber = x.PhoneNumber,
+                Address = x.Address,
+                CreateAy = DateTime.Now,
+                ImageUrl = x.ImageUrl
+            })
+            .ToListAsync();
+
+        if (!users.Any())
+            return OperationResult<IEnumerable<GetUserDashbordDto>>.Failure("users not found");
+
+        return OperationResult<IEnumerable<GetUserDashbordDto>>.Success(users);
+    }
+    public async Task<OperationResult<IEnumerable<GetUserDashbordDto>>> GetBlockeUser(int pageNumber, int size)
+    {
+        // Get all store user IDs
+        var storeUserIds = await _storeServices.GetListAsync();
+        var storeIds = storeUserIds.IsSuccess
+            ? storeUserIds.Data.Select(s => s.Id).ToHashSet()
+            : new HashSet<int>();
+
+        // Filter users who are not stores
+        var users = await _userManager.Users
+            .Where(u => !storeIds.Contains(u.Id) && u.IsBlocked == true)
+             .Skip((pageNumber - 1) * size)
+             .Take(size)
             .Select(x => new GetUserDashbordDto
             {
                 Id = x.Id,
