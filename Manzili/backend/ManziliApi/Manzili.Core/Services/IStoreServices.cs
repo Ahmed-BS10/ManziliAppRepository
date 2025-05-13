@@ -37,5 +37,7 @@ namespace Manzili.Core.Services
         Task<OperationResult<IEnumerable<GetStoreDashbord>>> GetBlockeStores(int pageNumber, int size);
         Task<OperationResult<bool>> MakeBloke(int Id);
         Task<OperationResult<bool>> UnBloke(int Id);
+
+        Task<OperationResult<GetHomeDashbordDto>> GetHomeDashbord();
     }
 }

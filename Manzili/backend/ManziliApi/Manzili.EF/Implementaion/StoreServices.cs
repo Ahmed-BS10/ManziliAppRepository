@@ -535,5 +535,24 @@ namespace Manzili.EF.Implementaion
             return OperationResult<IEnumerable<GetStoreDashbord>>.Success(storesQuery);
         }
 
+
+        public async Task<OperationResult<GetHomeDashbordDto>> GetHomeDashbord()
+        {
+            var totalUsers = await _db.Users.CountAsync();
+            var totalStores = await _db.Stores.CountAsync();
+            var totalOrders = await _db.Orders.CountAsync();
+            var totalSales = await _db.Orders.SumAsync(o => (double?)o.Total) ?? 0.0;
+
+            var result = new GetHomeDashbordDto
+            {
+                TotalUsers = totalUsers,
+                TotalStores = totalStores,
+                TotalOrders = totalOrders,
+                TotalSales = totalSales
+            };
+
+            return OperationResult<GetHomeDashbordDto>.Success(result);
+        }
+
     }
 }

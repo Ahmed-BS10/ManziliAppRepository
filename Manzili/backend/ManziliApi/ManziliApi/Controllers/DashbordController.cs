@@ -96,5 +96,15 @@ namespace ManziliApi.Controllers
                 return Ok(result);
             return BadRequest(result);
         }
+
+
+        [HttpGet("GetHomeDashbord")]
+        public async Task<IActionResult> GetHomeDashbord()
+        {
+            var result = await _storeServices.GetHomeDashbord();
+            if (result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
+        }
     }
 }
