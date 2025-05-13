@@ -87,19 +87,6 @@ namespace Manzili.EF.Implementation
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
         public async Task<OperationResult<bool>> UpdateOrderStatusAsync(int orderId, enOrderStatus status)
         {
             var order = await _context.Orders.FindAsync(orderId);
@@ -207,5 +194,35 @@ namespace Manzili.EF.Implementation
         {
             throw new NotImplementedException();
         }
+
+
+
+
+        public async Task<OperationResult<IEnumerable<GteOrdersDashbordDto>>> GetAllOrderDashbordAsync()
+        {
+            var orders = await _context.Orders
+                .Include(s => s.Store)
+                .Select(x => new GteOrdersDashbordDto
+                {
+                    Id = x.OrderId,
+                    StoreName = x.Store.BusinessName,
+                    UserName = x.User.UserName,
+                    CreatedAt = x.CreatedAt,
+                    Statu = x.Status.ToString(),
+                    TotlaPrice = x.Total
+
+
+                }).ToListAsync();
+
+
+            if (!orders.Any())
+                return OperationResult<IEnumerable<GteOrdersDashbordDto>>.Failure("there are no Order");
+
+
+            return OperationResult<IEnumerable<GteOrdersDashbordDto>>.Success(orders);
+
+
+        }
+
     }
 }

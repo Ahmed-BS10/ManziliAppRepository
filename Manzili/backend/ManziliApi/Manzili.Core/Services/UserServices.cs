@@ -102,7 +102,6 @@ public class UserServices
             usersWithoutStores.Adapt<IEnumerable<GetUserDto>>()
         );
     }
-
     public async Task<OperationResult<UpdateUserDto>> UpdateAsync(UpdateUserDto newUser, int id)
     {
         var oldUser = await _userManager.FindByIdAsync(id.ToString());
@@ -148,5 +147,35 @@ public class UserServices
         await _userManager.DeleteAsync(user);
         return OperationResult<User>.Success(user);
     }
+
+
+    public async Task<OperationResult<IEnumerable<GetUserDashbordDto>>> GetGetUserDashbord()
+    {
+        // Get all store user IDs
+        var storeUserIds = await _storeServices.GetListAsync();
+        var storeIds = storeUserIds.IsSuccess
+            ? storeUserIds.Data.Select(s => s.Id).ToHashSet()
+            : new HashSet<int>();
+
+        // Filter users who are not stores
+        var users = await _userManager.Users
+            .Where(u => !storeIds.Contains(u.Id))
+            .Select(x => new GetUserDashbordDto
+            {
+                Id = x.Id,
+                UserName = x.UserName,
+                PhoneNumber = x.PhoneNumber,
+                Address = x.Address,
+                CreateAy = DateTime.Now,
+                ImageUrl = x.ImageUrl
+            })
+            .ToListAsync();
+
+        if (!users.Any())
+            return OperationResult<IEnumerable<GetUserDashbordDto>>.Failure("users not found");
+
+        return OperationResult<IEnumerable<GetUserDashbordDto>>.Success(users);
+    }
+
 
 }

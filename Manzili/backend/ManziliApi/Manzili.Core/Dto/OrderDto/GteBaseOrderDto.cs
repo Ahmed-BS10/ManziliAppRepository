@@ -17,3 +17,16 @@ namespace Manzili.Core.Dto.OrderDto
         public int NumberOfProducts { get; set; }
     }
 }
+
+
+
+
+public class GteOrdersDashbordDto
+{
+    public int Id { get; set; }
+    public string StoreName { get; set; }
+    public string UserName { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public string Statu { get; set; }
+    public double TotlaPrice { get; set; }
+}
