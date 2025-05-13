@@ -91,12 +91,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/pds',
+      initialRoute: '/sp',
       getPages: [
         GetPage(
           name: '/sp',
           page: () => const SplashsView(),
-        // middlewares: [AuthMiddleware()],
+         middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/login',

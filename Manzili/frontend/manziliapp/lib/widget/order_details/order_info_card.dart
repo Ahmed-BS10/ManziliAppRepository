@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:manziliapp/view/order_detalis_view.dart';
 import 'package:manziliapp/widget/order_details/info_row.dart';
 import 'package:manziliapp/widget/order_details/order_info.dart';
 import 'package:manziliapp/widget/order_details/section_title.dart';
@@ -44,3 +43,5 @@ class OrderInfoCard extends StatelessWidget {
     );
   }
 }
+
+
