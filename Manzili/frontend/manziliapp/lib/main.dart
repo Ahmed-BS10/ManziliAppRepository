@@ -51,6 +51,7 @@ Future<void> main() async {
 
   // 7. شغّل التطبيق
   runApp(
+    
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
@@ -89,12 +90,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       initialRoute: '/sp',
       getPages: [
         GetPage(
           name: '/sp',
-          page: () => const StoreDashboard(),
+          page: () => const SplashsView(),
          // middlewares: [AuthMiddleware()],
         ),
         GetPage(

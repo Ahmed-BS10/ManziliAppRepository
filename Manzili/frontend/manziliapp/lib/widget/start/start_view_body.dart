@@ -24,7 +24,7 @@ class StartViewBody extends StatelessWidget {
             textAlign: TextAlign.right,
             textDirection: TextDirection.rtl,
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 80),
           Text(
             'هل أنت  ؟',
             style: TextStyle(
@@ -43,9 +43,9 @@ class StartViewBody extends StatelessWidget {
             },
             name: 'عميل ',
             fontColor: const Color(0xFFFFFFFF),
-            backColor: const Color(0xFF8E6CEF),
+            backColor: const Color(0xFF1548C7),
           ),
-          SizedBox(height: 15),
+          SizedBox(height: 30),
           CustomTextButton(
             onPressed: () {
               userType = 'producer';
@@ -53,7 +53,7 @@ class StartViewBody extends StatelessWidget {
             },
             name: 'أسرة منتجة',
             fontColor: const Color(0xFFFFFFFF),
-            backColor: const Color(0xFF8E6CEF),
+            backColor: const Color(0xFF1548C7),
           )
         ],
       ),
