@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manzili.EF.Migrations
 {
     [DbContext(typeof(ManziliDbContext))]
-    [Migration("20250509133421_initial")]
+    [Migration("20250513082106_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -210,6 +210,9 @@ namespace Manzili.EF.Migrations
 
                     b.Property<string>("DeliveryTime")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");

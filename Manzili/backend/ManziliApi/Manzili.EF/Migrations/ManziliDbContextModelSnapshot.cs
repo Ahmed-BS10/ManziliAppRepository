@@ -208,6 +208,9 @@ namespace Manzili.EF.Migrations
                     b.Property<string>("DeliveryTime")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 

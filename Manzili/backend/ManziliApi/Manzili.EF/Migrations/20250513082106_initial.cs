@@ -221,10 +221,10 @@ namespace Manzili.EF.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BankAccount = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BookTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeliveryFees = table.Column<int>(type: "int", nullable: false),
                     SocileMediaAcount = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Rate = table.Column<double>(type: "float", nullable: true),
-                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Rate = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -304,7 +304,8 @@ namespace Manzili.EF.Migrations
                     DeliveryTime = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeliveryFees = table.Column<int>(type: "int", nullable: true),
                     NumberOfProducts = table.Column<int>(type: "int", nullable: false),
-                    PdfFile = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    PdfFile = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    IsBlocked = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

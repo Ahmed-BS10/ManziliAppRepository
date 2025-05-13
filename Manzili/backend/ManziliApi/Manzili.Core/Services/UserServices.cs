@@ -147,8 +147,6 @@ public class UserServices
         await _userManager.DeleteAsync(user);
         return OperationResult<User>.Success(user);
     }
-
-
     public async Task<OperationResult<IEnumerable<GetUserDashbordDto>>> GetGetUserDashbord()
     {
         // Get all store user IDs
