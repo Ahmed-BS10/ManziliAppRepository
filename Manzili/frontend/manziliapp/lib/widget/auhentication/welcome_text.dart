@@ -6,7 +6,7 @@ class WelcomeText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Text(
-      'مرحبا',
+      'أهلاً بك',
       style: TextStyle(fontSize: 48, fontWeight: FontWeight.w500),
       textAlign: TextAlign.center,
     );

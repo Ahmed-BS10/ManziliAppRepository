@@ -16,11 +16,11 @@ class RegisterText extends StatelessWidget {
             Navigator.pushNamed(context, 'register');
           },
           child: Text(
-            'إنشاء حساب',
+            ' إنشاء حساب',
             style: TextStyle(
               color: pColor,
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -29,7 +29,7 @@ class RegisterText extends StatelessWidget {
           style: TextStyle(
             color: Colors.black,
             fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],

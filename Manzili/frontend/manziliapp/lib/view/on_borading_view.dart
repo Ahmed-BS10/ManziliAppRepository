@@ -164,33 +164,50 @@ class IntroPageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: 100),
-        Stack(
-          children: [
-            _buildAvatarStack(),
-            _buildImage(),
-          ],
-        ),
-        Text(
-          title,
-          style: TextStyle(
-              fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Text(
-            description,
-            style: TextStyle(fontSize: 18, color: Colors.white),
-            textAlign: TextAlign.center,
+    return SingleChildScrollView( // Add this wrapper
+      child: Column(
+        children: [
+          const SizedBox(height: 100),
+          Stack(
+            children: [
+              _buildAvatarStack(),
+              _buildImage(),
+            ],
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                      fontSize: 30, 
+                      fontWeight: FontWeight.bold, 
+                      color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                ConstrainedBox( // Add constraints
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.2,
+                  ),
+                  child: SingleChildScrollView( // Make description scrollable
+                    child: Text(
+                      description,
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
+  // Keep your original _buildAvatarStack and _buildImage methods unchanged
   Widget _buildAvatarStack() {
     return Center(
       child: CircleAvatar(
@@ -215,6 +232,7 @@ class IntroPageItem extends StatelessWidget {
         child: Image.asset(
           imagePath,
           width: 300,
+          fit: BoxFit.contain, // Add this to prevent image overflow
         ),
       ),
     );
