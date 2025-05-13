@@ -472,12 +472,9 @@ namespace Manzili.EF.Implementaion
 
          
 
-            var storesQuery = _db.Stores
-                .Include(s => s.StoreOrders) // Include related orders to calculate TotalSale
-                .AsNoTracking();
-
-            // Apply pagination
-            var paginatedStores = await storesQuery
+            var storesQuery = await _db.Stores
+               // .Include(s => s.StoreOrders) // Include related orders to calculate TotalSale
+                .AsNoTracking()
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(s => new GetStoreDashbord
@@ -487,19 +484,16 @@ namespace Manzili.EF.Implementaion
                     CreateAt = s.CreateAt,
                     Statu = s.Status,
                     Location = s.Address, // Assuming `Address` represents the location
-                    TotalSale = s.StoreOrders != null
-                        ? s.StoreOrders.Sum(o => o.Total)
-                        : 0 // Calculate total sales from orders
+                     // Calculate total sales from orders
                 })
                 .ToListAsync();
 
-            // Check if no stores were found
-            if (!paginatedStores.Any())
+            if (storesQuery is null )
             {
                 return OperationResult<IEnumerable<GetStoreDashbord>>.Failure("No stores found.");
             }
 
-            return OperationResult<IEnumerable<GetStoreDashbord>>.Success(paginatedStores);
+            return OperationResult<IEnumerable<GetStoreDashbord>>.Success(storesQuery);
         }
 
     }
