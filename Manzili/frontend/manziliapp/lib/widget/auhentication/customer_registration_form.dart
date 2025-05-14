@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:manziliapp/controller/auth_controller.dart';
+import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
 import 'package:manziliapp/core/widget/custome_text_filed.dart';
 import 'package:manziliapp/model/user_create_model.dart';
+import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/widget/auhentication/custom_password_text.dart';
 import 'package:manziliapp/widget/auhentication/email_text_filed.dart';
 import 'package:manziliapp/widget/auhentication/terms_and_privacy_checbok.dart';
@@ -31,6 +33,7 @@ class CustomerRegistrationForm extends StatefulWidget {
 class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
   final AuthController authController = Get.find<AuthController>();
   late UserCreateModel userCreateModel;
+  final UserController userController = Get.find<UserController>();
 
   @override
   void initState() {
@@ -110,18 +113,7 @@ class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
               ? const CircularProgressIndicator()
               : CustomTextButton(
                   onPressed: () {
-                    if (widget.formKey.currentState!.validate()) {
-                      if (widget.isAgreed) {
-                        authController.registerUser(userCreateModel);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text('يجب الموافقة على الشروط وسياسة الخصوصية'),
-                          ),
-                        );
-                      }
-                    }
+                    _validateForm2();
                   },
                   name: 'تسجيل الدخول',
                   fontColor: Colors.white,
@@ -140,5 +132,68 @@ class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
         ],
       );
     });
+  }
+
+  Future<void> _validateForm() async {
+    if (!widget.formKey.currentState!.validate()) {
+      return; // Stop if form validation fails
+    }
+
+    if (!widget.isAgreed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('يجب الموافقة على الشروط وسياسة الخصوصية'),
+        ),
+      );
+      return; // Stop if the user has not agreed to the terms
+    }
+
+    try {
+      await authController.registerUser(userCreateModel);
+
+      if (authController.apiResponseData.isNotEmpty) {
+        try {
+          final id = authController.apiResponseData['id'] as int;
+          final token = authController.apiResponseData['token'] as String;
+
+          await userController.saveUserData(id, token);
+
+          // Navigate to HomeView
+          Get.offAll(() => const HomeView());
+        } catch (e) {
+          print("Error saving user data: $e");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error saving user data: $e")),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('حدث خطأ أثناء التسجيل. حاول مرة أخرى.'),
+          ),
+        );
+      }
+    } catch (e) {
+      print("Error during registration: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('حدث خطأ غير متوقع. حاول مرة أخرى لاحقًا.'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _validateForm2() async {
+    if (widget.formKey.currentState!.validate()) {
+      await authController.registerUser(userCreateModel);
+      try {
+        final id = authController.apiResponseData['id'] as int;
+        final token = authController.apiResponseData['token'] as String;
+        await userController.saveUserData(id, token);
+        Get.offAll(() => HomeView());
+      } catch (e) {
+        print("Error saving user data: $e");
+      }
+    }
   }
 }
