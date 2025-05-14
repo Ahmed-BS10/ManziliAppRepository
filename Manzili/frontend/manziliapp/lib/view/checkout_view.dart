@@ -107,6 +107,9 @@ class _CheckoutViewState extends State<CheckoutView> {
           // Clear all product states
           await _clearAllProductStates();
 
+          // Call API to delete the cart
+          await _deleteCart();
+
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => OrderPlacedView()),
@@ -135,6 +138,27 @@ class _CheckoutViewState extends State<CheckoutView> {
       );
     } finally {
       setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _deleteCart() async {
+    final uri = Uri.parse(
+        'http://man.runasp.net/api/Cart/DeleteCartByUserIdAndStoreId?storeId=${widget.storeId}&userId=${widget.userid}');
+    try {
+      final response = await http.delete(uri);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['isSuccess'] == true) {
+          debugPrint('Cart deleted successfully.');
+        } else {
+          debugPrint('Failed to delete cart: ${data['message']}');
+        }
+      } else {
+        debugPrint('Failed to delete cart. HTTP ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error deleting cart: $e');
     }
   }
 
