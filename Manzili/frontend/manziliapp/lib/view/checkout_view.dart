@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:manziliapp/view/order_placed_view.dart';
 import 'package:manziliapp/view/order_view.dart';
 import 'package:manziliapp/widget/card/payment_receipt_widget.dart';
 import 'package:manziliapp/widget/card/shipment_address_widget.dart';
@@ -101,10 +102,11 @@ class _CheckoutViewState extends State<CheckoutView> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('تم إرسال الطلب بنجاح')),
           );
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (_) => const OrderView()),
-          // );
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => OrderPlacedView()),
+            (route) => false,
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
