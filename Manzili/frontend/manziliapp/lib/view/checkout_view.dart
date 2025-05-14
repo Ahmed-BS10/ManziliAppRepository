@@ -7,6 +7,7 @@ import 'package:manziliapp/view/order_placed_view.dart';
 import 'package:manziliapp/view/order_view.dart';
 import 'package:manziliapp/widget/card/payment_receipt_widget.dart';
 import 'package:manziliapp/widget/card/shipment_address_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckoutView extends StatefulWidget {
   const CheckoutView({
@@ -102,6 +103,10 @@ class _CheckoutViewState extends State<CheckoutView> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('تم إرسال الطلب بنجاح')),
           );
+
+          // Clear all product states
+          await _clearAllProductStates();
+
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => OrderPlacedView()),
@@ -131,6 +136,17 @@ class _CheckoutViewState extends State<CheckoutView> {
     } finally {
       setState(() => isLoading = false);
     }
+  }
+
+  Future<void> _clearAllProductStates() async {
+    for (var item in widget.cartItems) {
+      final productId = item['id'] ?? item['productId'];
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('isInCart_$productId');
+      await prefs.remove('quantity_$productId');
+      await prefs.remove('price_$productId');
+    }
+    debugPrint('All product states cleared.');
   }
 
   @override

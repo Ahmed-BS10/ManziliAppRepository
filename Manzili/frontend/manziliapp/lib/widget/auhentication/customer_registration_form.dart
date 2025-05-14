@@ -186,7 +186,6 @@ class _CustomerRegistrationFormState extends State<CustomerRegistrationForm> {
   Future<void> _validateForm2() async {
     if (widget.formKey.currentState!.validate()) {
       await authController.registerUser(userCreateModel);
-
       try {
         final id = authController.apiResponseData['id'] as int;
         final token = authController.apiResponseData['token'] as String;
