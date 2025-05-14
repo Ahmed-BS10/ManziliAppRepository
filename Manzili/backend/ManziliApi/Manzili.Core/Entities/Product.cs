@@ -16,14 +16,14 @@ public class Product
     public double? Rate { get; set; }
   
 
-    public int ProductCategoryId { get; set; }
-    public int StoreId { get; set; }
+    public int? ProductCategoryId { get; set; }
+    public int? StoreId { get; set; }
     public int? CartId { get; set; }
 
 
 
-    public ProductCategory ProductCategory { get; set; }
-    public Store Store { get; set; }
+    public ProductCategory? ProductCategory { get; set; }
+    public Store? Store { get; set; }
     public ICollection<Image>? Images { get; set; }
     public ICollection<CartProduct>? CartProducts { get; set; }
     public ICollection<OrderProduct>? OrderProducts { get; set; }

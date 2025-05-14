@@ -6,11 +6,13 @@ namespace Manzili.Core.Entities
     {
         public int CommentId { get; set; } // PK
         public string Content { get; set; }
-        public int ProductId { get; set; } // FK
+        public int? ProductId { get; set; } // FK
         public int UserId { get; set; } // FK
         public DateTime CreatedAt { get; set; }
         public string ReplyComment { get; set; } = string.Empty;
 
+
+        
         // Navigation properties
         //  public Product Product { get; set; }
         //  public User User { get; set; }

@@ -49,6 +49,9 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
 
         // StoreCategoriesStores With Store , StoreCategory
 
+
+
+
         modelBuilder.Entity<Store>()
             .HasMany(s => s.storeCategoryStores)
             .WithOne(sc => sc.Store)
@@ -131,11 +134,7 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
             .HasForeignKey<Cart>(c => c.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<Product>()
-            .HasMany(p => p.CartProducts)
-            .WithOne(c => c.Product)
-            .HasForeignKey(p => p.ProductId)
-            .OnDelete(DeleteBehavior.NoAction);
+      
 
 
         modelBuilder.Entity<Cart>()
@@ -172,7 +171,7 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
         .HasOne(op => op.Product)
         .WithMany(p => p.OrderProducts)
         .HasForeignKey(op => op.ProductId)
-        .OnDelete(DeleteBehavior.NoAction);
+        .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Store>()
             .HasMany(o => o.StoreOrders)
@@ -189,6 +188,16 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
            .OnDelete(DeleteBehavior.NoAction);
 
 
+
+
+        modelBuilder.Entity<Product>()
+            .HasMany(s => s.CartProducts)
+            .WithOne(sc => sc.Product)
+            .HasForeignKey(sc => sc.ProductId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+
+       
 
         #region commit
 

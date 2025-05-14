@@ -4,7 +4,7 @@
     {
         public int OrderProductId { get; set; }
         public int OrderId { get; set; } // PK, FK
-        public int ProductId { get; set; } // FK
+        public int? ProductId { get; set; } // FK
 
 
         public double Price { get; set; }
