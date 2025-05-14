@@ -132,13 +132,11 @@ namespace Manzili.Services
 
             return OperationResult<bool>.Success(true, "Note added successfully.");
         }
-       
-
+      
         public Task<OperationResult<bool>> IsCartEmptyAsync(int userId)
         {
             throw new NotImplementedException();
         }
-
         public async Task<OperationResult<bool>> UpdateProductQuantityAsync(int cartId, int productId, int newQuantity)
         {
             // Validate the new quantity
@@ -199,5 +197,63 @@ namespace Manzili.Services
             return OperationResult<bool>.Success(true, "Product removed from cart successfully.");
         }
 
+        public async Task<OperationResult<GetCartDto>> AllCartItemByUserIdAndStoreId(int userId, int storeId)
+        {
+            var cart = await _context.Carts
+                .Include(c => c.CartProducts)
+                    .ThenInclude(cp => cp.Product)
+                        .ThenInclude(p => p.Images)
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.StoreId == storeId);
+
+            if (cart == null)
+            {
+                return OperationResult<GetCartDto>.Failure("Cart not found for the specified user and store.");
+            }
+
+            var cartDto = new GetCartDto
+            {
+                CartId = cart.CartId,
+                UserId = cart.UserId,
+                StoreId = cart.StoreId,
+                Note = cart.Note,
+                getProductCardDtos = cart.CartProducts?.Select(product => new GetProductCartDto
+                {
+                    ProductId = product.Product.Id,
+                    Name = product.Product.Name,
+                    Price = product.Product.Price,
+                    ImageUrl = product.Product.Images.FirstOrDefault()?.ImageUrl ?? string.Empty,
+                    Quantity = product.Quantity
+                }).ToList()
+            };
+
+            return OperationResult<GetCartDto>.Success(cartDto, "Cart retrieved successfully.");
+        }
+        public async Task<OperationResult<bool>> DeleteCartByUserIdAndStoreId(int userId, int storeId)
+        {
+            var cart = await _context.Carts
+                .Include(c => c.CartProducts)
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.StoreId == storeId);
+
+            if (cart == null)
+            {
+                return OperationResult<bool>.Failure("Cart not found for the specified user and store.");
+            }
+
+            // Remove associated cart products
+            if (cart.CartProducts != null && cart.CartProducts.Any())
+            {
+                _context.CartProducts.RemoveRange(cart.CartProducts);
+            }
+
+            // Remove the cart itself
+            _context.Carts.Remove(cart);
+
+            await _context.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true, "Cart deleted successfully.");
+        }
+
     }
+
+
 }
