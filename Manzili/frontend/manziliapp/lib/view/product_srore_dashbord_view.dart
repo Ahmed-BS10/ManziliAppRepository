@@ -6,7 +6,8 @@ import 'package:manziliapp/view/add_product_screen.dart';
 
 class ProductSroreDashbordView extends StatefulWidget {
   @override
-  _ProductSroreDashbordViewState createState() => _ProductSroreDashbordViewState();
+  _ProductSroreDashbordViewState createState() =>
+      _ProductSroreDashbordViewState();
 }
 
 class _ProductSroreDashbordViewState extends State<ProductSroreDashbordView>
@@ -20,7 +21,7 @@ class _ProductSroreDashbordViewState extends State<ProductSroreDashbordView>
   }
 
   Future<void> fetchProducts() async {
-    final url = 'http://man.runasp.net/api/Product/All?storeId=2';
+    final url = 'http://man.runasp.net/api/Product/All?storeId=6';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -33,6 +34,25 @@ class _ProductSroreDashbordViewState extends State<ProductSroreDashbordView>
       }
     } catch (e) {
       print('Error fetching products: $e');
+    }
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    final url =
+        'http://man.runasp.net/api/Product/DeleteProduct?productId=$productId';
+    try {
+      final response = await http.delete(Uri.parse(url));
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Product deleted successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete product')),
+        );
+      }
+    } catch (e) {
+      print('Error deleting product: $e');
     }
   }
 
@@ -55,16 +75,19 @@ class _ProductSroreDashbordViewState extends State<ProductSroreDashbordView>
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('مجموع المنتجات: ${products.length}', style: TextStyle(fontSize: 14)),
+                    Text('مجموع المنتجات: ${products.length}',
+                        style: TextStyle(fontSize: 14)),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AddProductScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => AddProductScreen()),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -89,6 +112,11 @@ class _ProductSroreDashbordViewState extends State<ProductSroreDashbordView>
                     description: product['description'],
                     rate: product['rate'],
                     imageUrl: 'http://man.runasp.net${product['imageUrl']}',
+                    productId: product['id'].toString(),
+                    onDelete: () async {
+                      await deleteProduct(product['id'].toString());
+                      await fetchProducts(); // Refresh the product list after deletion
+                    },
                   );
                 },
               ),
@@ -106,6 +134,8 @@ class ProductItem extends StatefulWidget {
   final String description;
   final int rate;
   final String imageUrl;
+  final String productId;
+  final VoidCallback onDelete;
 
   ProductItem({
     required this.name,
@@ -113,6 +143,8 @@ class ProductItem extends StatefulWidget {
     required this.description,
     required this.rate,
     required this.imageUrl,
+    required this.productId,
+    required this.onDelete,
   });
 
   @override
@@ -143,11 +175,31 @@ class _ProductItemState extends State<ProductItem> {
             Text(widget.name, style: TextStyle(fontWeight: FontWeight.bold)),
             PopupMenuButton<String>(
               icon: Icon(Icons.more_vert),
-              onSelected: (value) {
+              onSelected: (value) async {
                 if (value == 'edit') {
                   // Edit action
                 } else if (value == 'delete') {
-                  // Delete action
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: Text('تأكيد الحذف'),
+                      content: Text('هل أنت متأكد أنك تريد حذف المنتج؟'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(ctx).pop(false),
+                          child: Text('إلغاء'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(ctx).pop(true),
+                          child: Text('حذف'),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirmed == true) {
+                    widget.onDelete();
+                  }
                 }
               },
               itemBuilder: (context) => [
