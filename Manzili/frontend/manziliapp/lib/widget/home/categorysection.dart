@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:manziliapp/core/helper/app_colors.dart';
-import 'package:manziliapp/core/helper/shadows.dart';
 import 'package:manziliapp/core/helper/text_styles.dart';
 import 'package:manziliapp/widget/home/storelistsection.dart';
 
@@ -39,9 +37,7 @@ class CategorySectionState extends State<CategorySection> {
       final Map<String, dynamic> decoded = json.decode(response.body);
       if (decoded["isSuccess"] == true && decoded["data"] != null) {
         final List<dynamic> values = decoded["data"];
-        List<Category> categories =
-            values.map((json) => Category.fromJson(json)).toList();
-        return categories;
+        return values.map((json) => Category.fromJson(json)).toList();
       } else {
         throw Exception("API returned an error: ${decoded["message"]}");
       }
@@ -54,7 +50,6 @@ class CategorySectionState extends State<CategorySection> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    // Ensuring cards start from right in RTL environment
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Column(
@@ -64,9 +59,9 @@ class CategorySectionState extends State<CategorySection> {
             future: _categoriesFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return SizedBox(
+                return const SizedBox(
                   height: 110,
-                  child: const Center(child: CircularProgressIndicator()),
+                  child: Center(child: CircularProgressIndicator()),
                 );
               } else if (snapshot.hasError) {
                 return SizedBox(
@@ -76,9 +71,9 @@ class CategorySectionState extends State<CategorySection> {
                           style: const TextStyle(color: Colors.black))),
                 );
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return SizedBox(
+                return const SizedBox(
                   height: 110,
-                  child: const Center(
+                  child: Center(
                       child: Text("لا توجد بيانات",
                           style: TextStyle(color: Colors.black))),
                 );
@@ -90,15 +85,10 @@ class CategorySectionState extends State<CategorySection> {
                 scrollDirection: Axis.horizontal,
                 padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                 child: Row(
-                  children: List.generate(categories.length, (index) {
-                    final category = categories[index];
-                    bool isActive = widget.activeCategory != null &&
-                        widget.activeCategory == category.id;
+                  children: categories.map((category) {
+                    final bool isActive = widget.activeCategory == category.id;
                     return GestureDetector(
-                      onTap: () {
-                        // When a category is tapped, send its id to the parent.
-                        widget.onCategorySelected(category.id);
-                      },
+                      onTap: () => widget.onCategorySelected(category.id),
                       child: CategoryCard(
                         id: category.id,
                         title: category.name,
@@ -107,7 +97,7 @@ class CategorySectionState extends State<CategorySection> {
                         isActive: isActive,
                       ),
                     );
-                  }),
+                  }).toList(),
                 ),
               );
             },
@@ -132,12 +122,10 @@ class Category {
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
-    String rawImageUrl = json["imageUrl"] as String;
-
     return Category(
       id: json["id"] as int,
       name: json["name"] as String,
-      imageUrl: rawImageUrl,
+      imageUrl: json["imageUrl"] as String,
       conunt: json["conunt"] is int
           ? json["conunt"] as int
           : int.parse(json["conunt"].toString()),
@@ -165,7 +153,7 @@ class SectionHeader extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              Get.to(StoreListSection());
+              Get.to(() => const StoreListSection());
             },
             child: Text(action,
                 style: TextStyles.linkStyle.copyWith(color: Colors.black)),
@@ -198,37 +186,48 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
-      width: screenWidth * 0.2,
-      height: 98,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      width: screenWidth * 0.25,
+      height: 110,
       margin: const EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
         color: isActive ? AppColors.primaryColor : AppColors.white,
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppColors.borderColor),
-        boxShadow: [Shadows.categoryShadow],
+        boxShadow: [
+          if (isActive)
+            BoxShadow(
+              color: AppColors.primaryColor.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(
-            radius: 21.5,
-            backgroundImage: imageUrl.isNotEmpty
+          Image(
+            width: 50,
+            height: 50,
+            image: imageUrl.isNotEmpty
                 ? NetworkImage('http://man.runasp.net/$imageUrl')
-                : AssetImage('lib/assets/image/burger.jpg'),
+                : const AssetImage('lib/assets/image/burger.jpg')
+                    as ImageProvider,
+            semanticLabel: 'Category image for $title',
           ),
           const SizedBox(height: 8),
           Text(
             title,
-            style: isActive
-                ? TextStyles.linkStyle.copyWith(color: Colors.black)
-                : TextStyles.sectionHeader.copyWith(color: Colors.black),
+            style: TextStyles.sectionHeader.copyWith(
+              color: isActive ? Colors.white : Colors.black,
+            ),
           ),
           Text(
             count,
-            style: isActive
-                ? TextStyles.sectionHeader.copyWith(color: Colors.black)
-                : TextStyles.timeStyle.copyWith(color: Colors.black),
+            style: TextStyles.timeStyle.copyWith(
+              color: isActive ? Colors.white70 : Colors.black54,
+            ),
           ),
         ],
       ),
