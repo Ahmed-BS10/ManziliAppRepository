@@ -14,32 +14,29 @@ class FilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Only three filters remain, as "الأقرب" has been removed.
     final List<String> filters = ["المفضلة", "الجديدة", "الكل"];
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return Padding(
-      padding: EdgeInsets.only(
-        right: MediaQuery.of(context).size.width * 0.05,
-        left: MediaQuery.of(context).size.width * 0.05,
-        top: 30,
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.05,
+        vertical: 20,
       ),
       child: Row(
-        children: List.generate(filters.length, (index) {
-          String filter = filters[index];
-          bool isActive = activeFilter != null && activeFilter == filter;
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: filters.map((filter) {
+          final bool isActive = activeFilter != null && activeFilter == filter;
           return Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: FilterButton(
                 title: filter,
                 isActive: isActive,
-                onTap: () {
-                  onFilterSelected(filter);
-                },
+                onTap: () => onFilterSelected(filter),
               ),
             ),
           );
-        }),
+        }).toList(),
       ),
     );
   }
@@ -60,23 +57,43 @@ class FilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      borderRadius: BorderRadius.circular(4),
+      borderRadius: BorderRadius.circular(8),
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(8),
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isActive ? AppColors.primaryColor : AppColors.filterInactive,
-            borderRadius: BorderRadius.circular(4),
+            color: isActive
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [],
           ),
           child: Center(
             child: Text(
               title,
               textAlign: TextAlign.center,
-              style: isActive ? TextStyles.sectionHeader : TextStyles.timeStyle,
+              style: isActive
+                  ? TextStyles.sectionHeader.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    )
+                  : TextStyles.timeStyle.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
             ),
           ),
         ),
