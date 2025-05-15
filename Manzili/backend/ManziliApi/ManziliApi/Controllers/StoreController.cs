@@ -15,6 +15,8 @@ namespace ManziliApi.Controllers
             _storeServices = storeServices;
         }
 
+     
+
 
         [HttpGet("GetLastTwoCompletedOrders")]
         public async Task<IActionResult> GetLastTwoCompletedOrdersAsync(int storeId)
@@ -22,6 +24,44 @@ namespace ManziliApi.Controllers
             var result = await _storeServices.GetLastTwoCompletedOrdersAsync(storeId);
             if (result.IsSuccess)
                 return Ok(result.Data);
+
+            return BadRequest(result.Message);
+        } 
+
+
+
+        [HttpGet("GetStoreOrdersInWorkStatus")]
+        public async Task<IActionResult> GetStoreOrdersInWorkStatus(int storeId)
+        {
+            var result = await _storeServices.GetStoreOrdersInWorkStatus(storeId);
+            if (result.IsSuccess)
+                return Ok(result.Data);
+
+            return BadRequest(result.Message);
+        } 
+
+
+
+        [HttpGet("GetStoreOrdersInNewStatus")]
+        public async Task<IActionResult> GetStoreOrdersInNewStatus(int storeId)
+        {
+            var result = await _storeServices.GetStoreOrdersInNewStatus(storeId);
+            if (result.IsSuccess)
+                return Ok(result.Data);
+
+            return BadRequest(result.Message);
+        }
+
+
+
+
+
+        [HttpGet("GetStoreOrdersInPastStatus")]
+        public async Task<IActionResult> GetStoreOrdersInPastStatus(int storeId)
+        {
+            var result = await _storeServices.GetStoreOrdersInPastStatus(storeId);
+            if (result.IsSuccess)
+                return Ok(result);
 
             return BadRequest(result.Message);
         }

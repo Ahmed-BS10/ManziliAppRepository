@@ -39,5 +39,8 @@ namespace Manzili.Core.Services
         Task<OperationResult<bool>> UnBloke(int Id);
 
         Task<OperationResult<GetHomeDashbordDto>> GetHomeDashbord();
+        Task<OperationResult<GetStoreOrders>> GetStoreOrdersInPastStatus(int storeId);
+        Task<OperationResult<GetStoreOrders>> GetStoreOrdersInWorkStatus(int storeId);
+        Task<OperationResult<GetStoreOrders>> GetStoreOrdersInNewStatus(int storeId);
     }
 }

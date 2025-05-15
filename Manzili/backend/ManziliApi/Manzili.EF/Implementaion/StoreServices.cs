@@ -534,8 +534,6 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<IEnumerable<GetStoreDashbord>>.Success(storesQuery);
         }
-
-
         public async Task<OperationResult<GetHomeDashbordDto>> GetHomeDashbord()
         {
             var totalUsers = await _db.Users.CountAsync();
@@ -553,6 +551,111 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<GetHomeDashbordDto>.Success(result);
         }
+
+        public async Task<OperationResult<GetStoreOrders>> GetStoreOrdersInPastStatus(int storeId)
+        {
+            var orders = await _db.Orders
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .Include(o => o.User) // Ensure User is included for Customer details
+                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.تم_التسليم)
+                .Select(o => new GetStoreOrders
+                {
+                    Id = o.OrderId,
+                    CustomerName = o.User != null ? o.User.UserName : "Unknown", // Replace null-propagating operator
+                    CustomerPhoneNumber = o.User != null ? o.User.PhoneNumber : "Unknown", // Replace null-propagating operator
+                    CustomerAddress = o.User != null ? o.User.Address : "Unknown", // Replace null-propagating operator
+                    CreatedAt = o.CreatedAt,
+                    TotalPrice = Math.Round(o.Total, 2), // Ensure proper rounding for TotalPrice
+                    TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
+                    Status = o.Status.ToString(),
+                    Note = o.Note,
+                    OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
+                    {
+                        Id = op.ProductId ?? 0, // Handle null ProductId
+                        Name = op.Product != null ? op.Product.Name : "Unknown", // Replace null-propagating operator
+                        Price = (int)Math.Round(op.Product != null ? op.Price : 0), // Replace null-propagating operator
+                        Total = Math.Round(op.TotlaPrice, 2), // Ensure proper rounding for Total
+                        Count = op.Quantity
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            if (!orders.Any())
+                return OperationResult<GetStoreOrders>.Failure("No orders found.");
+
+            return OperationResult<GetStoreOrders>.Success(orders.FirstOrDefault());
+        }
+        public async Task<OperationResult<GetStoreOrders>> GetStoreOrdersInWorkStatus(int storeId)
+        {
+            var orders = await _db.Orders
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .Include(o => o.User) // Ensure User is included for Customer details
+                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.في_الطريق || o.Status == enOrderStatus.الشحن)
+                .Select(o => new GetStoreOrders
+                {
+                    Id = o.OrderId,
+                    CustomerName = o.User != null ? o.User.UserName : "Unknown", // Replace null-propagating operator
+                    CustomerPhoneNumber = o.User != null ? o.User.PhoneNumber : "Unknown", // Replace null-propagating operator
+                    CustomerAddress = o.User != null ? o.User.Address : "Unknown", // Replace null-propagating operator
+                    CreatedAt = o.CreatedAt,
+                    TotalPrice = Math.Round(o.Total, 2), // Ensure proper rounding for TotalPrice
+                    TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
+                    Status = o.Status.ToString(),
+                    Note = o.Note,
+                    OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
+                    {
+                        Id = op.ProductId ?? 0, // Handle null ProductId
+                        Name = op.Product != null ? op.Product.Name : "Unknown", // Replace null-propagating operator
+                        Price = (int)Math.Round(op.Product != null ? op.Price : 0), // Replace null-propagating operator
+                        Total = Math.Round(op.TotlaPrice, 2), // Ensure proper rounding for Total
+                        Count = op.Quantity
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            if (!orders.Any())
+                return OperationResult<GetStoreOrders>.Failure("No orders found.");
+
+            return OperationResult<GetStoreOrders>.Success(orders.FirstOrDefault());
+        }
+        public async Task<OperationResult<GetStoreOrders>> GetStoreOrdersInNewStatus(int storeId)
+        {
+            var orders = await _db.Orders
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .Include(o => o.User) // Ensure User is included for Customer details
+                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.التجهيز)
+                .Select(o => new GetStoreOrders
+                {
+                    Id = o.OrderId,
+                    CustomerName = o.User != null ? o.User.UserName : "Unknown", // Replace null-propagating operator
+                    CustomerPhoneNumber = o.User != null ? o.User.PhoneNumber : "Unknown", // Replace null-propagating operator
+                    CustomerAddress = o.User != null ? o.User.Address : "Unknown", // Replace null-propagating operator
+                    CreatedAt = o.CreatedAt,
+                    TotalPrice = Math.Round(o.Total, 2), // Ensure proper rounding for TotalPrice
+                    TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
+                    Status = o.Status.ToString(),
+                    Note = o.Note,
+                    OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
+                    {
+                        Id = op.ProductId ?? 0, // Handle null ProductId
+                        Name = op.Product != null ? op.Product.Name : "Unknown", // Replace null-propagating operator
+                        Price = (int)Math.Round(op.Product != null ? op.Price : 0), // Replace null-propagating operator
+                        Total = Math.Round(op.TotlaPrice, 2), // Ensure proper rounding for Total
+                        Count = op.Quantity
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            if (!orders.Any())
+                return OperationResult<GetStoreOrders>.Failure("No orders found.");
+
+            return OperationResult<GetStoreOrders>.Success(orders.FirstOrDefault());
+        }
+
+
 
     }
 }
