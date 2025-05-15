@@ -67,16 +67,13 @@ class FilterButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isActive
-                ? Theme.of(context).colorScheme.primary
+                ? AppColors.primaryColor
                 : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(8),
             boxShadow: isActive
                 ? [
                     BoxShadow(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withOpacity(0.3),
+                      color: AppColors.primaryColor.withOpacity(0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),

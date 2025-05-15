@@ -28,7 +28,7 @@ class TextFileldSearch extends StatelessWidget {
           padding: EdgeInsets.only(left: screenWidth * 0.03),
           child: Icon(
             Icons.search,
-            color: Theme.of(context).colorScheme.primary,
+            color: AppColors.primaryColor,
             size: screenWidth * 0.06, // Responsive icon size
           ),
         ),
@@ -71,7 +71,7 @@ class TextFileldSearch extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.primary,
+            color: AppColors.primaryColor,
             width: 1.5,
           ),
         ),
@@ -85,7 +85,7 @@ class TextFileldSearch extends StatelessWidget {
       cursorWidth: 1.5,
       cursorRadius: const Radius.circular(2),
       style: TextStyle(
-        color: Theme.of(context).colorScheme.primary,
+        color: AppColors.primaryColor,
         fontSize: screenWidth * 0.045, // Responsive font size
         fontWeight: FontWeight.w500,
       ),

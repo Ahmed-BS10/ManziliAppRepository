@@ -26,7 +26,6 @@ class _StoreDashboardState extends State<StoreDashboard> {
       imageUrl: 'assets/images/burger.jpg',
       isFavorite: true,
     ),
-    
   ];
 
   String selectedMonth = 'مارس';
@@ -75,7 +74,8 @@ class _StoreDashboardState extends State<StoreDashboard> {
   }
 
   Future<void> _fetchAnalyticsData() async {
-    const String apiUrl = 'http://man.runasp.net/api/Store/GetAnalysisStore?storeId=2';
+    const String apiUrl =
+        'http://man.runasp.net/api/Store/GetAnalysisStore?storeId=5';
     try {
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
@@ -99,7 +99,8 @@ class _StoreDashboardState extends State<StoreDashboard> {
   }
 
   Future<void> _fetchLastTwoCompletedOrders() async {
-    const String apiUrl = 'http://man.runasp.net/api/Store/GetLastTwoCompletedOrders?storeId=2';
+    const String apiUrl =
+        'http://man.runasp.net/api/Store/GetLastTwoCompletedOrders?storeId=2';
     try {
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
@@ -135,7 +136,8 @@ class _StoreDashboardState extends State<StoreDashboard> {
       child: Scaffold(
         backgroundColor: Colors.grey[100],
         body: isLoading
-            ? Center(child: CircularProgressIndicator()) // Show loading indicator
+            ? Center(
+                child: CircularProgressIndicator()) // Show loading indicator
             : Stack(
                 children: [
                   // Main dashboard content
@@ -145,17 +147,21 @@ class _StoreDashboardState extends State<StoreDashboard> {
                         _buildHeader(),
                         Expanded(
                           child: SingleChildScrollView(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 const SizedBox(height: 16),
-                                _buildAnalyticsCards(numberOfOrders, totalSales, orderInProgress),
+                                _buildAnalyticsCards(numberOfOrders, totalSales,
+                                    orderInProgress),
                                 const SizedBox(height: 24),
                                 _buildProfitSection(),
                                 const SizedBox(height: 24),
                                 _buildTransactionSection(),
-                                const SizedBox(height: 100), // Extra space for the draggable sheet
+                                const SizedBox(
+                                    height:
+                                        100), // Extra space for the draggable sheet
                               ],
                             ),
                           ),
@@ -248,7 +254,8 @@ class _StoreDashboardState extends State<StoreDashboard> {
     );
   }
 
-  Widget _buildAnalyticsCards(int numberOfOrders, int totalSales, int orderInProgress) {
+  Widget _buildAnalyticsCards(
+      int numberOfOrders, int totalSales, int orderInProgress) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -455,10 +462,14 @@ class _StoreDashboardState extends State<StoreDashboard> {
           const Text('لا توجد طلبات مكتملة.', style: TextStyle(fontSize: 18)),
         if (lastTwoOrders.isNotEmpty)
           ...lastTwoOrders.map((order) {
-            final formattedDate = DateTime.parse(order['date']).toLocal().toString().split(' ')[0];
+            final formattedDate = DateTime.parse(order['date'])
+                .toLocal()
+                .toString()
+                .split(' ')[0];
             return Column(
               children: [
-                _buildTransactionItem(order['buyerName'], order['price'].toDouble(), formattedDate),
+                _buildTransactionItem(order['buyerName'],
+                    order['price'].toDouble(), formattedDate),
                 const Divider(),
               ],
             );

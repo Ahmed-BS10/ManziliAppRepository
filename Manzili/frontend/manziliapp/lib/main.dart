@@ -11,6 +11,7 @@ import 'package:manziliapp/view/product_srore_dashbord_view.dart';
 import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/view/register_view.dart';
 import 'package:manziliapp/view/splash_view.dart';
+import 'package:manziliapp/view/store_dashboard.dart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +20,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 SharedPreferences? sharedPreferences;
 
 //final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-   // FlutterLocalNotificationsPlugin();
+// FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
   // 1. تأكد من تهيئة الـ Binding قبل أي استدعاء async
@@ -84,12 +85,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/sp',
+      initialRoute: '/pds',
       getPages: [
         GetPage(
           name: '/sp',
           page: () => const SplashsView(),
-         middlewares: [AuthMiddleware()],
+          middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/login',
@@ -103,9 +104,9 @@ class MyApp extends StatelessWidget {
           name: '/home',
           page: () => const HomeView(),
         ),
-         GetPage(
+        GetPage(
           name: '/pds',
-          page: () => ProductSroreDashbordView(),
+          page: () => HomeView(),
         ),
       ],
     );
