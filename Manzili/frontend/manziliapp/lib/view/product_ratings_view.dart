@@ -11,8 +11,7 @@ import 'package:manziliapp/widget/product/ReviewItem.dart';
 class ProductRatingsView extends StatefulWidget {
   final int productId;
 
-  const ProductRatingsView({Key? key, required this.productId})
-      : super(key: key);
+  const ProductRatingsView({super.key, required this.productId});
 
   @override
   _ProductRatingsViewState createState() => _ProductRatingsViewState();
@@ -93,7 +92,7 @@ class _ProductRatingsViewState extends State<ProductRatingsView> {
             ),
           )
         else
-          ...reviews.map((review) => ReviewItem(review: review)).toList(),
+          ...reviews.map((review) => ReviewItem(review: review)),
         const SizedBox(height: 24),
         // Button to Add New Review with auto-refresh support
         CustomTextButton(

@@ -5,9 +5,9 @@ class OrderItemsList extends StatelessWidget {
   final List<OrderItem> items;
 
   const OrderItemsList({
-    Key? key,
+    super.key,
     required this.items,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +87,7 @@ class OrderItemsList extends StatelessWidget {
                       ],
                     ),
                   ))
-              .toList(),
+              ,
 
           const Divider(),
 

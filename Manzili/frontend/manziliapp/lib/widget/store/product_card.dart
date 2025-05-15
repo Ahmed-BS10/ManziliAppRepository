@@ -13,11 +13,11 @@ class ProductCard extends StatefulWidget {
   final int storeId;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     this.subCategoryId,
     required this.storeId,
-  }) : super(key: key);
+  });
 
   @override
   _ProductCardState createState() => _ProductCardState();

@@ -5,9 +5,9 @@ class ProductListWidget extends StatelessWidget {
   final List<ProductOrder> products;
 
   const ProductListWidget({
-    Key? key,
+    super.key,
     required this.products,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

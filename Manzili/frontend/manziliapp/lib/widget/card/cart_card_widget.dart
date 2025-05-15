@@ -10,11 +10,11 @@ import 'package:get/get.dart';
 
 class CartCardWidget extends StatefulWidget {
   const CartCardWidget({
-    Key? key,
+    super.key,
     required this.cartCardModel,
     required this.index,
     required this.onQuantityChanged,
-  }) : super(key: key);
+  });
 
   final CartCardModel cartCardModel;
   final int index;
@@ -184,7 +184,7 @@ class _CartCardWidgetState extends State<CartCardWidget> {
                       color: Colors.white,
                     ),
                     child: Image.network(
-                      'http://man.runasp.net' + product.imageUrl,
+                      'http://man.runasp.net${product.imageUrl}',
                       fit: BoxFit.fill,
                     ),
                   ),

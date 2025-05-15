@@ -7,10 +7,10 @@ class QuantityButton extends StatelessWidget {
   final VoidCallback onTap;
   
   const QuantityButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.onTap,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {

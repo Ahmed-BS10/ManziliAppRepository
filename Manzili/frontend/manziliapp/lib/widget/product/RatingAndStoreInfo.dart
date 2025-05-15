@@ -7,10 +7,10 @@ class RatingAndStoreInfo extends StatelessWidget {
   final String storeImage;
 
   const RatingAndStoreInfo({
-    Key? key,
+    super.key,
     required this.rating,
     required this.storeName, required this.storeImage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class RatingAndStoreInfo extends StatelessWidget {
             CircleAvatar(
               radius: 15,
               backgroundColor: const Color(0xFF0047FF),
-              child: Image.network('http://man.runasp.net'+storeImage),
+              child: Image.network('http://man.runasp.net$storeImage'),
             ),
           ],
         ),

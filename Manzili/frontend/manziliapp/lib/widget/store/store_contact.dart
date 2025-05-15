@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 class StoreContact extends StatelessWidget {
   const StoreContact(
-      {Key? key, required this.socileMediaAcount, required this.phoneNumberl})
-      : super(key: key);
+      {super.key, required this.socileMediaAcount, required this.phoneNumberl});
 
   final String socileMediaAcount;
   final String phoneNumberl;

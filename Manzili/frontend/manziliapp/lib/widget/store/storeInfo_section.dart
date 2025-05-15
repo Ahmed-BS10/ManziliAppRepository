@@ -3,11 +3,11 @@ import 'package:flutter/widgets.dart';
 
 class StoreInfoSection extends StatelessWidget {
   const StoreInfoSection({
-    Key? key,
+    super.key,
     required this.rate,
     required this.businessName,
     required this.categoryNames,
-  }) : super(key: key);
+  });
 
   final int rate;
   final String businessName;

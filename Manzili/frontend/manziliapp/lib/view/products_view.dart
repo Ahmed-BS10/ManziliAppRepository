@@ -7,10 +7,10 @@ import 'package:manziliapp/widget/store/product_card.dart';
 
 class ProductsView extends StatefulWidget {
   const ProductsView({
-    Key? key,
+    super.key,
     required this.categoryNames,
     required this.storeid,
-  }) : super(key: key);
+  });
 
   final List<String> categoryNames;
   final int storeid;

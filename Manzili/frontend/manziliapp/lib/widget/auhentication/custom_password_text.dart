@@ -51,7 +51,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
           ),
           hintText: widget.hintText,
           filled: true,
-          fillColor: const Color(0xF4F4F4),
+          fillColor: const Color(0x00f4f4f4),
           contentPadding: const EdgeInsets.symmetric(
               horizontal: 16.0 * 1.5, vertical: 16.0),
           border: const OutlineInputBorder(
@@ -69,6 +69,8 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
 }
 
 class EmailTextField extends StatelessWidget {
+  const EmailTextField({super.key});
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(

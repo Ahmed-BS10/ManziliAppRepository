@@ -7,12 +7,12 @@ class CategoryTabs extends StatelessWidget {
   final bool showMore;
 
   const CategoryTabs({
-    Key? key,
+    super.key,
     required this.categories,
     required this.selectedCategory,
     required this.onCategorySelected,
     this.showMore = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

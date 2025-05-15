@@ -31,7 +31,7 @@ class EmailTextFiled extends StatelessWidget {
             prefixIcon: iconData,
             hintText: 'أدخل بريدك الإلكتروني',
             filled: true,
-            fillColor: const Color(0xF4F4F4),
+            fillColor: const Color(0x00f4f4f4),
             contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16.0 * 1.5, vertical: 16.0),
             border: const OutlineInputBorder(

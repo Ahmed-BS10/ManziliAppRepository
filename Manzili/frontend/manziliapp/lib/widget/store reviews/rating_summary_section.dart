@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 class RatingSummarySection extends StatelessWidget {
   const RatingSummarySection(
-      {Key? key, required this.averageRating, required this.totalRatings})
-      : super(key: key);
+      {super.key, required this.averageRating, required this.totalRatings});
 
   final double averageRating;
   final int totalRatings;

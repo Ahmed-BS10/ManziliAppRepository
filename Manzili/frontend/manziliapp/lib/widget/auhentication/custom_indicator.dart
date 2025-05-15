@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:manziliapp/core/constant/constant.dart';
 
 class CustomIndicator extends StatelessWidget {
-  const CustomIndicator({Key? key, required this.dotIndex}) : super(key: key);
+  const CustomIndicator({super.key, required this.dotIndex});
   final int dotIndex;
 
   @override

@@ -8,11 +8,11 @@ class StoreTabs extends StatelessWidget {
   final String addrees;
 
   const StoreTabs({
-    Key? key,
+    super.key,
     required this.selectedTabIndex,
     required this.onTabSelected,
     required this.status, required this.addrees,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

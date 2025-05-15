@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/controller/category_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/middleware/auth_middelware.dart';
 import 'package:manziliapp/providers/category_providers.dart';
-import 'package:manziliapp/services/notification_service%20.dart';
-import 'package:manziliapp/view/add_product_screen.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
-import 'package:manziliapp/view/order_view.dart';
 import 'package:manziliapp/view/product_srore_dashbord_view.dart';
 import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/view/register_view.dart';
 import 'package:manziliapp/view/splash_view.dart';
-import 'package:manziliapp/view/start_view.dart';
-import 'package:manziliapp/view/store_dashboard.dart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
-import 'package:manziliapp/view/store_orders_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -91,7 +84,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/pds',
+      initialRoute: '/sp',
       getPages: [
         GetPage(
           name: '/sp',

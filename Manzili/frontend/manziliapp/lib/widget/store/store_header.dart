@@ -19,7 +19,7 @@ class TranslatedStoreImage extends StatelessWidget {
   final Widget placeholder;
 
   const TranslatedStoreImage({
-    Key? key,
+    super.key,
     this.imageUrl,
     this.size = 100.0,
     this.offset = const Offset(10, 15),
@@ -31,7 +31,7 @@ class TranslatedStoreImage extends StatelessWidget {
       size: 48,
       color: Colors.grey,
     ),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -90,12 +90,12 @@ class StoreHeader extends StatelessWidget {
   final int deliveryFee;
 
   const StoreHeader({
-    Key? key,
+    super.key,
     this.imageUrl,
     required this.storeId,
     required this.userId,
     required this.deliveryFee,
-  }) : super(key: key);
+  });
 
   Future<CartCardModel?> _fetchCartData(int userId, int storeId) async {
     try {

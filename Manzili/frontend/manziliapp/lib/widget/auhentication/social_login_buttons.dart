@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:manziliapp/core/widget/custom_text_button_icon.dart';
 
 class SocialLoginButtons extends StatelessWidget {
-  const SocialLoginButtons();
+  const SocialLoginButtons({super.key});
 
   @override
   Widget build(BuildContext context) {

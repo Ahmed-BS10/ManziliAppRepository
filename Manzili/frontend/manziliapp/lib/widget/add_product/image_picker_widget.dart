@@ -7,10 +7,10 @@ class ImagePickerWidget extends StatefulWidget {
   final Function(String?) onImageSelected;
 
   const ImagePickerWidget({
-    Key? key,
+    super.key,
     this.isMainImage = false,
     required this.onImageSelected,
-  }) : super(key: key);
+  });
 
   @override
   State<ImagePickerWidget> createState() => _ImagePickerWidgetState();

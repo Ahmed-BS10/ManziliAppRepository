@@ -4,7 +4,7 @@ import '../model/mock_data.dart';
 import '../widget/store_order/order_card.dart';
 
 class StoreOrdersView extends StatefulWidget {
-  const StoreOrdersView({Key? key}) : super(key: key);
+  const StoreOrdersView({super.key});
 
   @override
   State<StoreOrdersView> createState() => _OrdersScreenState();

@@ -8,11 +8,11 @@ class ProductDescription extends StatelessWidget {
   //final String additionalInfo;
   
   const ProductDescription({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     //required this.additionalInfo,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {

@@ -90,7 +90,7 @@ class _OnBoradingViewState extends State<OnBoradingView> {
   Widget _floatingActionButtonContent() {
     return Transform.translate(
       offset: Offset(30, 30),
-      child: Container(
+      child: SizedBox(
         width: 100,
         height: 100,
         child: FloatingActionButton(

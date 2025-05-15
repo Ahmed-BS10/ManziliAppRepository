@@ -6,11 +6,11 @@ class RatingSummary extends StatelessWidget {
   final Map<int, int> ratingDistribution;
 
   const RatingSummary({
-    Key? key,
+    super.key,
     required this.averageRating,
     required this.totalReviews,
     required this.ratingDistribution,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

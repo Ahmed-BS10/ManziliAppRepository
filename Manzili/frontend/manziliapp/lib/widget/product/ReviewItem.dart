@@ -7,9 +7,9 @@ class ReviewItem extends StatelessWidget {
   final ReviewProduct review;
 
   const ReviewItem({
-    Key? key,
+    super.key,
     required this.review,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class ReviewItem extends StatelessWidget {
                     radius: 15,
                     backgroundColor: const Color(0xFF1548c7),
                     child:
-                        Image.network('http://man.runasp.net' + review.avatar),
+                        Image.network('http://man.runasp.net${review.avatar}'),
                   ),
 
                   //   const Icon(Icons.person, color: Colors.white, size: 18),

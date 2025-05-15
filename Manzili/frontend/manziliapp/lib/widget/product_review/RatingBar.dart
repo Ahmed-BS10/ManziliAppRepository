@@ -7,10 +7,10 @@ class RatingBar extends StatelessWidget {
   final Function(double) onRatingUpdate;
 
   const RatingBar({
-    Key? key,
+    super.key,
     required this.initialRating,
     required this.onRatingUpdate,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

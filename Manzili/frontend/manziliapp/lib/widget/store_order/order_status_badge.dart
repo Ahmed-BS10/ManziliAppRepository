@@ -5,9 +5,9 @@ class OrderStatusBadge extends StatelessWidget {
   final OrderStatus status;
 
   const OrderStatusBadge({
-    Key? key,
+    super.key,
     required this.status,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

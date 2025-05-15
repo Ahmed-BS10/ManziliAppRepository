@@ -13,11 +13,11 @@ class ImageCarousel extends StatelessWidget {
   final Function(int) onPageChanged;
   
   const ImageCarousel({
-    Key? key,
+    super.key,
     required this.images,
     required this.currentIndex,
     required this.onPageChanged,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class ImageCarousel extends StatelessWidget {
                     color: Colors.black,
                   ),
                   child: Image.network(
-                    'http://man.runasp.net/'+imageUrl,
+                    'http://man.runasp.net/$imageUrl',
                     fit: BoxFit.cover,
                   ),
                 );

@@ -11,7 +11,7 @@ class StoreImage extends StatelessWidget {
   final Widget placeholder;
 
   const StoreImage({
-    Key? key,
+    super.key,
     this.imageUrl,
     this.size = 80.0,
     this.placeholder = const Icon(
@@ -19,7 +19,7 @@ class StoreImage extends StatelessWidget {
       size: 40,
       color: Colors.grey,
     ),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

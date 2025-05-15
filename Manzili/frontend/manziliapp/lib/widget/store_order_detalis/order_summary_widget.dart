@@ -9,13 +9,13 @@ class OrderSummaryWidget extends StatelessWidget {
   final OrderStatus status;
 
   const OrderSummaryWidget({
-    Key? key,
+    super.key,
     required this.subtotal,
     required this.deliveryFee,
     required this.discount,
     required this.total,
     required this.status,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

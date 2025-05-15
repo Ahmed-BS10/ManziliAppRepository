@@ -4,9 +4,9 @@ class OrderNoteWidget extends StatelessWidget {
   final String note;
 
   const OrderNoteWidget({
-    Key? key,
+    super.key,
     required this.note,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

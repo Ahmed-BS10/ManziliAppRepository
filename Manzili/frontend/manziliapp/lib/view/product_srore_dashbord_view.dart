@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:manziliapp/view/add_product_screen.dart';
 
 class ProductSroreDashbordView extends StatefulWidget {
+  const ProductSroreDashbordView({super.key});
+
   @override
   _ProductSroreDashbordViewState createState() =>
       _ProductSroreDashbordViewState();
@@ -137,7 +139,7 @@ class ProductItem extends StatefulWidget {
   final String productId;
   final VoidCallback onDelete;
 
-  ProductItem({
+  const ProductItem({super.key, 
     required this.name,
     required this.price,
     required this.description,

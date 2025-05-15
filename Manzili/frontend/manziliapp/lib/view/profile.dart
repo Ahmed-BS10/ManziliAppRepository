@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // ================ USER PROVIDER ================
 class UserProvider with ChangeNotifier {
-  UserModel _user = UserModel.defaultUser();
+  final UserModel _user = UserModel.defaultUser();
 
   UserModel get user => _user;
 
@@ -33,10 +33,10 @@ class NavigationItem extends StatelessWidget {
   final VoidCallback onTap;
 
   const NavigationItem({
-    Key? key,
+    super.key,
     required this.label,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class NavigationItem extends StatelessWidget {
 
 // ================ SCREENS ================
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:manziliapp/view/home_view.dart';
-import 'package:manziliapp/view/order_view.dart';
 
 class OrderPlacedView extends StatelessWidget {
   const OrderPlacedView({super.key});

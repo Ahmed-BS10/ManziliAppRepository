@@ -3,7 +3,7 @@ import 'package:manziliapp/providers/category_providers.dart';
 import 'package:provider/provider.dart';
 
 class AddCategoryDialog extends StatefulWidget {
-  const AddCategoryDialog({Key? key}) : super(key: key);
+  const AddCategoryDialog({super.key});
 
   @override
   State<AddCategoryDialog> createState() => _AddCategoryDialogState();

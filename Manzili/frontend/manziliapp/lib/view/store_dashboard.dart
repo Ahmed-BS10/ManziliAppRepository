@@ -462,7 +462,7 @@ class _StoreDashboardState extends State<StoreDashboard> {
                 const Divider(),
               ],
             );
-          }).toList(),
+          }),
       ],
     );
   }

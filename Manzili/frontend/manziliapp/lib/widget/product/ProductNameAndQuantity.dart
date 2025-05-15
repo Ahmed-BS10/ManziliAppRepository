@@ -8,12 +8,12 @@ class ProductNameAndQuantity extends StatelessWidget {
   final VoidCallback onDecrement;
 
   const ProductNameAndQuantity({
-    Key? key,
+    super.key,
     required this.name,
     required this.quantity,
     required this.onIncrement,
     required this.onDecrement,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

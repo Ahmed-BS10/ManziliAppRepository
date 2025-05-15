@@ -14,14 +14,14 @@ class OrderCard extends StatelessWidget {
   final VoidCallback? onContactCustomer;
 
   const OrderCard({
-    Key? key,
+    super.key,
     required this.order,
     this.onAccept,
     this.onCancel,
     this.onDetails,
     this.onProductDetails,
     this.onContactCustomer,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

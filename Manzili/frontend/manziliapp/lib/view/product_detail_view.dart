@@ -18,10 +18,10 @@ class ProductDetailView extends StatefulWidget {
   final int storeId;
 
   const ProductDetailView({
-    Key? key,
+    super.key,
     required this.productId,
     required this.storeId,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductDetailView> createState() => _ProductDetailViewState();
@@ -217,12 +217,12 @@ class ProductDetailsViewBody extends StatelessWidget {
   final String storeImage;
 
   const ProductDetailsViewBody({
-    Key? key,
+    super.key,
     required this.product,
     required this.onQuantityChanged,
     required this.storeImage,
     required this.quantity,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

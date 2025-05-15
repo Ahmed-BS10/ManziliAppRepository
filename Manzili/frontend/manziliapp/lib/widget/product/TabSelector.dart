@@ -9,10 +9,10 @@ class TabSelector extends StatelessWidget {
   final Function(int) onTabSelected;
   
   const TabSelector({
-    Key? key,
+    super.key,
     required this.selectedTabIndex,
     required this.onTabSelected,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {

@@ -8,12 +8,12 @@ class CustomerInfo extends StatelessWidget {
   final DateTime orderDate;
 
   const CustomerInfo({
-    Key? key,
+    super.key,
     required this.name,
     required this.avatarUrl,
     required this.orderId,
     required this.orderDate,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

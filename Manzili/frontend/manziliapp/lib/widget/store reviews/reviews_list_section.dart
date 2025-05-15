@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:manziliapp/model/review.dart';
 
 class ReviewsListSection extends StatelessWidget {
-  const ReviewsListSection({Key? key, required this.reviews}) : super(key: key);
+  const ReviewsListSection({super.key, required this.reviews});
 
   final List<Review> reviews;
 

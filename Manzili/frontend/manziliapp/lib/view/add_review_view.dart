@@ -4,8 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
 class AddReviewView extends StatefulWidget {
-  const AddReviewView({Key? key, required this.storeId, required this.userId})
-      : super(key: key);
+  const AddReviewView({super.key, required this.storeId, required this.userId});
 
   final int storeId;
   final int userId;
@@ -108,7 +107,7 @@ class _AddReviewViewState extends State<AddReviewView> {
             const Spacer(),
 
             // Submit button
-            Container(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {

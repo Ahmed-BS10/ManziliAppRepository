@@ -98,7 +98,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                         price: product.total.toDouble(),
                       ),
                     );
-                  }).toList(),
+                  }),
                   const SizedBox(height: 24),
                   OrderInfoCard(
                     info: OrderInfo(

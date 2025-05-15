@@ -6,10 +6,10 @@ class BottomBar extends StatelessWidget {
   final VoidCallback onAddToCart;
 
   const BottomBar({
-    Key? key,
+    super.key,
     required this.price,
     required this.onAddToCart,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +65,11 @@ class AnimatedCounter extends StatelessWidget {
   final TextStyle style;
 
   const AnimatedCounter({
-    Key? key,
+    super.key,
     required this.value,
     required this.duration,
     required this.style,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

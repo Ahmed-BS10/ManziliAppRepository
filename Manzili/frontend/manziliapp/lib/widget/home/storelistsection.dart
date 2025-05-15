@@ -16,8 +16,7 @@ class StoreListSection extends StatefulWidget {
   final int? category;
   final String? filter;
 
-  const StoreListSection({Key? key, this.category, this.filter})
-      : super(key: key);
+  const StoreListSection({super.key, this.category, this.filter});
 
   @override
   _StoreListSectionState createState() => _StoreListSectionState();
@@ -143,7 +142,7 @@ class StoreListItem extends StatefulWidget {
   final List<String> categoryNames;
 
   const StoreListItem({
-    Key? key,
+    super.key,
     required this.storeId,
     required this.title,
     required this.rating,
@@ -151,7 +150,7 @@ class StoreListItem extends StatefulWidget {
     required this.statusColor,
     required this.imageUrl,
     required this.categoryNames,
-  }) : super(key: key);
+  });
 
   @override
   StoreListItemState createState() => StoreListItemState();
@@ -269,8 +268,7 @@ class _StatusIndicator extends StatelessWidget {
   final String status;
   final Color color;
 
-  const _StatusIndicator({Key? key, required this.status, required this.color})
-      : super(key: key);
+  const _StatusIndicator({super.key, required this.status, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -295,8 +293,7 @@ class _StatusIndicator extends StatelessWidget {
 class _CategoryIndicators extends StatelessWidget {
   final List<String> categories;
 
-  const _CategoryIndicators({Key? key, required this.categories})
-      : super(key: key);
+  const _CategoryIndicators({super.key, required this.categories});
 
   @override
   Widget build(BuildContext context) {

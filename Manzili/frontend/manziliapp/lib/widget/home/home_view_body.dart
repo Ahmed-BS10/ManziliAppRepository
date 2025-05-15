@@ -70,7 +70,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
 
 /// HomePage contains your original UI elements.
 class StartPage extends StatefulWidget {
-  const StartPage({Key? key}) : super(key: key);
+  const StartPage({super.key});
 
   @override
   _StartPageState createState() => _StartPageState();
@@ -121,7 +121,7 @@ class _StartPageState extends State<StartPage> {
 }
 
 class OrderPage extends StatelessWidget {
-  const OrderPage({Key? key}) : super(key: key);
+  const OrderPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +145,7 @@ class OrderPage extends StatelessWidget {
 
 /// Placeholder for Notification Page.
 class NotificationPage extends StatelessWidget {
-  const NotificationPage({Key? key}) : super(key: key);
+  const NotificationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +157,7 @@ class NotificationPage extends StatelessWidget {
 
 /// Placeholder for Profile Page.
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {

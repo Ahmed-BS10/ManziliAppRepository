@@ -8,9 +8,9 @@ class RatingHeader extends StatelessWidget {
   final int totalReviews;
   
   const RatingHeader({
-    Key? key,
+    super.key,
     required this.totalReviews,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {

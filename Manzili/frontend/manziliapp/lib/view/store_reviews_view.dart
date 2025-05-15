@@ -7,7 +7,7 @@ import 'package:manziliapp/widget/store%20reviews/reviews_list_section.dart';
 import 'add_review_view.dart';
 
 class StoreReviewsView extends StatefulWidget {
-  const StoreReviewsView({Key? key, required this.storeId}) : super(key: key);
+  const StoreReviewsView({super.key, required this.storeId});
 
   final int storeId;
 

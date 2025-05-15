@@ -1,5 +1,4 @@
 import 'package:manziliapp/model/category_store.dart';
-import 'package:manziliapp/widget/home/categorysection.dart';
 
 class AddProduct {
   final String? id;

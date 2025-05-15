@@ -40,7 +40,7 @@ class CustomPageView extends StatelessWidget {
   final Function(File) onUserImagePicked;
 
   const CustomPageView({
-    Key? key,
+    super.key,
     required this.pageController,
     required this.usernameController,
     required this.phoneController,
@@ -54,7 +54,7 @@ class CustomPageView extends StatelessWidget {
     required this.onUserImagePicked,
     required this.socileMediaAcountController,
     required this.descriptionController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

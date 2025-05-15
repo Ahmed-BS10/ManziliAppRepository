@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:manziliapp/view/order_placed_view.dart';
-import 'package:manziliapp/view/order_view.dart';
 import 'package:manziliapp/widget/card/payment_receipt_widget.dart';
 import 'package:manziliapp/widget/card/shipment_address_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';

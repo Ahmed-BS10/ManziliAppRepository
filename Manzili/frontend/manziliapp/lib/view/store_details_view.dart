@@ -62,7 +62,7 @@ class StoreData {
 }
 
 class StoreDetailsScreen extends StatefulWidget {
-  const StoreDetailsScreen({Key? key, required this.storeId}) : super(key: key);
+  const StoreDetailsScreen({super.key, required this.storeId});
 
   final int storeId;
 

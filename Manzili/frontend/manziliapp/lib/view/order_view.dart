@@ -94,12 +94,12 @@ class InfoRow extends StatelessWidget {
   final Color? valueColor;
 
   const InfoRow({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     this.isBold = false,
     this.valueColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +122,7 @@ class InfoRow extends StatelessWidget {
 
 // Main Widget Code
 class OrderView extends StatefulWidget {
-  const OrderView({Key? key}) : super(key: key);
+  const OrderView({super.key});
 
   @override
   State<OrderView> createState() => _OrderViewState();
@@ -265,7 +265,7 @@ class _OrderViewState extends State<OrderView> {
 class OrderCard extends StatelessWidget {
   final Order order;
 
-  const OrderCard({Key? key, required this.order}) : super(key: key);
+  const OrderCard({super.key, required this.order});
 
   String _formatDate(String date) {
     final parsedDate = DateTime.parse(date);

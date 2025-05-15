@@ -224,7 +224,7 @@ class OrderActions extends StatelessWidget {
   final String? documentName;
 
   const OrderActions({
-    Key? key,
+    super.key,
     required this.orderStatus,
     this.onAccept,
     this.onCancel,
@@ -232,7 +232,7 @@ class OrderActions extends StatelessWidget {
     this.onProductDetails,
     this.onContactCustomer,
     this.documentName,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

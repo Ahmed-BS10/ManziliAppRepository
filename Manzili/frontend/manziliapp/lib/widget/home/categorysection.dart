@@ -214,7 +214,7 @@ class CategoryCard extends StatelessWidget {
           CircleAvatar(
             radius: 21.5,
             backgroundImage: imageUrl.isNotEmpty
-                ? NetworkImage('http://man.runasp.net/${imageUrl}')
+                ? NetworkImage('http://man.runasp.net/$imageUrl')
                 : AssetImage('lib/assets/image/burger.jpg'),
           ),
           const SizedBox(height: 8),
