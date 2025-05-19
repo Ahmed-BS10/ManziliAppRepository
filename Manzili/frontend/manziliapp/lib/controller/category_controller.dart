@@ -15,7 +15,7 @@ class CategoryController extends GetxController {
 
   //API endpoint
   final String apiEndpoint =
-      "https://localhost:7175/api/Store/GetProductGategoriesByStoreId?storeId=6";
+      "http://man.runasp.net/api/Store/GetProductGategoriesByStoreId?storeId=6";
 
   // Fetch categories from the API
   Future<void> fetchCategories() async {

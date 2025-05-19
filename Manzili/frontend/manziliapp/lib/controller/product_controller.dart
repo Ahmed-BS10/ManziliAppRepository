@@ -18,8 +18,8 @@ class ProductController extends GetxController {
       error('');
 
       String url = subCategoryId == null
-          ? 'https://localhost:7175/api/Product/GetStoreProducts?$storeId'
-          : 'https://localhost:7175/api/Product/All?$storeId&productCategoryId = 10';
+          ? 'http://man.runasp.net/api/Product/GetStoreProducts?$storeId'
+          : 'http://man.runasp.net/api/Product/All?$storeId&productCategoryId = 10';
 
       final response = await http.get(Uri.parse(url));
 

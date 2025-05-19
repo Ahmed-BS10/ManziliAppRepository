@@ -224,5 +224,14 @@ namespace Manzili.EF.Implementation
 
         }
 
+        public OperationResult<bool> DeleteOrder(int orderId)
+        {
+           var order = _context.Orders.Find(orderId);
+            if (order == null)
+                return OperationResult<bool>.Failure("Order not found");
+            _context.Orders.Remove(order);
+            _context.SaveChanges();
+            return OperationResult<bool>.Success(true);
+        }
     }
 }

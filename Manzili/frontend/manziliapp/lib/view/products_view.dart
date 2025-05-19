@@ -38,7 +38,7 @@ class _ProductsViewState extends State<ProductsView> {
     try {
       final response = await http.get(
         Uri.parse(
-            'https://localhost:7175/api/Store/GetProductGategoriesByStoreId?storeId=${widget.storeid}'),
+            'http://man.runasp.net/api/Store/GetProductGategoriesByStoreId?storeId=${widget.storeid}'),
       );
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -64,7 +64,7 @@ class _ProductsViewState extends State<ProductsView> {
     try {
       final response = await http.get(
         Uri.parse(
-            'https://localhost:7175/api/Product/GetStoreProducts?storeId=${widget.storeid}'),
+            'http://man.runasp.net/api/Product/GetStoreProducts?storeId=${widget.storeid}'),
       );
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
@@ -110,7 +110,7 @@ class _ProductsViewState extends State<ProductsView> {
                 try {
                   final response = await http.get(
                     Uri.parse(
-                        'https://localhost:7175/api/Store/GetProductGategoriesByStoreId?storeId=${widget.storeid}'),
+                        'http://man.runasp.net/api/Store/GetProductGategoriesByStoreId?storeId=${widget.storeid}'),
                   );
                   int? categoryId;
                   if (response.statusCode == 200) {
@@ -129,7 +129,7 @@ class _ProductsViewState extends State<ProductsView> {
                   if (categoryId != null) {
                     final prodResponse = await http.get(
                       Uri.parse(
-                          'https://localhost:7175/api/Product/All?storeId=${widget.storeid}&productCategoryId=$categoryId'),
+                          'http://man.runasp.net/api/Product/All?storeId=${widget.storeid}&productCategoryId=$categoryId'),
                     );
                     if (prodResponse.statusCode == 200) {
                       final prodJson = json.decode(prodResponse.body);

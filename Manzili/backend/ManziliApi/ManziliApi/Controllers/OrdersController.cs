@@ -82,6 +82,16 @@ namespace Manzili.API.Controllers
 
             return BadRequest(result);
         }
+
+
+        [HttpDelete("{orderId}")]
+        public  IActionResult DeleteOrder(int orderId)
+        {
+            var result = _orderService.DeleteOrder(orderId);
+            if(result.IsSuccess)
+                return Ok(result);
+            return BadRequest(result);
+        }
     }
 
    

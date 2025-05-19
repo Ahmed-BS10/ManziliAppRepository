@@ -3,7 +3,7 @@
     public class OrderProduct
     {
         public int OrderProductId { get; set; }
-        public int OrderId { get; set; } // PK, FK
+        public int? OrderId { get; set; } // PK, FK
         public int? ProductId { get; set; } // FK
 
 
@@ -14,7 +14,7 @@
 
 
         // Navigation properties
-        public Order Order { get; set; }
+        public Order ?Order { get; set; }
         public Product? Product { get; set; }
     }
 
