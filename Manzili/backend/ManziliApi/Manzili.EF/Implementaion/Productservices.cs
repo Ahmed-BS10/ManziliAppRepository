@@ -27,6 +27,27 @@ namespace Manzili.Core.Services
             _fileService = fileService;
         }
 
+
+        public async Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId)
+        {
+            // Ensure null safety and proper async handling
+            var products = await _db.Products
+                .Where(x => x.StoreId == storeId)
+                .Select(x => new GetAllProduct
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description ?? string.Empty, // Fix CS8601: Handle possible null values
+                    Price = x.Price,
+                    State = x.State,
+                    Rate = 45,
+                    ImageUrl = x.Images.Count > 0 ? x.Images.FirstOrDefault().ImageUrl : string.Empty // Fix CS8072: Replace null-propagating operator
+                })
+                .ToListAsync(); // Fix CS1061: Ensure async method is awaited properly
+
+            // Fix CS0103: Correctly use the 'products' variable
+            return OperationResult<List<GetAllProduct>>.Success(products, "Store products retrieved successfully.");
+        }
         public async Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId, int productGategoryId)
         {
             // Ensure null safety and proper async handling

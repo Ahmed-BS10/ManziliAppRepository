@@ -25,6 +25,21 @@ namespace ManziliApi.Controllers
 
         #region Methods
 
+
+
+        [HttpGet("GetStoreProducts")]
+        public async Task<IActionResult> GetStoreProducts(int storeId)
+        {
+            var result = await _productservices.GetStoreProductsAsync(storeId);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+
+
+
         [HttpGet(ProductRouting.GetAll)]
         public async Task<IActionResult> GetStoreProducts(int storeId , int productCategoryId)
         {
