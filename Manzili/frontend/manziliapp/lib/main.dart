@@ -12,6 +12,7 @@ import 'package:manziliapp/view/profile.dart';
 import 'package:manziliapp/view/register_view.dart';
 import 'package:manziliapp/view/splash_view.dart';
 import 'package:manziliapp/view/store_dashboard.dart';
+import 'package:manziliapp/view/store_orders_view.dart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -85,7 +86,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/pds',
+      initialRoute: '/sov',
       getPages: [
         GetPage(
           name: '/sp',
@@ -105,8 +106,8 @@ class MyApp extends StatelessWidget {
           page: () => const HomeView(),
         ),
         GetPage(
-          name: '/pds',
-          page: () => HomeView(),
+          name: '/sov',
+          page: () => StoreOrdersView(),
         ),
       ],
     );

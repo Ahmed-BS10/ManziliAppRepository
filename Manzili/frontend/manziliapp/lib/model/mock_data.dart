@@ -1,109 +1,99 @@
 import 'order.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class MockData {
-  static List<Order> getNewOrders() {
-    return [
-      Order(
-        id: '1001',
-        customerName: 'أحمد محمد',
-        customerAvatar: 'https://i.pravatar.cc/150?img=1',
-        status: OrderStatus.new_order,
-        date: DateTime.now().subtract(const Duration(hours: 1)),
-        notes: 'يرجى التوصيل بسرعة، شكراً',
-        items: [
-          OrderItem(name: 'منتج أول', price: 24.00, quantity: 1),
-          OrderItem(name: 'منتج ثاني', price: 35.00, quantity: 2),
-          OrderItem(name: 'منتج ثالث', price: 42.50, quantity: 1),
-          OrderItem(name: 'منتج رابع', price: 18.75, quantity: 3),
-        ],
-      ),
-      Order(
-        id: '1002',
-        customerName: 'سارة أحمد',
-        customerAvatar: 'https://i.pravatar.cc/150?img=5',
-        status: OrderStatus.new_order,
-        date: DateTime.now().subtract(const Duration(hours: 2)),
-        notes: 'الرجاء الاتصال قبل التوصيل',
-        items: [
-          OrderItem(name: 'منتج أول', price: 24.00, quantity: 2),
-          OrderItem(name: 'منتج ثاني', price: 35.00, quantity: 1),
-          OrderItem(name: 'منتج ثالث', price: 42.50, quantity: 3),
-        ],
-      ),
-    ];
+  static Future<List<Order>> getNewOrders() async {
+    final url = Uri.parse('http://man.runasp.net/api/Store/GetStoreOrdersInNewStatus?storeId=5');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // If the API returns a list, parse each; if single object, wrap in list
+      final ordersJson = data is List ? data : [data];
+
+      return ordersJson.map<Order>((jsonOrder) {
+        return Order(
+          id: jsonOrder['id'].toString(),
+          customerName: jsonOrder['customerName'] ?? '',
+          customerAvatar: '', // No avatar in API
+          status: OrderStatus.new_order,
+          date: DateTime.tryParse(jsonOrder['createdAt'] ?? '') ?? DateTime.now(),
+          notes: jsonOrder['note'] ?? '',
+          items: (jsonOrder['orderProducts'] as List)
+              .map((p) => OrderItem(
+                    name: p['name'] ?? '',
+                    price: (p['price'] as num?)?.toDouble() ?? 0.0,
+                    quantity: p['count'] ?? 0,
+                  ))
+              .toList(),
+        );
+      }).toList();
+    } else {
+      throw Exception('Failed to load new orders');
+    }
   }
 
-  static List<Order> getCurrentOrders() {
-    return [
-      Order(
-        id: '1003',
-        customerName: 'محمد علي',
-        customerAvatar: 'https://i.pravatar.cc/150?img=3',
-        status: OrderStatus.in_progress,
-        date: DateTime.now().subtract(const Duration(hours: 5)),
-        notes: 'يرجى التوصيل في المساء',
-        items: [
-          OrderItem(name: 'منتج أول', price: 24.00, quantity: 1),
-          OrderItem(name: 'منتج ثاني', price: 35.00, quantity: 2),
-          OrderItem(name: 'منتج ثالث', price: 42.50, quantity: 1),
-        ],
-      ),
-      Order(
-        id: '1004',
-        customerName: 'فاطمة محمد',
-        customerAvatar: 'https://i.pravatar.cc/150?img=9',
-        status: OrderStatus.in_progress,
-        date: DateTime.now().subtract(const Duration(hours: 8)),
-        notes: 'لا توجد ملاحظات',
-        items: [
-          OrderItem(name: 'منتج أول', price: 24.00, quantity: 3),
-          OrderItem(name: 'منتج ثاني', price: 35.00, quantity: 1),
-        ],
-      ),
-      Order(
-        id: '1005',
-        customerName: 'خالد أحمد',
-        customerAvatar: 'https://i.pravatar.cc/150?img=7',
-        status: OrderStatus.in_progress,
-        date: DateTime.now().subtract(const Duration(hours: 10)),
-        notes: 'يرجى إرسال إيصال',
-        items: [
-          OrderItem(name: 'منتج أول', price: 24.00, quantity: 2),
-          OrderItem(name: 'منتج ثاني', price: 35.00, quantity: 1),
-          OrderItem(name: 'منتج ثالث', price: 42.50, quantity: 2),
-          OrderItem(name: 'منتج رابع', price: 18.75, quantity: 1),
-        ],
-      ),
-    ];
+  static Future<List<Order>> getCurrentOrders() async {
+    final url = Uri.parse('http://man.runasp.net/api/Store/GetStoreOrdersInWorkStatus?storeId=5');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      final ordersJson = data is List ? data : [data];
+
+      return ordersJson.map<Order>((jsonOrder) {
+        return Order(
+          id: jsonOrder['id'].toString(),
+          customerName: jsonOrder['customerName'] ?? '',
+          customerAvatar: '', // No avatar in API
+          status: OrderStatus.in_progress, // or map from jsonOrder['status'] if needed
+          date: DateTime.tryParse(jsonOrder['createdAt'] ?? '') ?? DateTime.now(),
+          notes: jsonOrder['note'] ?? '',
+          items: (jsonOrder['orderProducts'] as List)
+              .map((p) => OrderItem(
+                    name: p['name'] ?? '',
+                    price: (p['price'] as num?)?.toDouble() ?? 0.0,
+                    quantity: p['count'] ?? 0,
+                  ))
+              .toList(),
+        );
+      }).toList();
+    } else {
+      throw Exception('Failed to load current orders');
+    }
   }
 
-  static List<Order> getPreviousOrders() {
-    return [
-      Order(
-        id: '1006',
-        customerName: 'نورا سعيد',
-        customerAvatar: 'https://i.pravatar.cc/150?img=6',
-        status: OrderStatus.completed,
-        date: DateTime.now().subtract(const Duration(days: 2)),
-        notes: 'تم التسليم بنجاح',
-        items: [
-          OrderItem(name: 'منتج أول', price: 24.00, quantity: 1),
-          OrderItem(name: 'منتج ثاني', price: 35.00, quantity: 2),
-        ],
-      ),
-      Order(
-        id: '1007',
-        customerName: 'عمر خالد',
-        customerAvatar: 'https://i.pravatar.cc/150?img=4',
-        status: OrderStatus.cancelled,
-        date: DateTime.now().subtract(const Duration(days: 3)),
-        notes: 'تم الإلغاء بناءً على طلب العميل',
-        items: [
-          OrderItem(name: 'منتج أول', price: 24.00, quantity: 2),
-          OrderItem(name: 'منتج ثاني', price: 35.00, quantity: 1),
-          OrderItem(name: 'منتج ثالث', price: 42.50, quantity: 1),
-        ],
-      ),
-    ];
+  static Future<List<Order>> getPreviousOrders() async {
+    final url = Uri.parse('http://man.runasp.net/api/Store/GetStoreOrdersInPastStatus?storeId=5');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      final ordersJson = data is List ? data : [data];
+
+      return ordersJson.map<Order>((jsonOrder) {
+        return Order(
+          id: jsonOrder['id'].toString(),
+          customerName: jsonOrder['customerName'] ?? '',
+          customerAvatar: '', // No avatar in API
+          status: OrderStatus.completed, // or map from jsonOrder['status'] if needed
+          date: DateTime.tryParse(jsonOrder['createdAt'] ?? '') ?? DateTime.now(),
+          notes: jsonOrder['note'] ?? '',
+          items: (jsonOrder['orderProducts'] as List)
+              .map((p) => OrderItem(
+                    name: p['name'] ?? '',
+                    price: (p['price'] as num?)?.toDouble() ?? 0.0,
+                    quantity: p['count'] ?? 0,
+                  ))
+              .toList(),
+        );
+      }).toList();
+    } else {
+      throw Exception('Failed to load previous orders');
+    }
   }
 }

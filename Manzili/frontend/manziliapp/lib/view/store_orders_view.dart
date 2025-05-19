@@ -61,9 +61,48 @@ class _OrdersScreenState extends State<StoreOrdersView>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildOrderList(MockData.getPreviousOrders()),
-                  _buildOrderList(MockData.getCurrentOrders()),
-                  _buildOrderList(MockData.getNewOrders()),
+                  FutureBuilder<List<Order>>(
+                    future: MockData.getPreviousOrders(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('لا توجد بيانات'));
+                      } else if (snapshot.hasData) {
+                        return _buildOrderList(snapshot.data!);
+                      } else {
+                        return const Center(child: Text('لا توجد بيانات'));
+                      }
+                    },
+                  ),
+                  FutureBuilder<List<Order>>(
+                    future: MockData.getCurrentOrders(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('لا توجد بيانات'));
+                      } else if (snapshot.hasData) {
+                        return _buildOrderList(snapshot.data!);
+                      } else {
+                        return const Center(child: Text('لا توجد بيانات'));
+                      }
+                    },
+                  ),
+                  FutureBuilder<List<Order>>(
+                    future: MockData.getNewOrders(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child:Text('لا توجد بيانات'));
+                      } else if (snapshot.hasData) {
+                        return _buildOrderList(snapshot.data!);
+                      } else {
+                        return const Center(child: Text('لا توجد بيانات'));
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
