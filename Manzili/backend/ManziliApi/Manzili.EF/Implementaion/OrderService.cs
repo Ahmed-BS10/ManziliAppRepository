@@ -196,9 +196,6 @@ namespace Manzili.EF.Implementation
             throw new NotImplementedException();
         }
 
-
-
-
         public async Task<OperationResult<IEnumerable<GteOrdersDashbordDto>>> GetAllOrderDashbordAsync(int pageNumber, int size)
         {
             var orders = await _context.Orders

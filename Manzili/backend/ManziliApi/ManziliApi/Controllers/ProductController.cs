@@ -37,9 +37,6 @@ namespace ManziliApi.Controllers
             return BadRequest(result);
         }
 
-
-
-
         [HttpGet(ProductRouting.GetAll)]
         public async Task<IActionResult> GetStoreProducts(int storeId , int productCategoryId)
         {
