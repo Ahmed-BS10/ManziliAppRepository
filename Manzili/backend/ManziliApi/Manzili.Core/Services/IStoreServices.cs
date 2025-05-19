@@ -25,11 +25,11 @@ namespace Manzili.Core.Services
         Task<OperationResult<IEnumerable<GetStoreDto>>> SearchStoreByNameAsync(string BusinessName);
 
         // Create
-        Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto , List<int> categories);
+        Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto, List<int> categories);
 
         //Delete
         Task<OperationResult<Store>> DeleteAsync(int id);
-       
+
         // Update 
 
         Task<OperationResult<UpdateStoreDto>> UpdateAsync(UpdateStoreDto newStore, int storeId);
@@ -39,8 +39,23 @@ namespace Manzili.Core.Services
         Task<OperationResult<bool>> UnBloke(int Id);
 
         Task<OperationResult<GetHomeDashbordDto>> GetHomeDashbord();
-        Task<OperationResult<GetStoreOrders>> GetStoreOrdersInPastStatus(int storeId);
-        Task<OperationResult<GetStoreOrders>> GetStoreOrdersInWorkStatus(int storeId);
-        Task<OperationResult<GetStoreOrders>> GetStoreOrdersInNewStatus(int storeId);
+      
+        Task<OperationResult<IEnumerable<GetProductGategory>>> GetProductGategoriesByStoreId(int storeId);
+
+
+
+
+
+
+
+
+
+
+        Task<OperationResult<IEnumerable<GetStoreOrders>>> GetStoreOrdersInPastStatus(int storeId);
+        Task<OperationResult<IEnumerable<GetStoreOrders>>> GetStoreOrdersInWorkStatus(int storeId);
+        Task<OperationResult<IEnumerable<GetStoreOrders>>> GetStoreOrdersInNewStatus(int storeId);
+        Task<OperationResult<IEnumerable<GetStoreOrders>>> GetAllOrders();
+
     }
+
 }

@@ -14,6 +14,7 @@ public interface IOrdersService
     Task<OperationResult<int?>> GetUserIdByOrderIdAsync(int orderId);
     Task<OperationResult<IEnumerable<OrderTracking>>> GetOrderTrackingHistoryAsync(int orderId);
     Task<OperationResult<IEnumerable<GteOrdersDashbordDto>>> GetAllOrderDashbordAsync(int pageNumber, int size);
+    OperationResult<bool> DeleteOrder(int orderId);
 
 }
 

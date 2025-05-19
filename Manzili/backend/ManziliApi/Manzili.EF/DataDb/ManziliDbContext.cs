@@ -163,7 +163,7 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
             .HasMany(op => op.OrderProducts)
             .WithOne(o => o.Order)
             .HasForeignKey(fk => fk.OrderId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.SetNull);
 
 
 

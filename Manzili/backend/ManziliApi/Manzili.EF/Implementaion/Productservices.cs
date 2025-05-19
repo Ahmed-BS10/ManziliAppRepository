@@ -27,31 +27,46 @@ namespace Manzili.Core.Services
             _fileService = fileService;
         }
 
+
         public async Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId)
         {
-            var store = await _db.Stores
-                .Include(s => s.Products)
-                .ThenInclude(p => p.Images)
-                .FirstOrDefaultAsync(s => s.Id == storeId);
+            // Ensure null safety and proper async handling
+            var products = await _db.Products
+                .Where(x => x.StoreId == storeId)
+                .Select(x => new GetAllProduct
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description ?? string.Empty, // Fix CS8601: Handle possible null values
+                    Price = x.Price,
+                    State = x.State,
+                    Rate = 45,
+                    ImageUrl = x.Images.Count > 0 ? x.Images.FirstOrDefault().ImageUrl : string.Empty // Fix CS8072: Replace null-propagating operator
+                })
+                .ToListAsync(); // Fix CS1061: Ensure async method is awaited properly
 
-            if (store == null)
-            {
-                return OperationResult<List<GetAllProduct>>.Failure("Store not found.");
-            }
+            // Fix CS0103: Correctly use the 'products' variable
+            return OperationResult<List<GetAllProduct>>.Success(products, "Store products retrieved successfully.");
+        }
+        public async Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId, int productGategoryId)
+        {
+            // Ensure null safety and proper async handling
+            var products = await _db.Products
+                .Where(x => x.StoreId == storeId && x.ProductCategoryId == productGategoryId)
+                .Select(x => new GetAllProduct
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description ?? string.Empty, // Fix CS8601: Handle possible null values
+                    Price = x.Price,
+                    State = x.State,
+                    Rate = 45,
+                    ImageUrl = x.Images.Count > 0 ? x.Images.FirstOrDefault().ImageUrl : string.Empty // Fix CS8072: Replace null-propagating operator
+                })
+                .ToListAsync(); // Fix CS1061: Ensure async method is awaited properly
 
-            var productsDto = store.Products.Select(x => new GetAllProduct
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Description = x.Description,
-                Price = x.Price,
-                State = x.State,
-                Rate = 45,
-                ImageUrl = x.Images.First().ImageUrl,
-            }).ToList();
-
-
-            return OperationResult<List<GetAllProduct>>.Success(productsDto, "Store products retrieved successfully.");
+            // Fix CS0103: Correctly use the 'products' variable
+            return OperationResult<List<GetAllProduct>>.Success(products, "Store products retrieved successfully.");
         }
         public async Task<OperationResult<GteFullInfoProdcut>> GetProductByIdAsync(int productId)
         {
@@ -152,11 +167,7 @@ namespace Manzili.Core.Services
                 .Include(p => p.ProductCategory)
                 .ThenInclude(scs => scs.StoreCategory)
                 .Include(p => p.Store)
-
-
-
-               .Where(p => p.StoreId == storeId && p.ProductCategoryId == productCategoryId && p.ProductCategory.StoreCategoryId == storeCategoryId)
-
+                .Where(p => p.StoreId == storeId && p.ProductCategoryId == productCategoryId && p.ProductCategory.StoreCategoryId == storeCategoryId)
                 .ToListAsync();
 
             if (!products.Any())
@@ -172,12 +183,8 @@ namespace Manzili.Core.Services
                 Price = x.Price,
                 State = x.State,
                 Rate = x.Rate,
-                ImageUrl = x.Images.First().ImageUrl,
-
+                ImageUrl = x.Images.Count > 0 ? x.Images.First().ImageUrl : string.Empty // Fix CS8072: Replace null-propagating operator
             }).ToList();
-                
-                
- 
 
             return OperationResult<IEnumerable<GetAllProduct>>.Success(productDto, "Products retrieved successfully.");
         }

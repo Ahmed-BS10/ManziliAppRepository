@@ -196,9 +196,6 @@ namespace Manzili.EF.Implementation
             throw new NotImplementedException();
         }
 
-
-
-
         public async Task<OperationResult<IEnumerable<GteOrdersDashbordDto>>> GetAllOrderDashbordAsync(int pageNumber, int size)
         {
             var orders = await _context.Orders
@@ -227,5 +224,14 @@ namespace Manzili.EF.Implementation
 
         }
 
+        public OperationResult<bool> DeleteOrder(int orderId)
+        {
+           var order = _context.Orders.Find(orderId);
+            if (order == null)
+                return OperationResult<bool>.Failure("Order not found");
+            _context.Orders.Remove(order);
+            _context.SaveChanges();
+            return OperationResult<bool>.Success(true);
+        }
     }
 }

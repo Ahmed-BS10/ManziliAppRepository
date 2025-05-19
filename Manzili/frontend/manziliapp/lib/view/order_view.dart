@@ -6,9 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/view/order_detalis_view.dart';
 
-
-
-
 // Order Model
 class Order {
   final int id;
@@ -129,7 +126,6 @@ class OrderView extends StatefulWidget {
 }
 
 class _OrderViewState extends State<OrderView> {
- 
   final OrdersController _controller = OrdersController();
   bool _showDelivered = true;
   List<Order> _orders = [];
@@ -149,8 +145,10 @@ class _OrderViewState extends State<OrderView> {
 
     try {
       _orders = _showDelivered
-          ? await _controller.getDeliveredOrders(Get.find<UserController>().userId.value)
-          : await _controller.getInProgressOrders(Get.find<UserController>().userId.value);
+          ? await _controller
+              .getDeliveredOrders(Get.find<UserController>().userId.value)
+          : await _controller
+              .getInProgressOrders(Get.find<UserController>().userId.value);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
@@ -277,9 +275,10 @@ class OrderCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OrderDetailsView(
-          orderId: order.id,
-        )),
+        MaterialPageRoute(
+            builder: (context) => OrderDetailsView(
+                  orderId: order.id,
+                )),
       ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),

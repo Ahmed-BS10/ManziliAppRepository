@@ -25,10 +25,22 @@ namespace ManziliApi.Controllers
 
         #region Methods
 
-        [HttpGet(ProductRouting.GetAll)]
+
+
+        [HttpGet("GetStoreProducts")]
         public async Task<IActionResult> GetStoreProducts(int storeId)
         {
             var result = await _productservices.GetStoreProductsAsync(storeId);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+        [HttpGet(ProductRouting.GetAll)]
+        public async Task<IActionResult> GetStoreProducts(int storeId , int productCategoryId)
+        {
+            var result = await _productservices.GetStoreProductsAsync(storeId , productCategoryId);
             if (result.IsSuccess)
                 return Ok(result);
 
@@ -120,6 +132,8 @@ namespace ManziliApi.Controllers
         }
 
 
+
+       
 
         #endregion
     }

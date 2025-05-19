@@ -34,14 +34,14 @@ namespace Manzili.EF.Implementaion
         public async Task<OperationResult<IEnumerable<CompletedOrderDto>>> GetLastTwoCompletedOrdersAsync(int storeId)
         {
             var orders = await _db.Orders
-                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.تم_التسليم) 
-                .OrderByDescending(o => o.CreatedAt) 
+                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.تم_التسليم)
+                .OrderByDescending(o => o.CreatedAt)
                 .Take(2)
                 .Select(o => new CompletedOrderDto
                 {
-                    BuyerName = o.User.UserName, 
-                    Price = o.Total, 
-                    Date = o.CreatedAt 
+                    BuyerName = o.User.UserName,
+                    Price = o.Total,
+                    Date = o.CreatedAt
                 })
                 .ToListAsync();
 
@@ -462,9 +462,9 @@ namespace Manzili.EF.Implementaion
         public async Task<OperationResult<IEnumerable<GetStoreDashbord>>> GetUnBlockeStores(int page, int pageSize)
         {
 
-        
+
             var storesQuery = await _db.Stores
-               // .Include(s => s.StoreOrders) // Include related orders to calculate TotalSale
+                // .Include(s => s.StoreOrders) // Include related orders to calculate TotalSale
                 .AsNoTracking()
                 .Where(x => x.IsBlocked == false)
                 .Skip((page - 1) * pageSize)
@@ -476,11 +476,11 @@ namespace Manzili.EF.Implementaion
                     CreateAt = s.CreateAt,
                     Statu = s.Status,
                     Location = s.Address, // Assuming `Address` represents the location
-                     // Calculate total sales from orders
+                                          // Calculate total sales from orders
                 })
                 .ToListAsync();
 
-            if (storesQuery is null )
+            if (storesQuery is null)
             {
                 return OperationResult<IEnumerable<GetStoreDashbord>>.Failure("No stores found.");
             }
@@ -492,7 +492,7 @@ namespace Manzili.EF.Implementaion
             var user = await _db.Users.FindAsync(Id);
             if (user == null) return OperationResult<bool>.Failure("User not found");
             user.IsBlocked = true;
-          
+
 
             await _db.SaveChangesAsync();
             return OperationResult<bool>.Success(true);
@@ -551,14 +551,68 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<GetHomeDashbordDto>.Success(result);
         }
+        public async Task<OperationResult<IEnumerable<GetProductGategory>>> GetProductGategoriesByStoreId(int storeId)
+        {
+            var storeProductCategories = await _db.Products
+                .Where(p => p.StoreId == storeId && p.ProductCategory != null)
+                .Select(p => new GetProductGategory
+                {
+                    Id = p.ProductCategoryId.Value, // Assuming ProductCategoryId is not null
+                    Name = p.ProductCategory.Name
+                })
+                .Distinct()
+                .ToListAsync();
 
-        public async Task<OperationResult<GetStoreOrders>> GetStoreOrdersInPastStatus(int storeId)
+            return OperationResult<IEnumerable<GetProductGategory>>.Success(storeProductCategories);
+        }
+
+
+
+
+
+
+
+        public async Task<OperationResult<IEnumerable<GetStoreOrders>>> GetStoreOrdersInPastStatus(int storeId)
+        {
+            var orders = await _db.Orders
+               .Include(o => o.OrderProducts)
+               .ThenInclude(op => op.Product)
+               .Include(o => o.User) // Ensure User is included for Customer details
+               .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.تم_التسليم)
+               .Select(o => new GetStoreOrders
+               {
+                   Id = o.OrderId,
+                   CustomerName = o.User != null ? o.User.UserName : "Unknown", // Replace null-propagating operator
+                   CustomerPhoneNumber = o.User != null ? o.User.PhoneNumber : "Unknown", // Replace null-propagating operator
+                   CustomerAddress = o.User != null ? o.User.Address : "Unknown", // Replace null-propagating operator
+                   CreatedAt = o.CreatedAt,
+                   TotalPrice = Math.Round(o.Total, 2), // Ensure proper rounding for TotalPrice
+                   TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
+                   Status = o.Status.ToString(),
+                   Note = o.Note,
+                   OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
+                   {
+                       Id = op.ProductId ?? 0, // Handle null ProductId
+                       Name = op.Product != null ? op.Product.Name : "Unknown", // Replace null-propagating operator
+                       Price = (int)Math.Round(op.Product != null ? op.Price : 0), // Replace null-propagating operator
+                       Total = Math.Round(op.TotlaPrice, 2), // Ensure proper rounding for Total
+                       Count = op.Quantity
+                   }).ToList()
+               })
+               .ToListAsync();
+
+            if (!orders.Any())
+                return OperationResult<IEnumerable<GetStoreOrders>>.Failure("No orders found.");
+
+            return OperationResult<IEnumerable<GetStoreOrders>>.Success(orders);
+        }
+        public async Task<OperationResult<IEnumerable<GetStoreOrders>>> GetStoreOrdersInWorkStatus(int storeId)
         {
             var orders = await _db.Orders
                 .Include(o => o.OrderProducts)
                 .ThenInclude(op => op.Product)
                 .Include(o => o.User) // Ensure User is included for Customer details
-                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.تم_التسليم)
+                .Where(o => o.StoreId == storeId && (o.Status == enOrderStatus.في_الطريق || o.Status == enOrderStatus.الشحن))
                 .Select(o => new GetStoreOrders
                 {
                     Id = o.OrderId,
@@ -582,45 +636,11 @@ namespace Manzili.EF.Implementaion
                 .ToListAsync();
 
             if (!orders.Any())
-                return OperationResult<GetStoreOrders>.Failure("No orders found.");
+                return OperationResult<IEnumerable<GetStoreOrders>>.Failure("No orders found.");
 
-            return OperationResult<GetStoreOrders>.Success(orders.FirstOrDefault());
+            return OperationResult<IEnumerable<GetStoreOrders>>.Success(orders);
         }
-        public async Task<OperationResult<GetStoreOrders>> GetStoreOrdersInWorkStatus(int storeId)
-        {
-            var orders = await _db.Orders
-                .Include(o => o.OrderProducts)
-                .ThenInclude(op => op.Product)
-                .Include(o => o.User) // Ensure User is included for Customer details
-                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.في_الطريق || o.Status == enOrderStatus.الشحن)
-                .Select(o => new GetStoreOrders
-                {
-                    Id = o.OrderId,
-                    CustomerName = o.User != null ? o.User.UserName : "Unknown", // Replace null-propagating operator
-                    CustomerPhoneNumber = o.User != null ? o.User.PhoneNumber : "Unknown", // Replace null-propagating operator
-                    CustomerAddress = o.User != null ? o.User.Address : "Unknown", // Replace null-propagating operator
-                    CreatedAt = o.CreatedAt,
-                    TotalPrice = Math.Round(o.Total, 2), // Ensure proper rounding for TotalPrice
-                    TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
-                    Status = o.Status.ToString(),
-                    Note = o.Note,
-                    OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
-                    {
-                        Id = op.ProductId ?? 0, // Handle null ProductId
-                        Name = op.Product != null ? op.Product.Name : "Unknown", // Replace null-propagating operator
-                        Price = (int)Math.Round(op.Product != null ? op.Price : 0), // Replace null-propagating operator
-                        Total = Math.Round(op.TotlaPrice, 2), // Ensure proper rounding for Total
-                        Count = op.Quantity
-                    }).ToList()
-                })
-                .ToListAsync();
-
-            if (!orders.Any())
-                return OperationResult<GetStoreOrders>.Failure("No orders found.");
-
-            return OperationResult<GetStoreOrders>.Success(orders.FirstOrDefault());
-        }
-        public async Task<OperationResult<GetStoreOrders>> GetStoreOrdersInNewStatus(int storeId)
+        public async Task<OperationResult<IEnumerable<GetStoreOrders>>> GetStoreOrdersInNewStatus(int storeId)
         {
             var orders = await _db.Orders
                 .Include(o => o.OrderProducts)
@@ -650,12 +670,47 @@ namespace Manzili.EF.Implementaion
                 .ToListAsync();
 
             if (!orders.Any())
-                return OperationResult<GetStoreOrders>.Failure("No orders found.");
+                return OperationResult<IEnumerable<GetStoreOrders>>.Failure("No orders found.");
 
-            return OperationResult<GetStoreOrders>.Success(orders.FirstOrDefault());
+            return OperationResult<IEnumerable<GetStoreOrders>>.Success(orders);
+        }
+        public async Task<OperationResult<IEnumerable<GetStoreOrders>>> GetAllOrders()
+        {
+            var orders = await _db.Orders
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .Include(o => o.User) // Ensure User is included for Customer details
+                .Select(o => new GetStoreOrders
+                {
+                    Id = o.OrderId,
+                    CustomerName = o.User != null ? o.User.UserName : "Unknown", // Replace null-propagating operator
+                    CustomerPhoneNumber = o.User != null ? o.User.PhoneNumber : "Unknown", // Replace null-propagating operator
+                    CustomerAddress = o.User != null ? o.User.Address : "Unknown", // Replace null-propagating operator
+                    CreatedAt = o.CreatedAt,
+                    TotalPrice = Math.Round(o.Total, 2), // Ensure proper rounding for TotalPrice
+                    TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
+                    Status = o.Status.ToString(),
+                    Note = o.Note,
+                    OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
+                    {
+                        Id = op.ProductId ?? 0, // Handle null ProductId
+                        Name = op.Product != null ? op.Product.Name : "Unknown", // Replace null-propagating operator
+                        Price = (int)Math.Round(op.Product != null ? op.Price : 0), // Replace null-propagating operator
+                        Total = Math.Round(op.TotlaPrice, 2), // Ensure proper rounding for Total
+                        Count = op.Quantity
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            if (!orders.Any())
+                return OperationResult<IEnumerable<GetStoreOrders>>.Failure("No orders found.");
+
+            return OperationResult<IEnumerable<GetStoreOrders>>.Success(orders); // Corrected to match the expected type
         }
 
 
 
     }
 }
+
+
