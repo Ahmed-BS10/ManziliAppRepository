@@ -34,14 +34,14 @@ namespace Manzili.EF.Implementaion
         public async Task<OperationResult<IEnumerable<CompletedOrderDto>>> GetLastTwoCompletedOrdersAsync(int storeId)
         {
             var orders = await _db.Orders
-                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.تم_التسليم) 
-                .OrderByDescending(o => o.CreatedAt) 
+                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.تم_التسليم)
+                .OrderByDescending(o => o.CreatedAt)
                 .Take(2)
                 .Select(o => new CompletedOrderDto
                 {
-                    BuyerName = o.User.UserName, 
-                    Price = o.Total, 
-                    Date = o.CreatedAt 
+                    BuyerName = o.User.UserName,
+                    Price = o.Total,
+                    Date = o.CreatedAt
                 })
                 .ToListAsync();
 
@@ -462,9 +462,9 @@ namespace Manzili.EF.Implementaion
         public async Task<OperationResult<IEnumerable<GetStoreDashbord>>> GetUnBlockeStores(int page, int pageSize)
         {
 
-        
+
             var storesQuery = await _db.Stores
-               // .Include(s => s.StoreOrders) // Include related orders to calculate TotalSale
+                // .Include(s => s.StoreOrders) // Include related orders to calculate TotalSale
                 .AsNoTracking()
                 .Where(x => x.IsBlocked == false)
                 .Skip((page - 1) * pageSize)
@@ -476,11 +476,11 @@ namespace Manzili.EF.Implementaion
                     CreateAt = s.CreateAt,
                     Statu = s.Status,
                     Location = s.Address, // Assuming `Address` represents the location
-                     // Calculate total sales from orders
+                                          // Calculate total sales from orders
                 })
                 .ToListAsync();
 
-            if (storesQuery is null )
+            if (storesQuery is null)
             {
                 return OperationResult<IEnumerable<GetStoreDashbord>>.Failure("No stores found.");
             }
@@ -492,7 +492,7 @@ namespace Manzili.EF.Implementaion
             var user = await _db.Users.FindAsync(Id);
             if (user == null) return OperationResult<bool>.Failure("User not found");
             user.IsBlocked = true;
-          
+
 
             await _db.SaveChangesAsync();
             return OperationResult<bool>.Success(true);
@@ -656,6 +656,22 @@ namespace Manzili.EF.Implementaion
         }
 
 
+        public async Task<OperationResult<IEnumerable<GetProductGategory>>> GetProductGategoriesByStoreId(int storeId)
+        {
+            var storeProductCategories = await _db.Products
+                .Where(p => p.StoreId == storeId && p.ProductCategory != null)
+                .Select(p => new GetProductGategory
+                {
+                    Id = p.ProductCategoryId.Value, // Assuming ProductCategoryId is not null
+                    Name = p.ProductCategory.Name
+                })
+                .Distinct()
+                .ToListAsync();
+
+            return OperationResult<IEnumerable<GetProductGategory>>.Success(storeProductCategories);
+        }
 
     }
 }
+
+

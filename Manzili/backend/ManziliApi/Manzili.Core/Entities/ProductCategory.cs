@@ -7,7 +7,7 @@
         public string? Image { get; set; }
         public int StoreCategoryId { get; set; }
 
- 
+        
         public ICollection<Product>? Products { get; set; }
         public StoreCategory StoreCategory { get; set; }
     }
