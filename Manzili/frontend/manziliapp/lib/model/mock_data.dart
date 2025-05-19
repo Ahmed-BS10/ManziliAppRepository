@@ -73,7 +73,8 @@ class MockData {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
 
-      final ordersJson = data is List ? data : [data];
+      // Extract the list of orders from the "data" field
+      final ordersJson = (data['data'] ?? []) as List;
 
       return ordersJson.map<Order>((jsonOrder) {
         return Order(

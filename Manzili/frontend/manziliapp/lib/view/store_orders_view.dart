@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../model/order.dart';
 import '../model/mock_data.dart';
 import '../widget/store_order/order_card.dart';
+import 'package:http/http.dart' as http;
 
 class StoreOrdersView extends StatefulWidget {
   const StoreOrdersView({super.key});
@@ -24,6 +25,13 @@ class _OrdersScreenState extends State<StoreOrdersView>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  // Helper to delete order from API
+  Future<bool> _deleteOrder(String orderId) async {
+    final url = Uri.parse('http://man.runasp.net/api/Orders/$orderId');
+    final response = await http.delete(url);
+    return response.statusCode == 200;
   }
 
   @override
@@ -125,11 +133,45 @@ class _OrdersScreenState extends State<StoreOrdersView>
               SnackBar(content: Text('تم قبول الطلب ${orders[index].id}')),
             );
           },
-          onCancel: () {
-            // Handle cancel action
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('تم إلغاء الطلب ${orders[index].id}')),
+          onCancel: () async {
+            final confirm = await showDialog<bool>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: const Text('تأكيد الإلغاء'),
+                content: const Text('هل أنت متأكد أنك تريد إلغاء هذا الطلب؟'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: const Text('لا'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: const Text('نعم'),
+                  ),
+                ],
+              ),
             );
+            if (confirm != true) return;
+
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (ctx) => const Center(child: CircularProgressIndicator()),
+            );
+            final success = await _deleteOrder(orders[index].id);
+            Navigator.of(context).pop(); // remove loading dialog
+            if (success) {
+              setState(() {
+                orders.removeAt(index);
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('تم إلغاء الطلب ${orders[index].id}')),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('فشل في إلغاء الطلب')),
+              );
+            }
           },
           onDetails: () {
             // Handle show details action
