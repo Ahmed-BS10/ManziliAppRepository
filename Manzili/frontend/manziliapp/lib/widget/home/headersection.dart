@@ -19,7 +19,7 @@ class HeaderSectionState extends State<HeaderSection>
   bool _isHovering = false;
 
   // Design constants
-  static const double _aspectRatio = 16 / 9;
+  static const double _aspectRatio = 16 / 6; // Shrink height (was 16/9)
   static const Duration _transitionDuration = Duration(milliseconds: 500);
   static const Duration _autoScrollDuration = Duration(seconds: 5);
   static const Curve _transitionCurve = Curves.easeInOutCubic;
@@ -92,7 +92,7 @@ class HeaderSectionState extends State<HeaderSection>
           child: Container(
             margin: EdgeInsets.symmetric(
               horizontal: width * 0.05,
-              vertical: 20,
+              vertical: 10, // Shrink vertical margin (was 20)
             ),
             height: height,
             decoration: BoxDecoration(

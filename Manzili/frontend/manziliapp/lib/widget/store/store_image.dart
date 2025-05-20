@@ -18,7 +18,7 @@ class StoreImage extends StatelessWidget {
       Icons.storefront_outlined,
       size: 40,
       color: Colors.grey,
-    ),
+    ), required int borderRadius, required int height, required int width,
   });
 
   @override

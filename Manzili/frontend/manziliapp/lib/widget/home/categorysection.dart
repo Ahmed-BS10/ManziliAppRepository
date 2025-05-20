@@ -54,7 +54,14 @@ class CategorySectionState extends State<CategorySection> {
       textDirection: TextDirection.rtl,
       child: Column(
         children: [
-          const SectionHeader(title: "تصفح التصنيفات", action: "عرض الكل"),
+          SectionHeader(
+            title: "عرض الكل",
+            action: "تصفح التصنيفات",
+            titleStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1548C8),
+            ),
+          ),
           FutureBuilder<List<Category>>(
             future: _categoriesFuture,
             builder: (context, snapshot) {
@@ -136,8 +143,14 @@ class Category {
 class SectionHeader extends StatelessWidget {
   final String title;
   final String action;
+  final TextStyle? titleStyle; // Add this
 
-  const SectionHeader({super.key, required this.title, required this.action});
+  const SectionHeader({
+    super.key,
+    required this.title,
+    required this.action,
+    this.titleStyle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +159,7 @@ class SectionHeader extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: screenWidth * 0.05,
-        vertical: 14,
+        vertical: 8, // Shrink header height (was 14)
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,11 +168,19 @@ class SectionHeader extends StatelessWidget {
             onTap: () {
               Get.to(() => const StoreListSection());
             },
-            child: Text(action,
-                style: TextStyles.linkStyle.copyWith(color: Colors.black)),
+            child: Text(
+              action,
+              style: TextStyles.linkStyle.copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 25, // Make it bigger
+              ),
+            ),
           ),
-          Text(title,
-              style: TextStyles.sectionHeader.copyWith(color: Colors.black)),
+          Text(
+            title,
+            style: titleStyle ?? TextStyles.sectionHeader.copyWith(color: Colors.black),
+          ),
         ],
       ),
     );
@@ -188,13 +209,13 @@ class CategoryCard extends StatelessWidget {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      width: screenWidth * 0.25,
-      height: 110,
-      margin: const EdgeInsets.only(right: 8),
+      width: screenWidth * 0.30, // Increased width (was 0.25)
+      height: 180, 
+      margin: const EdgeInsets.only(right: 12), // Slightly more margin
       decoration: BoxDecoration(
         color: isActive ? AppColors.primaryColor : AppColors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.borderColor),
+        border: Border.all(color: const Color(0xFFE0E6ED)), // Set border color to E0E6ED
         boxShadow: [
           if (isActive)
             BoxShadow(
@@ -208,15 +229,15 @@ class CategoryCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image(
-            width: 50,
-            height: 50,
+            width: 60, // Increased image size (was 50)
+            height: 60, // Increased image size (was 50)
             image: imageUrl.isNotEmpty
                 ? NetworkImage('http://man.runasp.net/$imageUrl')
                 : const AssetImage('lib/assets/image/burger.jpg')
                     as ImageProvider,
             semanticLabel: 'Category image for $title',
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10), // Slightly more spacing (was 8)
           Text(
             title,
             style: TextStyles.sectionHeader.copyWith(
@@ -224,7 +245,7 @@ class CategoryCard extends StatelessWidget {
             ),
           ),
           Text(
-            count,
+            count + ' أسرة منتجة',
             style: TextStyles.timeStyle.copyWith(
               color: isActive ? Colors.white70 : Colors.black54,
             ),
