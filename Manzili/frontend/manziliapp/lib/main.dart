@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/sp',
+      initialRoute: '/sov',
       getPages: [
         GetPage(
           name: '/sp',
@@ -111,7 +111,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/sov',
-          page: () => StoreProfileScreen(),
+          page: () => StoreOrdersView(),
         ),
       ],
     );
