@@ -9,6 +9,7 @@ import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
 import 'package:manziliapp/view/product_srore_dashbord_view.dart';
 import 'package:manziliapp/view/profile.dart';
+import 'package:manziliapp/view/profile_store.dart';
 import 'package:manziliapp/view/register_view.dart';
 import 'package:manziliapp/view/splash_view.dart';
 import 'package:manziliapp/view/store_dashboard.dart';
@@ -50,8 +51,11 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
-        ChangeNotifierProvider(create: (_) => UserProvider()),
+         ChangeNotifierProvider(create: (_) => StoreProvider()), // Commented out as UserProvider is undefined
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()), // Commented out as UserProvider is undefined
+
+
       ],
       child: const MyApp(),
     ),
@@ -91,7 +95,7 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: '/sp',
           page: () => const SplashsView(),
-          middlewares: [AuthMiddleware()],
+        //  middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/login',
@@ -107,7 +111,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/sov',
-          page: () => StoreOrdersView(),
+          page: () => StoreProfileScreen(),
         ),
       ],
     );
