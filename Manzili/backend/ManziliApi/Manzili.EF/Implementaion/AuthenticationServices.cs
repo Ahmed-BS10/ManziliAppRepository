@@ -1,6 +1,7 @@
 ﻿using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Dto.UserDto;
 using Manzili.Core.Entities;
+using Manzili.Core.Enum;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -123,7 +124,10 @@ namespace Manzili.Core.Services
                 UserName = storeCreate.UserName,
 
                 Email = storeCreate.Email,
-                Address = storeCreate.Address
+                Address = storeCreate.Address,
+
+
+                Status = enStoreStatus.Close.ToString()
             };
 
             var result = await _storeServices.CreateAsync(storeCreate , categories);

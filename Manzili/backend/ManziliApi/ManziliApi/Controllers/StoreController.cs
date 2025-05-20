@@ -1,4 +1,5 @@
 ﻿using Manzili.Core.Dto.StoreDtp;
+using Manzili.Core.Enum;
 using Manzili.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using static Manzili.Core.Routes.Route;
@@ -17,6 +18,22 @@ namespace ManziliApi.Controllers
 
 
 
+        [HttpPut("ChangeStoreStatsu")]
+        public async Task<IActionResult> ChangeStoreStatsu(int storeId , enStoreStatus enStore)
+        {
+            var result = await _storeServices.ChangeStoreStatsu(storeId, enStore);
+            return Ok(result);
+        }
+
+        [HttpGet("GetProfileStore")]
+        public async Task<IActionResult> GetProfileStore(int storeId)
+        {
+            var result = await _storeServices.GetProfileStore(storeId);
+            if (result.IsSuccess)
+                return Ok(result.Data);
+
+            return BadRequest(result.Message);
+        }
 
         [HttpGet("GetAllOrders")]
         public async Task<IActionResult> GetAllOrders()
@@ -62,10 +79,6 @@ namespace ManziliApi.Controllers
 
             return BadRequest(result.Message);
         }
-
-
-
-
 
         [HttpGet("GetStoreOrdersInPastStatus")]
         public async Task<IActionResult> GetStoreOrdersInPastStatus(int storeId)

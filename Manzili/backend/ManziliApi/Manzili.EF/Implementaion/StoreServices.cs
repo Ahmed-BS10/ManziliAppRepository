@@ -215,6 +215,24 @@ namespace Manzili.EF.Implementaion
             return OperationResult<GetStoreDto>.Success(new GetStoreDto(id, store.ImageUrl, store.BusinessName, store.Rate, [""], store.Status));
         }
 
+        public async Task<OperationResult<StoreBasicInfoDto>> GetProfileStore(int storeId)
+        {
+            var store = await _dbSet.AsNoTracking().FirstOrDefaultAsync(s => s.Id == storeId);
+            if (store == null)
+                return OperationResult<StoreBasicInfoDto>.Failure("Store not found.");
+
+            var dto = new StoreBasicInfoDto
+            {
+                Id = store.Id,
+                Image = store.ImageUrl,
+                Phone = store.PhoneNumber,
+                Status = store.Status ?? "o",
+                Description = store.Description,
+                Location = store.Address
+            };
+
+            return OperationResult<StoreBasicInfoDto>.Success(dto);
+        }
 
         // Anther
         public async Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto, List<int> categoriesIds)
@@ -709,6 +727,22 @@ namespace Manzili.EF.Implementaion
         }
 
 
+
+
+
+
+        public async Task<OperationResult<bool>>ChangeStoreStatsu(int store , enStoreStatus enStore)
+        {
+            var storeToUpdate = await _db.Stores.FindAsync(store);
+            if (storeToUpdate == null)
+                return OperationResult<bool>.Failure("Store not found");
+
+            storeToUpdate.Status = enStore.ToString();
+            
+            await _db.SaveChangesAsync();
+
+            return OperationResult<bool>.Success(true);
+        }
 
     }
 }

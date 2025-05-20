@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/sov',
+      initialRoute: '/sp',
       getPages: [
         GetPage(
           name: '/sp',

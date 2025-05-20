@@ -1,6 +1,7 @@
 ﻿using Manzili.Core.Dto.StoreDto;
 using Manzili.Core.Dto.StoreDtp;
 using Manzili.Core.Entities;
+using Manzili.Core.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace Manzili.Core.Services
@@ -23,6 +24,7 @@ namespace Manzili.Core.Services
         Task<OperationResult<IEnumerable<GetStoreDto>>> GetStoresWithCategory(int storeCategoryId);
         Task<OperationResult<GetInfoStoreDto>> GetInfoStore(int storeId);
         Task<OperationResult<IEnumerable<GetStoreDto>>> SearchStoreByNameAsync(string BusinessName);
+        Task<OperationResult<StoreBasicInfoDto>> GetProfileStore(int storeId);
 
         // Create
         Task<OperationResult<CreateStoreDto>> CreateAsync(CreateStoreDto storeDto, List<int> categories);
@@ -55,6 +57,11 @@ namespace Manzili.Core.Services
         Task<OperationResult<IEnumerable<GetStoreOrders>>> GetStoreOrdersInWorkStatus(int storeId);
         Task<OperationResult<IEnumerable<GetStoreOrders>>> GetStoreOrdersInNewStatus(int storeId);
         Task<OperationResult<IEnumerable<GetStoreOrders>>> GetAllOrders();
+
+
+
+
+        Task<OperationResult<bool>> ChangeStoreStatsu(int store, enStoreStatus enStore);
 
     }
 

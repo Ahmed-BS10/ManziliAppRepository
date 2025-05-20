@@ -20,8 +20,8 @@ namespace Manzili.Core.Entities
         public string? SocileMediaAcount { get; set; }
         public double ? Rate {  get; set; }
 
-        public string Status = enStoreStatus.Open.ToString();
-       
+        public string Status { get; set; }
+
 
 
 

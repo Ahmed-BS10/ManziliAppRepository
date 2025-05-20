@@ -12,5 +12,4 @@ namespace Manzili.Core.Enum
         Close = 2,
     }
 
-   
 }
