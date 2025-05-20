@@ -7,22 +7,28 @@ class StoreModel {
   String _location;
   String _profileImage;
   String _password;
+  String _status;
+  String _description;
 
   StoreModel({
     required String id,
-    required String name,
-    required String email,
+    String name = "",
+    String email = "",
     required String phone,
     String location = "",
     String profileImage = "assets/images/profile.png",
     String password = "••••••••••",
+    String status = "",
+    String description = "",
   })  : _id = id,
         _name = name,
         _email = email,
         _phone = phone,
         _location = location,
         _profileImage = profileImage,
-        _password = password;
+        _password = password,
+        _status = status,
+        _description = description;
 
   String get id => _id;
   String get name => _name;
@@ -31,23 +37,19 @@ class StoreModel {
   String get location => _location;
   String get profileImage => _profileImage;
   String get password => _password;
+  String get status => _status;
+  String get description => _description;
 
   set name(String value) {
-    if (value.trim().isNotEmpty) {
-      _name = value;
-    }
+    _name = value;
   }
 
   set email(String value) {
-    if (value.contains('@')) {
-      _email = value;
-    }
+    _email = value;
   }
 
   set phone(String value) {
-    if (RegExp(r'^\d+$').hasMatch(value)) {
-      _phone = value;
-    }
+    _phone = value;
   }
 
   set location(String value) {
@@ -59,9 +61,15 @@ class StoreModel {
   }
 
   set password(String value) {
-    if (value.length >= 8) {
-      _password = value;
-    }
+    _password = value;
+  }
+
+  set status(String value) {
+    _status = value;
+  }
+
+  set description(String value) {
+    _description = value;
   }
 
   StoreModel clone() {
@@ -73,6 +81,8 @@ class StoreModel {
       location: _location,
       profileImage: _profileImage,
       password: _password,
+      status: _status,
+      description: _description,
     );
   }
 
@@ -83,15 +93,35 @@ class StoreModel {
     _location = store._location;
     _profileImage = store._profileImage;
     _password = store._password;
+    _status = store._status;
+    _description = store._description;
+  }
+
+  factory StoreModel.fromApi(Map<String, dynamic> json) {
+    return StoreModel(
+      id: json['id'].toString(),
+      name: json['userName'] ?? '', // use userName from API
+      phone: json['phone'] ?? '',
+      profileImage: json['image'] != null
+          ? 'http://man.runasp.net${json['image']}'
+          : "assets/images/profile.png",
+      status: json['status'] ?? '',
+      description: json['description'] ?? '',
+      location: json['location'] ?? '',
+    );
   }
 
   factory StoreModel.defaultStore() {
     return StoreModel(
       id: "1",
-      name: "ali abdullah",
-      email: "Asalim@gmail.com",
-      phone: "7175656548",
-      location: "قوة المتصررين",
+      name: "",
+      email: "",
+      phone: "",
+      location: "",
+      profileImage: "assets/images/profile.png",
+      password: "••••••••••",
+      status: "",
+      description: "",
     );
   }
 }
