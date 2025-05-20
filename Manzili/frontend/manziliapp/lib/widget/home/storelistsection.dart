@@ -190,80 +190,103 @@ class StoreListItemState extends State<StoreListItem> {
               borderRadius: BorderRadius.circular(8),
             ),
             margin: EdgeInsets.zero,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  StoreImage(
-                    imageUrl: widget.imageUrl,
-                    width: 80,
-                    height: 80,
-                    borderRadius: 0, // Make the image squared (no rounding)
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.title,
-                                style: TextStyles.linkStyle.copyWith(
-                                  fontSize: 20, // Make it bigger
-                                  fontWeight: FontWeight.bold, // Make it bold
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 6),
-                              _StatusIndicator(
-                                status: widget.status,
-                                color: widget.statusColor,
-                              ),
-                              const SizedBox(height: 6),
-                              _CategoryIndicators(
-                                  categories: widget.categoryNames),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      StoreImage(
+                        imageUrl: widget.imageUrl,
+                        width: 80,
+                        height: 80,
+                        borderRadius: 0, // Make the image squared (no rounding)
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            InkWell(
-                              onTap: _toggleFavorite,
-                              borderRadius: BorderRadius.circular(20),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Icon(
-                                  isFavorite
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: isFavorite ? Colors.red : Colors.grey,
-                                  size: 20,
-                                ),
+                            Text(
+                              widget.title,
+                              style: TextStyles.linkStyle.copyWith(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 6),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.star, size: 16, color: Colors.amber),
-                                const SizedBox(width: 4),
-                                Text(widget.rating,
-                                    style: TextStyles.timeStyle),
-                              ],
+                            _StatusIndicator(
+                              status: widget.status,
+                              color: widget.statusColor,
                             ),
+                            const SizedBox(height: 6),
+                            _CategoryIndicators(
+                              categories: widget.categoryNames,
+                            ),
+                            
                           ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Favorite icon in the top left with left margin
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _toggleFavorite,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.grey,
+                          size: 22,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                // Store rate in the bottom left with left margin
+                Positioned(
+                  bottom: 10,
+                  left: 10,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.07),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.star, size: 16, color: Colors.amber),
+                        const SizedBox(width: 4),
+                        Text(
+                          widget.rating,
+                          style: TextStyles.timeStyle.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -302,13 +325,14 @@ class _StatusIndicator extends StatelessWidget {
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(6),
+          
           ),
           child: Text(
             status,
             style: TextStyles.linkStyle.copyWith(
               color: textColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              fontSize: 15,
             ),
           ),
         ),
@@ -332,14 +356,20 @@ class _CategoryIndicators extends StatelessWidget {
             (category) => Container(
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
               decoration: BoxDecoration(
-              color: const Color(0xFFECF1F6),
-              borderRadius: BorderRadius.circular(4),
+                color: const Color(0xFFECF1F6),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: const Color(0xFFECF1F6), // More obvious border color (blue)
+                  width: 1.5, // Thicker border for more visibility
+                ),
               ),
               child: Text(
-              category,
-              style: TextStyles.linkStyle.copyWith(
-                color: const Color(0xFF66707A),
-              ),
+                category,
+                style: TextStyles.linkStyle.copyWith(
+                  color: const Color(0xFF66707A),
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           )
