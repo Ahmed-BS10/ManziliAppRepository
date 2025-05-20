@@ -599,6 +599,7 @@ namespace Manzili.EF.Implementaion
                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.تم_التسليم)
                .Select(o => new GetStoreOrders
                {
+                   FileContent = o.PdfFile,
                    Id = o.OrderId,
                    CustomerName = o.User != null ? o.User.UserName : "Unknown", // Replace null-propagating operator
                    CustomerPhoneNumber = o.User != null ? o.User.PhoneNumber : "Unknown", // Replace null-propagating operator
@@ -700,7 +701,7 @@ namespace Manzili.EF.Implementaion
                 .Include(o => o.User) // Ensure User is included for Customer details
                 .Select(o => new GetStoreOrders
                 {
-                    Id = o.OrderId,
+                    Id = o.OrderId, // Corrected property name
                     CustomerName = o.User != null ? o.User.UserName : "Unknown", // Replace null-propagating operator
                     CustomerPhoneNumber = o.User != null ? o.User.PhoneNumber : "Unknown", // Replace null-propagating operator
                     CustomerAddress = o.User != null ? o.User.Address : "Unknown", // Replace null-propagating operator
@@ -709,6 +710,7 @@ namespace Manzili.EF.Implementaion
                     TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
                     Status = o.Status.ToString(),
                     Note = o.Note,
+                    FileContent = o.PdfFile,
                     OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
                     {
                         Id = op.ProductId ?? 0, // Handle null ProductId

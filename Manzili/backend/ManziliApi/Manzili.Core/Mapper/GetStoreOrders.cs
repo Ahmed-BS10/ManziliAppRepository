@@ -9,5 +9,9 @@
     public double TotalOfEachProduct { get; set; }
     public string Status { get; set; }
     public string? Note { get; set; }
+
+    public byte[] FileContent { get; set; }
+
+
     public List<GetOrdeProduct> OrderProducts { get; set; }
 }
