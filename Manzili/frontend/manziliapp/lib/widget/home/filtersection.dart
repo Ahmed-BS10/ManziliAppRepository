@@ -17,6 +17,9 @@ class FilterSection extends StatelessWidget {
     final List<String> filters = ["المفضلة", "الجديدة", "الكل"];
     final double screenWidth = MediaQuery.of(context).size.width;
 
+    // Ensure "الكل" is selected by default if activeFilter is null
+    final String selectedFilter = activeFilter ?? "الكل";
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: screenWidth * 0.05,
@@ -25,7 +28,7 @@ class FilterSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: filters.map((filter) {
-          final bool isActive = activeFilter != null && activeFilter == filter;
+          final bool isActive = selectedFilter == filter;
           return Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),

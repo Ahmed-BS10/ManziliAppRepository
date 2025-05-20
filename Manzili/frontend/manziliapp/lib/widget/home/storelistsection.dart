@@ -195,7 +195,12 @@ class StoreListItemState extends State<StoreListItem> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  StoreImage(imageUrl: widget.imageUrl),
+                  StoreImage(
+                    imageUrl: widget.imageUrl,
+                    width: 80,
+                    height: 80,
+                    borderRadius: 0, // Make the image squared (no rounding)
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Row(
@@ -207,7 +212,10 @@ class StoreListItemState extends State<StoreListItem> {
                             children: [
                               Text(
                                 widget.title,
-                                style: TextStyles.linkStyle,
+                                style: TextStyles.linkStyle.copyWith(
+                                  fontSize: 20, // Make it bigger
+                                  fontWeight: FontWeight.bold, // Make it bold
+                                ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 6),
@@ -272,19 +280,38 @@ class _StatusIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine background color for open/closed
+    Color? bgColor;
+    Color? textColor = Colors.white;
+    if (status == "مفتوح") {
+      bgColor = Color(0xFF20D851);
+    } else if (status == "مغلق") {
+      bgColor = Colors.red;
+    } else {
+      bgColor = color.withOpacity(0.2);
+      textColor = color;
+    }
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Removed the colored dot before status text
+        // const SizedBox(width: 6), // Remove extra spacing as well
         Container(
-          width: 8,
-          height: 8,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color,
+            color: bgColor,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            status,
+            style: TextStyles.linkStyle.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
           ),
         ),
-        const SizedBox(width: 6),
-        Text(status, style: TextStyles.linkStyle),
       ],
     );
   }
@@ -305,12 +332,14 @@ class _CategoryIndicators extends StatelessWidget {
             (category) => Container(
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 174, 202, 231),
-                borderRadius: BorderRadius.circular(4),
+              color: const Color(0xFFECF1F6),
+              borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                category,
-                style: TextStyles.linkStyle,
+              category,
+              style: TextStyles.linkStyle.copyWith(
+                color: const Color(0xFF66707A),
+              ),
               ),
             ),
           )
