@@ -25,7 +25,7 @@ namespace Manzili.Core.Dto.StoreDtp
         public string BankAccount { get; set; }
 
 
-
+        public string BookTime { get; set; }
 
         public string Password { get; set; }
 

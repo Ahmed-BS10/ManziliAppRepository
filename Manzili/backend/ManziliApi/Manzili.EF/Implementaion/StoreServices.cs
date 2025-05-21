@@ -224,6 +224,7 @@ namespace Manzili.EF.Implementaion
             var dto = new StoreBasicInfoDto
             {
                 Id = store.Id,
+                UserName = store.UserName ?? "Ali",
                 Image = store.ImageUrl,
                 Phone = store.PhoneNumber,
                 Status = store.Status ?? "o",
@@ -260,7 +261,7 @@ namespace Manzili.EF.Implementaion
 
             var store = new Store
             {
-
+                Status = enStoreStatus.Open.ToString(),
                 UserName = storeDto.UserName,
                 BusinessName = storeDto.BusinessName,
                 Description = storeDto.Description,
@@ -599,7 +600,7 @@ namespace Manzili.EF.Implementaion
                .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.تم_التسليم)
                .Select(o => new GetStoreOrders
                {
-                   FileContent = o.PdfFile,
+                  // FileContent = o.PdfFile,
                    Id = o.OrderId,
                    CustomerName = o.User != null ? o.User.UserName : "Unknown", // Replace null-propagating operator
                    CustomerPhoneNumber = o.User != null ? o.User.PhoneNumber : "Unknown", // Replace null-propagating operator
@@ -643,6 +644,7 @@ namespace Manzili.EF.Implementaion
                     TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
                     Status = o.Status.ToString(),
                     Note = o.Note,
+                   // FileContent = o.PdfFile,
                     OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
                     {
                         Id = op.ProductId ?? 0, // Handle null ProductId
@@ -659,7 +661,7 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<IEnumerable<GetStoreOrders>>.Success(orders);
         }
-        public async Task<OperationResult<IEnumerable<GetStoreOrders>>> GetStoreOrdersInNewStatus(int storeId)
+        public async Task<OperationResult<IEnumerable<GetStoreOrders>>> GetStoreOrdersInNewStatus(int storeId) 
         {
             var orders = await _db.Orders
                 .Include(o => o.OrderProducts)
@@ -677,6 +679,7 @@ namespace Manzili.EF.Implementaion
                     TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
                     Status = o.Status.ToString(),
                     Note = o.Note,
+                  //  FileContent = o.PdfFile,
                     OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
                     {
                         Id = op.ProductId ?? 0, // Handle null ProductId
