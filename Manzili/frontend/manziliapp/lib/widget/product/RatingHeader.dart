@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 
-
-
-
 // Rating Header Component
 class RatingHeader extends StatelessWidget {
   final int totalReviews;
-  
+
   const RatingHeader({
     super.key,
     required this.totalReviews,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -20,15 +17,15 @@ class RatingHeader extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-               const Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(Icons.star, color: Colors.amber, size: 20),
-              SizedBox(width: 4),
-              Text('3.3', style: TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-              
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Icon(Icons.star, color: Colors.amber, size: 20),
+                  const SizedBox(width: 4),
+                  Text(totalReviews.toString(),
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                ],
+              ),
               const Spacer(),
               const Text(
                 'تقييم المنتج',
@@ -42,25 +39,21 @@ class RatingHeader extends StatelessWidget {
             ],
           ),
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.end,
-          
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-                  '$totalReviews تقييمات',
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),textAlign: TextAlign.right,
-                ),
+              '$totalReviews تقييمات',
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.right,
+            ),
           ],
         ),
         const SizedBox(height: 8),
-
-        
-        
-       
       ],
     );
-    
   }
 }

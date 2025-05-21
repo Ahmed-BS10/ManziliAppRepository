@@ -73,6 +73,7 @@ namespace Manzili.Core.Services
             var product = await _db.Set<Product>()
                 .Include(s => s.Store)
                 .Include(im => im.Images)
+                .Include(ra => ra.ProductRatings)
                 .FirstOrDefaultAsync(p => p.Id == productId);
 
             if (product == null)
@@ -88,7 +89,7 @@ namespace Manzili.Core.Services
                 Price = product.Price,
                 State = product.State,
                 Quantity = product.Quantity,
-                Rate = product.Rate,
+                Rate = product.ProductRatings.Average(x => x.RatingValue), // Fix CS0103: Use Average directly on the collection
                 StoreName = product.Store.BusinessName,
                 images = product.Images.Select(i => i.ImageUrl).ToList() ?? [],
                 StoreImage = product.Store.ImageUrl ?? "/Profile/383ba157cb9f4367b67f7baeea98097d.jpg",

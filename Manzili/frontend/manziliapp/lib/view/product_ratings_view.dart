@@ -10,8 +10,9 @@ import 'package:manziliapp/widget/product/ReviewItem.dart';
 
 class ProductRatingsView extends StatefulWidget {
   final int productId;
-
-  const ProductRatingsView({super.key, required this.productId});
+  final int reviewI;
+  const ProductRatingsView(
+      {super.key, required this.productId, required this.reviewI});
 
   @override
   _ProductRatingsViewState createState() => _ProductRatingsViewState();
@@ -79,7 +80,9 @@ class _ProductRatingsViewState extends State<ProductRatingsView> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: [
         // Overall Rating Header
-        RatingHeader(totalReviews: reviews.length),
+        RatingHeader(
+          totalReviews: widget.reviewI,
+        ),
         const SizedBox(height: 24),
         // Reviews List or Loading/Error
         if (isLoading)

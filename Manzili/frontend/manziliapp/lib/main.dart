@@ -51,11 +51,13 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
-         ChangeNotifierProvider(create: (_) => StoreProvider()), // Commented out as UserProvider is undefined
+        ChangeNotifierProvider(
+            create: (_) =>
+                StoreProvider()), // Commented out as UserProvider is undefined
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
-        ChangeNotifierProvider(create: (_) => UserProvider()), // Commented out as UserProvider is undefined
-
-
+        ChangeNotifierProvider(
+            create: (_) =>
+                UserProvider()), // Commented out as UserProvider is undefined
       ],
       child: const MyApp(),
     ),
@@ -95,7 +97,7 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: '/sp',
           page: () => const SplashsView(),
-        //  middlewares: [AuthMiddleware()],
+          middlewares: [AuthMiddleware()],
         ),
         GetPage(
           name: '/login',

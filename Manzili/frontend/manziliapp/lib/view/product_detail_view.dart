@@ -137,7 +137,11 @@ class _ProductDetailViewState extends State<ProductDetailView> {
         return Column(
           children: [
             ImageCarousel(
-              images: product.images!,
+              images: product.images!.map((imageUrl) {
+                return imageUrl.startsWith('http')
+                    ? imageUrl
+                    : 'lib/assets/image/ad1.jpeg';
+              }).toList(),
               currentIndex: 0,
               onPageChanged: (_) {},
             ),
@@ -160,7 +164,10 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           await _saveQuantity(qty);
                         },
                       )
-                    : ProductRatingsView(productId: product.id);
+                    : ProductRatingsView(
+                        productId: product.id,
+                        reviewI: product.rating,
+                      );
               }),
             ),
 
@@ -231,7 +238,7 @@ class ProductDetailsViewBody extends StatelessWidget {
       children: [
         // عرض تقييم ومعلومات المتجر
         RatingAndStoreInfo(
-          rating: 0,
+          // rating: product.rating.round(),
           storeName: product.storeName,
           storeImage: storeImage,
         ),
