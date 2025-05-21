@@ -3,6 +3,7 @@ import '../model/order.dart';
 import '../model/mock_data.dart';
 import '../widget/store_order/order_card.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class StoreOrdersView extends StatefulWidget {
   const StoreOrdersView({super.key});
@@ -187,13 +188,18 @@ class _OrdersScreenState extends State<StoreOrdersView>
               ),
             );
           },
-          onContactCustomer: () {
-            // Handle contact customer action
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('التواصل مع العميل للطلب ${orders[index].id}'),
-              ),
-            );
+          onContactCustomer: () async {
+            final String phone =  '+967${orders[index].customerPhone}';
+            final whatsappUrl = Uri.parse('https://wa.me/$phone');
+            if (await canLaunchUrl(whatsappUrl)) {
+              await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('لا يمكن فتح واتساب لهذا الرقم: $phone'),
+                ),
+              );
+            }
           },
         );
       },

@@ -15,6 +15,7 @@ class MockData {
 
       return ordersJson.map<Order>((jsonOrder) {
         return Order(
+          customerPhone: jsonOrder['customerPhoneNumber'],
           id: jsonOrder['id'].toString(),
           customerName: jsonOrder['customerName'] ?? '',
           customerAvatar: '', // No avatar in API
@@ -46,6 +47,7 @@ class MockData {
 
       return ordersJson.map<Order>((jsonOrder) {
         return Order(
+           customerPhone: jsonOrder['customerPhoneNumber'],
           id: jsonOrder['id'].toString(),
           customerName: jsonOrder['customerName'] ?? '',
           customerAvatar: '', // No avatar in API
@@ -78,6 +80,7 @@ class MockData {
 
       return ordersJson.map<Order>((jsonOrder) {
         return Order(
+           customerPhone: jsonOrder['customerPhoneNumber'],
           id: jsonOrder['id'].toString(),
           customerName: jsonOrder['customerName'] ?? '',
           customerAvatar: '', // No avatar in API

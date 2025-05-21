@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class Order {
   final String id;
+  
   final String customerName;
   final String customerAvatar;
+  final String customerPhone;
   final List<OrderItem> items;
   final OrderStatus status;
   final DateTime date;
@@ -13,6 +15,7 @@ class Order {
     required this.id,
     required this.customerName,
     required this.customerAvatar,
+    required this.customerPhone,
     required this.items,
     required this.status,
     required this.date,
