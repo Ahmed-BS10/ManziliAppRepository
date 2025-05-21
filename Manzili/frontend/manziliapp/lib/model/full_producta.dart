@@ -5,11 +5,13 @@ class ProductData {
   final String description;
   final String state;
   final int quantity;
+  final int rating;
   final String storeName;
   final String storeImage;
   final List<String>? images;
 
   ProductData({
+    required this.rating,
     required this.id,
     required this.name,
     required this.price,
@@ -23,6 +25,7 @@ class ProductData {
 
   factory ProductData.fromJson(Map<String, dynamic> json) {
     return ProductData(
+      rating: json['rate'], // ضمان التحويل إلى double
       id: json['id'],
       name: json['name'],
       price: (json['price'] as num).toDouble(), // ضمان التحويل إلى double
@@ -45,12 +48,14 @@ class ProductData {
     double? price,
     String? description,
     String? state,
+    int? rating,
     int? quantity,
     String? storeName,
     String? storeImage,
     List<String>? images,
   }) {
     return ProductData(
+      rating: rating ?? 0,
       id: id ?? this.id,
       name: name ?? this.name,
       price: price ?? this.price,

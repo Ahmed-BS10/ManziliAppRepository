@@ -6,6 +6,7 @@ import 'dart:convert';
 class ProductDetailController extends GetxController {
   // تعريف البيانات مع كمية ابتدائية تساوي 1
   var product = ProductData(
+    rating: 0,
     id: 0,
     name: '',
     price: 0.0,
