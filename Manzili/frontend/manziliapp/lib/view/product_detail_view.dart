@@ -165,44 +165,82 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             ),
 
             // Add/Remove Cart Button & Price
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 90,
+              decoration: const BoxDecoration(
+                color: Color(0xFF1548C7), // Blue background
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Price
+                 Directionality(
+                    textDirection: TextDirection.rtl, // Force RTL layout
+                    child: RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: (product.price * _quantity).toStringAsFixed(2),
+                          ),
+                          const TextSpan(
+                            text: ' ريال',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Add/Remove Cart Button or Loading Spinner
                   _isLoading
-                      ? SizedBox(
+                      ? const SizedBox(
                           width: 30,
                           height: 30,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              _isInCart ? Colors.red : const Color(0xFF1548C7),
-                            ),
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
-                      : IconButton(
+                      : ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: _isInCart ? Colors.red : Color(0xFF1548C7),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                          ),
+                          onPressed: _toggleCart,
                           icon: Icon(
                             _isInCart
                                 ? Icons.remove_circle_outline
                                 : Icons.shopping_cart_outlined,
-                            color: _isInCart
-                                ? Colors.red
-                                : const Color(0xFF1548C7),
-                            size: 30,
+                            size: 20,
                           ),
-                          onPressed: _toggleCart,
+                          label: Text(
+                            _isInCart ? 'إزالة من السلة' : 'إضافة للسلة',
+                            style: const TextStyle(fontSize: 14),
+                          ),
                         ),
-                  Text(
-                    'السعر: ${(product.price * _quantity).toStringAsFixed(2)} ريال',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                 ],
               ),
             ),
+          ),
+
           ],
         );
       }),

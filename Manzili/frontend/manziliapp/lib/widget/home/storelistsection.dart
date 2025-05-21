@@ -186,6 +186,7 @@ class StoreListItemState extends State<StoreListItem> {
           ),
           child: Card(
             elevation: isHovered ? 4 : 2,
+            color: Colors.white, // Make the card background transparent
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),

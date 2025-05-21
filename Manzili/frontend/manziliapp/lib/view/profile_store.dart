@@ -229,7 +229,7 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                                 child: const Text(
                                   'تسجيل الخروج',
                                   style: TextStyle(
-                                    color: Colors.red,
+                                    color: Color(0xffFA3636),
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),

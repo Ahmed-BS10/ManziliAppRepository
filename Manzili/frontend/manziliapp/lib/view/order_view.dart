@@ -239,7 +239,7 @@ class _OrderViewState extends State<OrderView> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: isActive ? Colors.blue : Colors.grey[200],
+          color: isActive ? Color(0xff1548C7) : Color(0xffF4F4F4),
           borderRadius: BorderRadius.horizontal(
             right:
                 title == 'تم توصيلها' ? const Radius.circular(20) : Radius.zero,

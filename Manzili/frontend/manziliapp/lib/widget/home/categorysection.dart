@@ -211,7 +211,7 @@ class CategoryCard extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       width: screenWidth * 0.30, // Increased width (was 0.25)
       height: 180, 
-      margin: const EdgeInsets.only(right: 12), // Slightly more margin
+      margin: const EdgeInsets.only(left:10), // Add left margin
       decoration: BoxDecoration(
         color: isActive ? AppColors.primaryColor : AppColors.white,
         borderRadius: BorderRadius.circular(8),

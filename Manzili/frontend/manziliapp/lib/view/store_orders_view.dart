@@ -125,76 +125,79 @@ class _OrdersScreenState extends State<StoreOrdersView>
       padding: const EdgeInsets.all(8.0),
       itemCount: orders.length,
       itemBuilder: (context, index) {
-        return OrderCard(
-          order: orders[index],
-          onAccept: () {
-            // Handle accept action
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('تم قبول الطلب ${orders[index].id}')),
-            );
-          },
-          onCancel: () async {
-            final confirm = await showDialog<bool>(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: const Text('تأكيد الإلغاء'),
-                content: const Text('هل أنت متأكد أنك تريد إلغاء هذا الطلب؟'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(false),
-                    child: const Text('لا'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(true),
-                    child: const Text('نعم'),
-                  ),
-                ],
-              ),
-            );
-            if (confirm != true) return;
+        return Container(
+          color: Colors.transparent, // Make the container background transparent
+          child: OrderCard(
+            order: orders[index],
+            onAccept: () {
+              // Handle accept action
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('تم قبول الطلب ${orders[index].id}')),
+              );
+            },
+            onCancel: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('تأكيد الإلغاء'),
+                  content: const Text('هل أنت متأكد أنك تريد إلغاء هذا الطلب؟'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(false),
+                      child: const Text('لا'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(true),
+                      child: const Text('نعم'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirm != true) return;
 
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (ctx) => const Center(child: CircularProgressIndicator()),
-            );
-            final success = await _deleteOrder(orders[index].id);
-            Navigator.of(context).pop(); // remove loading dialog
-            if (success) {
-              setState(() {
-                orders.removeAt(index);
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('تم إلغاء الطلب ${orders[index].id}')),
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (ctx) => const Center(child: CircularProgressIndicator()),
               );
-            } else {
+              final success = await _deleteOrder(orders[index].id);
+              Navigator.of(context).pop(); // remove loading dialog
+              if (success) {
+                setState(() {
+                  orders.removeAt(index);
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('تم إلغاء الطلب ${orders[index].id}')),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('فشل في إلغاء الطلب')),
+                );
+              }
+            },
+            onDetails: () {
+              // Handle show details action
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('فشل في إلغاء الطلب')),
+                SnackBar(content: Text('عرض تفاصيل الطلب ${orders[index].id}')),
               );
-            }
-          },
-          onDetails: () {
-            // Handle show details action
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('عرض تفاصيل الطلب ${orders[index].id}')),
-            );
-          },
-          onProductDetails: () {
-            // Handle product details action
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('عرض تفاصيل المنتج للطلب ${orders[index].id}'),
-              ),
-            );
-          },
-          onContactCustomer: () {
-            // Handle contact customer action
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('التواصل مع العميل للطلب ${orders[index].id}'),
-              ),
-            );
-          },
+            },
+            onProductDetails: () {
+              // Handle product details action
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('عرض تفاصيل المنتج للطلب ${orders[index].id}'),
+                ),
+              );
+            },
+            onContactCustomer: () {
+              // Handle contact customer action
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('التواصل مع العميل للطلب ${orders[index].id}'),
+                ),
+              );
+            },
+          ),
         );
       },
     );

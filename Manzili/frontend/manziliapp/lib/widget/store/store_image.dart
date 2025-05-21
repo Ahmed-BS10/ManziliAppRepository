@@ -27,15 +27,24 @@ class StoreImage extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: ClipOval(
-        child: Container(
-          color: Colors.grey.shade200,
-          child: (imageUrl?.isNotEmpty == true)
-              ? Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // The network image itself
-                    Image.network(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200, // Slight border radius
+          border: Border(
+            right: BorderSide(
+              color: Color(0xFF1548C7),
+              width: 3,
+            ),
+          ),
+        ),
+        child: (imageUrl?.isNotEmpty == true)
+            ? Stack(
+                fit: StackFit.expand,
+                children: [
+                  // The network image itself
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
                       imageUrl!,
                       fit: BoxFit.cover,
                       loadingBuilder: (ctx, child, progress) {
@@ -52,10 +61,10 @@ class StoreImage extends StatelessWidget {
                         return Center(child: placeholder);
                       },
                     ),
-                  ],
-                )
-              : Center(child: placeholder),
-        ),
+                  ),
+                ],
+              )
+            : Center(child: placeholder),
       ),
     );
   }

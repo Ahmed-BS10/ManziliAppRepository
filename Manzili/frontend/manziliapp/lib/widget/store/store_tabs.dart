@@ -42,7 +42,7 @@ class StoreTabs extends StatelessWidget {
                         status,
                         style: TextStyle(
                             color:
-                                status == 'مفتوح' ? Colors.white : Colors.red,
+                                status == 'مفتوح' ? Colors.white : Colors.white,
                             fontSize: 15),
                       ),
                     ),

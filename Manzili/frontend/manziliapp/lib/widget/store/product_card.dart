@@ -111,84 +111,102 @@ class _ProductCardState extends State<ProductCard> {
         border: Border.all(color: const Color(0xFF1548C7)),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
+      child: Stack(
         children: [
-          // Price + cart icon
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${widget.product.price.toInt()} ريال',
-                  style: const TextStyle(
-                    color: Color(0xFF1548C7),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-                const SizedBox(height: 12),
-                _isLoading
-                    ? const SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: CircularProgressIndicator(strokeWidth: 2.5),
-                      )
-                    : IconButton(
-                        icon: Icon(
-                          _isInCart
-                              ? Icons.remove_circle_outline
-                              : Icons.shopping_cart_outlined,
-                          color:
-                              _isInCart ? Colors.red : const Color(0xFF1548C7),
-                          size: 30,
+          Row(
+            children: [
+              // Product details
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(right: 10, bottom: 6),
+                      child: Text(
+                        widget.product.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                          color: Color(0xFF1548C7),
                         ),
-                        onPressed: () => _toggleCart(widget.product.id),
+                        textAlign: TextAlign.right,
                       ),
-              ],
-            ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(right: 10, bottom: 0),
+                      child: Text(
+                        widget.product.description,
+                        style: const TextStyle(fontSize: 14),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Image + rating
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  'http://man.runasp.net${widget.product.image}',
+                  width: 90, // was 91
+                  height: 86, // was 87
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    width: 87,
+                    height: 83,
+                    color: Colors.grey.shade300,
+                    child: const Icon(Icons.fastfood, color: Colors.grey),
+                  ),
+                ),
+              ),
+            ],
           ),
-
-          // Product details
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  widget.product.name,
+          // Price at top left
+          Positioned(
+            top: 8, // margin top
+            left: 8, // margin left
+            child: Directionality(
+              textDirection: TextDirection.rtl, // Force RTL context
+              child: RichText(
+                text: TextSpan(
                   style: const TextStyle(
+                    color: Color(0xFF1548C7),
                     fontWeight: FontWeight.bold,
                     fontSize: 17,
-                    color: Color(0xFF1548C7),
                   ),
-                  textAlign: TextAlign.right,
+                  children: [
+                    TextSpan(
+                      text: '${widget.product.price.toInt()}',
+                    ),
+                    const TextSpan(
+                      text: ' ريال',
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  widget.product.description,
-                  style: const TextStyle(fontSize: 14),
-                  textAlign: TextAlign.right,
-                ),
-              ],
-            ),
-          ),
-
-          // Image + rating
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              'http://man.runasp.net${widget.product.image}',
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                width: 100,
-                height: 100,
-                color: Colors.grey.shade300,
-                child: const Icon(Icons.fastfood, color: Colors.grey),
               ),
             ),
+          ),
+          // Cart icon at bottom left
+          Positioned(
+            bottom: 8,
+            left: 8,
+            child: _isLoading
+                ? const SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator(strokeWidth: 2.5),
+                  )
+                : IconButton(
+                    icon: Icon(
+                      _isInCart
+                          ? Icons.remove_circle_outline
+                          : Icons.shopping_cart_outlined,
+                      color: _isInCart ? Colors.red : const Color(0xFF1548C7),
+                      size: 30,
+                    ),
+                    onPressed: () => _toggleCart(widget.product.id),
+                  ),
           ),
         ],
       ),
