@@ -125,9 +125,7 @@ namespace Manzili.Core.Services
 
                 Email = storeCreate.Email,
                 Address = storeCreate.Address,
-
-
-                Status = enStoreStatus.Close.ToString()
+               
             };
 
             var result = await _storeServices.CreateAsync(storeCreate , categories);

@@ -8,5 +8,7 @@ namespace Manzili.Core.Dto.StoreDto
         public string Status { get; set; }
         public string Description { get; set; }
         public string Location { get; set; }
+
+        public string UserName { get; set; }
     }
 }

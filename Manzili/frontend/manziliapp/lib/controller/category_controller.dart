@@ -9,13 +9,13 @@ class CategoryController extends GetxController {
   var selectedCategoryNames = <String>[].obs;
   var isLoading = false.obs; // Loading state
 
-  // API endpoint
-  // final String apiEndpoint =
-  //     "http://man.runasp.net/api/StoreCategory/GetStoreNamesAndId";
-
-  //API endpoint
+ // API endpoint
   final String apiEndpoint =
-      "http://man.runasp.net/api/Store/GetProductGategoriesByStoreId?storeId=6";
+      "http://man.runasp.net/api/StoreCategory/GetStoreNamesAndId";
+
+  // //API endpoint
+  // // final String apiEndpoint =
+  // //     "http://man.runasp.net/api/Store/GetProductGategoriesByStoreId?storeId=6";
 
   // Fetch categories from the API
   Future<void> fetchCategories() async {

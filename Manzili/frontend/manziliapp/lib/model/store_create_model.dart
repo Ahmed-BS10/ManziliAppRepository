@@ -6,6 +6,7 @@ class StoreCreateModel {
   String email;
   String phonenumber;
   String address;
+  String? bookTime;
 
   File? image;
 
@@ -17,6 +18,7 @@ class StoreCreateModel {
   String bankAccount;
 
   StoreCreateModel({
+    this.bookTime,
     required this.socileMediaAcount,
     required this.email,
     required this.phonenumber,
@@ -32,6 +34,7 @@ class StoreCreateModel {
 
   Map<String, dynamic> toMap() {
     return {
+      "BookTime": bookTime,
       "UserName": userName,
       "Email": email,
       "Description": description,
