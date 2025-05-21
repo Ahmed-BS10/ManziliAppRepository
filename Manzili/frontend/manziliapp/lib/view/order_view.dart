@@ -81,6 +81,22 @@ class OrdersController {
         'http://man.runasp.net/api/Orders/GetUnDeliveredOrdersByUserId?userId=$userId';
     return await fetchOrders(url);
   }
+
+  Future<bool> updateOrderStatus(int orderId, int status) async {
+    final url =
+        'http://man.runasp.net/api/Orders/UpdateOrderStatus?orderId=$orderId&status=$status';
+    try {
+      final response = await http.put(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // Optionally, check response body for success
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error updating order status: $e');
+      return false;
+    }
+  }
 }
 
 // Reusable Text Row Widget
@@ -163,6 +179,20 @@ class _OrderViewState extends State<OrderView> {
     }
   }
 
+  Future<void> _markOrderDelivered(int orderId) async {
+    final success = await _controller.updateOrderStatus(orderId, 4);
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم تحديث حالة الطلب بنجاح')),
+      );
+      _fetchOrders();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('حدث خطأ أثناء تحديث حالة الطلب')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,7 +229,12 @@ class _OrderViewState extends State<OrderView> {
                             padding: const EdgeInsets.all(16),
                             itemCount: _orders.length,
                             itemBuilder: (context, index) {
-                              return OrderCard(order: _orders[index]);
+                              return OrderCard(
+                                order: _orders[index],
+                                showDeliveryPrompt: !_showDelivered,
+                                onDelivered: () =>
+                                    _markOrderDelivered(_orders[index].id),
+                              );
                             },
                           ),
               ),
@@ -262,8 +297,15 @@ class _OrderViewState extends State<OrderView> {
 
 class OrderCard extends StatelessWidget {
   final Order order;
+  final bool showDeliveryPrompt;
+  final VoidCallback? onDelivered;
 
-  const OrderCard({super.key, required this.order});
+  const OrderCard({
+    super.key,
+    required this.order,
+    this.showDeliveryPrompt = false,
+    this.onDelivered,
+  });
 
   String _formatDate(String date) {
     final parsedDate = DateTime.parse(date);
@@ -299,7 +341,7 @@ class OrderCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             InfoRow(
-                label: ' رقم الطلب', value: order.numberOrder, isBold: true),
+                label: ' رقم الطلب', value: order.id.toString(), isBold: true),
             const SizedBox(height: 4),
             Text(
               'تم الطلب من متجر ${order.storeName}: ${_formatDate(order.createdAt)}',
@@ -324,6 +366,21 @@ class OrderCard extends StatelessWidget {
               isBold: true,
               valueColor: Colors.blue,
             ),
+            if (showDeliveryPrompt) ...[
+              const SizedBox(height: 16),
+              const Text(
+                'يرجى في حال توصيل الطلب الضغط على الزر :',
+                style: TextStyle(fontSize: 16, color: Colors.black),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: onDelivered,
+                  child: const Text('تم التوصيل'),
+                ),
+              ),
+            ],
           ],
         ),
       ),
