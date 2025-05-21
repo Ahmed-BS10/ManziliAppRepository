@@ -111,7 +111,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/sov',
-          page: () => StoreOrdersView(),
+          page: () => StoreProfileScreen(),
         ),
       ],
     );

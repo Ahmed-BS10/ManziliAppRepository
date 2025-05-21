@@ -61,11 +61,21 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
     final storeProvider = Provider.of<StoreProvider>(context, listen: false);
     try {
       await storeProvider.fetchStoreProfile();
-    } catch (_) {}
-    if (mounted) {
+      final status = storeProvider.store.status;
       setState(() {
+        if (status == "Open") {
+          storeStatus = 'مفتوح';
+        } else if (status == "Close") {
+          storeStatus = 'مغلق';
+        }
         _isLoading = false;
       });
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -126,10 +136,27 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                                               child: Text(status),
                                             ))
                                         .toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        storeStatus = value!;
-                                      });
+                                    onChanged: (value) async {
+                                      if (value == null || value == storeStatus) return;
+                                      int enStore = value == 'مفتوح' ? 1 : 2;
+                                      final url = Uri.parse('http://man.runasp.net/api/Store/ChangeStoreStatsu?storeId=5&enStore=$enStore');
+                                      final response = await http.put(url);
+                                      if (response.statusCode == 200) {
+                                        final data = json.decode(response.body);
+                                        if (data['isSuccess'] == true) {
+                                          setState(() {
+                                            storeStatus = value;
+                                          });
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text('فشل في تغيير حالة المتجر')),
+                                          );
+                                        }
+                                      } else {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('خطأ في الاتصال بالخادم')),
+                                        );
+                                      }
                                     },
                                     style: const TextStyle(
                                       color: Colors.blue,
