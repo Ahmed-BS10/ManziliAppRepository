@@ -52,6 +52,7 @@ dependencies:
   platform_file: ^0.1.0
   intl: ^0.20.2
   dio: ^5.8.0+1
+  url_launcher: ^6.3.1
   
 
 

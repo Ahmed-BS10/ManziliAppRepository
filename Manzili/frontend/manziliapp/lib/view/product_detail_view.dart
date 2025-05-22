@@ -276,7 +276,7 @@ class ProductDetailsViewBody extends StatelessWidget {
       children: [
         // عرض تقييم ومعلومات المتجر
         RatingAndStoreInfo(
-          // rating: product.rating.round(),
+           rating: product.rating.round(),
           storeName: product.storeName,
           storeImage: storeImage,
         ),
