@@ -5,6 +5,8 @@ class Order {
   
   final String customerName;
   final String customerAvatar;
+  final String customerEmail; 
+  final String customerAddress;
   final String customerPhone;
   final List<OrderItem> items;
   final OrderStatus status;
@@ -15,6 +17,8 @@ class Order {
     required this.id,
     required this.customerName,
     required this.customerAvatar,
+    required this.customerEmail,
+    required this.customerAddress,
     required this.customerPhone,
     required this.items,
     required this.status,
@@ -30,11 +34,13 @@ class Order {
 }
 
 class OrderItem {
+  final String id;
   final String name;
   final double price;
   final int quantity;
 
   OrderItem({
+    required this.id,
     required this.name,
     required this.price,
     required this.quantity,

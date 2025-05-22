@@ -4,6 +4,7 @@ import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/controller/category_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/middleware/auth_middelware.dart';
+import 'package:manziliapp/model/order.dart';
 import 'package:manziliapp/providers/category_providers.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
@@ -13,6 +14,7 @@ import 'package:manziliapp/view/profile_store.dart';
 import 'package:manziliapp/view/register_view.dart';
 import 'package:manziliapp/view/splash_view.dart';
 import 'package:manziliapp/view/store_dashboard.dart';
+import 'package:manziliapp/view/store_order_details_view.dart';
 import 'package:manziliapp/view/store_orders_view.dart';
 import 'package:manziliapp/widget/home/favorite_provider.dart';
 import 'package:provider/provider.dart';
@@ -92,7 +94,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/home',
+      initialRoute: '/sov',
       getPages: [
         GetPage(
           name: '/sp',
@@ -113,7 +115,26 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/sov',
-          page: () => StoreOrdersView(),
+          page: () {
+            // Provide a dummy Order object for navigation testing
+            // Replace this with your actual order fetching logic
+            final dummyOrder = Order(
+              id: '1',
+              customerName: 'عميل تجريبي',
+              customerAvatar: '',
+              customerPhone: '777777777',
+              customerEmail: 'dummy@email.com',
+              customerAddress: 'عنوان تجريبي',
+              items: [
+                OrderItem(name: 'منتج 1', price: 10.0, quantity: 2, id: '1'),
+                OrderItem(name: 'منتج 2', price: 5.0, quantity: 1, id: '2'),
+              ],
+              status: OrderStatus.new_order,
+              date: DateTime.now(),
+              notes: 'ملاحظة تجريبية',
+            );
+            return StoreOrderDetailsView(order: dummyOrder);
+          },
         ),
       ],
     );
