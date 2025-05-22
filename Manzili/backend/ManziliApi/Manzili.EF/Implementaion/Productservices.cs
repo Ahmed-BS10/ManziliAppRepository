@@ -1,6 +1,7 @@
 ﻿using Manzili.Core.Dto.ProductDto;
 using Manzili.Core.Dto.StoreCategoryDto;
 using Manzili.Core.Entities;
+using Manzili.Core.Enum;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -89,8 +90,10 @@ namespace Manzili.Core.Services
                 Price = product.Price,
                 State = product.State,
                 Quantity = product.Quantity,
-                Rate = product.ProductRatings.Average(x => x.RatingValue), // Fix CS0103: Use Average directly on the collection
-                StoreName = product.Store.BusinessName,
+                Rate = product.ProductRatings != null && product.ProductRatings.Any()
+                    ? product.ProductRatings.Average(x => x.RatingValue)
+                    : 0, // Fix CS0029, CS1003, CS0029, CS0747, CS8604
+                StoreName = product.Store?.BusinessName ?? "Unknown", // Fix CS8602
                 images = product.Images.Select(i => i.ImageUrl).ToList() ?? [],
                 StoreImage = product.Store.ImageUrl ?? "/Profile/383ba157cb9f4367b67f7baeea98097d.jpg",
             };
@@ -238,7 +241,7 @@ namespace Manzili.Core.Services
                             Description = productDto.Description,
                             Price = productDto.Price,
                             Quantity = productDto.Quantity,
-
+                          
 
                             ProductCategoryId = productDto.ProductCategoryId,
                             StoreId = storeId,
