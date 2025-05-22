@@ -191,18 +191,7 @@ class _StoreDashboardState extends State<StoreDashboard> {
                         ),
                       ),
                     ),
-                  // Bottom navigation
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: BottomNavigation(
-                      currentIndex: 3,
-                      onTap: (index) {
-                        print('تم النقر على التبويب: $index');
-                      },
-                    ),
-                  ),
+                 
                 ],
               ),
       ),

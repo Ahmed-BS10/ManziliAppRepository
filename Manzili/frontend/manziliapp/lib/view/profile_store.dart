@@ -270,30 +270,7 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                   ],
                 ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 0,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: "الحساب",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.assignment),
-              label: "الطلبات",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.inventory),
-              label: "منتجاتي",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "الرئيسية",
-            ),
-          ],
-        ),
+       
       ),
     );
   }
