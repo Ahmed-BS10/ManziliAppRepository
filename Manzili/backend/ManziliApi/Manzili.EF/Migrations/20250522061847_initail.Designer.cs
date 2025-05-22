@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Manzili.EF.Migrations
 {
     [DbContext(typeof(ManziliDbContext))]
-    [Migration("20250513082106_initial")]
-    partial class initial
+    [Migration("20250522061847_initail")]
+    partial class initail
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,7 @@ namespace Manzili.EF.Migrations
                     b.Property<int?>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -116,7 +116,7 @@ namespace Manzili.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<string>("ReplyComment")
@@ -211,9 +211,6 @@ namespace Manzili.EF.Migrations
                     b.Property<string>("DeliveryTime")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsBlocked")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -226,13 +223,13 @@ namespace Manzili.EF.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("StoreId")
+                    b.Property<int?>("StoreId")
                         .HasColumnType("int");
 
                     b.Property<double>("Total")
                         .HasColumnType("float");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("OrderId");
@@ -252,13 +249,13 @@ namespace Manzili.EF.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderProductId"));
 
-                    b.Property<int>("OrderId")
+                    b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -312,7 +309,7 @@ namespace Manzili.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("RatingValue")
@@ -438,6 +435,9 @@ namespace Manzili.EF.Migrations
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -641,7 +641,7 @@ namespace Manzili.EF.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int>("ProductCategoryId")
+                    b.Property<int?>("ProductCategoryId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Quantity")
@@ -654,7 +654,7 @@ namespace Manzili.EF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StoreId")
+                    b.Property<int?>("StoreId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -718,6 +718,10 @@ namespace Manzili.EF.Migrations
                     b.Property<string>("SocileMediaAcount")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.ToTable("Stores", (string)null);
                 });
 
@@ -731,8 +735,7 @@ namespace Manzili.EF.Migrations
                     b.HasOne("Product", "Product")
                         .WithMany("CartProducts")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Cart");
 
@@ -773,9 +776,7 @@ namespace Manzili.EF.Migrations
                 {
                     b.HasOne("Product", null)
                         .WithMany("Comments")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.Favorite", b =>
@@ -802,14 +803,12 @@ namespace Manzili.EF.Migrations
                     b.HasOne("Manzili.Core.Entities.Store", "Store")
                         .WithMany("StoreOrders")
                         .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Manzili.Core.Entities.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Store");
 
@@ -821,14 +820,12 @@ namespace Manzili.EF.Migrations
                     b.HasOne("Manzili.Core.Entities.Order", "Order")
                         .WithMany("OrderProducts")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Product", "Product")
                         .WithMany("OrderProducts")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Order");
 
@@ -850,9 +847,7 @@ namespace Manzili.EF.Migrations
                 {
                     b.HasOne("Product", null)
                         .WithMany("ProductRatings")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("Manzili.Core.Entities.StoreCategoryStore", b =>
@@ -958,14 +953,12 @@ namespace Manzili.EF.Migrations
                     b.HasOne("Manzili.Core.Entities.ProductCategory", "ProductCategory")
                         .WithMany("Products")
                         .HasForeignKey("ProductCategoryId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Manzili.Core.Entities.Store", "Store")
                         .WithMany("Products")
                         .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("ProductCategory");
 
