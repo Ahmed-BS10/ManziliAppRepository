@@ -5,6 +5,7 @@ import 'package:manziliapp/controller/category_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/middleware/auth_middelware.dart';
 import 'package:manziliapp/providers/category_providers.dart';
+import 'package:manziliapp/view/add_product_screen.dart';
 import 'package:manziliapp/view/home_store_view.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/view/login_view.dart';
@@ -114,7 +115,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/sov',
-          page: () => HomeStoreView(),
+          page: () => ProductSroreDashbordView(),
         ),
       ],
     );

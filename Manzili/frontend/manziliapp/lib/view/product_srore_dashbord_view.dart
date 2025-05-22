@@ -23,7 +23,7 @@ class _ProductSroreDashbordViewState extends State<ProductSroreDashbordView>
   }
 
   Future<void> fetchProducts() async {
-    final url = 'http://man.runasp.net/api/Product/All?storeId=6';
+    final url = 'http://man.runasp.net/api/Product/GetStoreProducts?storeId=1';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {

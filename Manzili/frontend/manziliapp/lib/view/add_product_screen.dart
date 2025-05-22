@@ -1,10 +1,10 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:manziliapp/model/category_store.dart';
 import 'package:manziliapp/widget/add_product/add_category_dialog.dart';
 import 'package:manziliapp/widget/add_product/image_picker_widget.dart';
 import 'package:manziliapp/widget/home/categorysection.dart';
-import 'package:provider/provider.dart';
-import '../providers/category_providers.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -20,13 +20,34 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final _descriptionController = TextEditingController();
   CategoryStore? _selectedCategory;
   final List<String> _selectedImages = [];
+  List<CategoryStore> _categories = [];
 
   @override
   void initState() {
     super.initState();
-    // Fetch categories when screen initializes
-    Future.microtask(() => Provider.of<CategoryProvider>(context, listen: false)
-        .fetchCategories());
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    final url = Uri.parse('http://man.runasp.net/api/Category/List');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+        if (body['isSuccess'] == true && body['data'] != null) {
+          setState(() {
+            _categories = List<CategoryStore>.from(
+              body['data'].map((cat) => CategoryStore(
+                    id: cat['id'].toString(),
+                    name: cat['name'],
+                  )),
+            );
+          });
+        }
+      }
+    } catch (e) {
+      // Optionally handle error
+    }
   }
 
   @override
@@ -44,12 +65,41 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  void _saveProduct() {
+  Future<void> _saveProduct() async {
     if (_formKey.currentState!.validate() && _selectedCategory != null) {
-      // In a real app, you would save the product to a database or API
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم حفظ المنتج بنجاح')),
-      );
+      final url = Uri.parse('http://man.runasp.net/api/Product/Create?storeId=1');
+      final request = http.MultipartRequest('POST', url);
+
+      request.fields['Name'] = _nameController.text;
+      request.fields['Price'] = _priceController.text;
+      request.fields['ProductCategoryId'] = _selectedCategory!.id;
+      request.fields['Description'] = _descriptionController.text;
+      request.fields['Quantity'] = '1';
+
+      // Attach images if any (assuming _selectedImages contains file paths)
+      for (var imagePath in _selectedImages) {
+        request.files.add(await http.MultipartFile.fromPath('formImages', imagePath));
+      }
+
+      try {
+        final streamedResponse = await request.send();
+        final response = await http.Response.fromStream(streamedResponse);
+        final body = json.decode(response.body);
+
+        if (response.statusCode == 200 && body['isSuccess'] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(body['message'] ?? 'تم حفظ المنتج بنجاح')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(body['message'] ?? 'حدث خطأ أثناء حفظ المنتج')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('حدث خطأ أثناء الاتصال بالخادم')),
+        );
+      }
     } else if (_selectedCategory == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('الرجاء اختيار تصنيف')),
@@ -59,9 +109,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final categoryProvider = Provider.of<CategoryProvider>(context);
-    final categories = categoryProvider.categories;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -76,7 +123,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {_saveProduct;},
             child: const Text(
               'إعادة تعيين',
               style: TextStyle(color: Color(0xFF1548C7)),
@@ -160,7 +207,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ),
               const SizedBox(height: 8),
               CategoryDropdown(
-                categories: categories,
+                categories: _categories,
                 selectedCategory: _selectedCategory,
                 onCategorySelected: (category) {
                   setState(() {
@@ -273,7 +320,7 @@ class _CategoryDropdownState extends State<CategoryDropdown> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.selectedCategory?.name ?? 'مأكولات',
+                  widget.selectedCategory?.name ?? (widget.categories.isNotEmpty ? widget.categories[0].name : ''), 
                   style: TextStyle(
                     color: widget.selectedCategory == null
                         ? Colors.grey
