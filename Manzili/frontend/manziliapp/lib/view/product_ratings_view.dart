@@ -99,7 +99,7 @@ class _ProductRatingsViewState extends State<ProductRatingsView> {
         const SizedBox(height: 24),
         // Button to Add New Review with auto-refresh support
         CustomTextButton(
-          name: "اعطي لنا تقيم",
+          name: "اعطي لنا تقييمك",
           backColor: const Color(0xFF1548c7),
           fontColor: Colors.white,
           onPressed: () async {

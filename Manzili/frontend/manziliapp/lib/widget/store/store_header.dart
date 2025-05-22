@@ -150,10 +150,13 @@ class StoreHeader extends StatelessWidget {
           ),
 
           // Store logo
-          TranslatedStoreImage(
-            imageUrl: imageUrl,
-            size: 100,
-            offset: const Offset(10, 15),
+          Container(
+            margin: const EdgeInsets.only(left: 35),
+            child: TranslatedStoreImage(
+              imageUrl: imageUrl,
+              size: 100,
+              offset: const Offset(10, 15),
+            ),
           ),
 
           // Shopping cart

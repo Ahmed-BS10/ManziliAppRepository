@@ -122,7 +122,7 @@ class ProfileScreen extends StatelessWidget {
                                   child: const Text(
                                     'تعديل',
                                     style: TextStyle(
-                                      color: Colors.blue,
+                                      color: Color(0xff1548C7),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -195,7 +195,7 @@ class ProfileScreen extends StatelessWidget {
                           child: const Text(
                             'تسجيل الخروج',
                             style: TextStyle(
-                              color: Colors.red,
+                              color: Color(0xffFA3636),
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),

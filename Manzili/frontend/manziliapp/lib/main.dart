@@ -92,7 +92,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/sov',
+      initialRoute: '/home',
       getPages: [
         GetPage(
           name: '/sp',
