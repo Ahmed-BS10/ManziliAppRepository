@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import '../model/order.dart';
 import '../model/mock_data.dart';
 import '../widget/store_order/order_card.dart';
@@ -176,6 +178,11 @@ class _OrdersScreenState extends State<StoreOrdersView>
           },
           onDetails: () {
             // Handle show details action
+            if (orders[index] is Order) {
+                  Get.toNamed('/sov', arguments: orders[index]);
+                } else {
+                  print('Invalid order object');
+                }
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('عرض تفاصيل الطلب ${orders[index].id}')),
             );
