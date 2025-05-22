@@ -63,7 +63,7 @@ namespace Manzili.EF.Implementaion
             var storeDtos = storesWithUserFavorite.Select(store => new GetStoreDto(
                   store.Id,
                   store.ImageUrl,
-                  store.BusinessName,
+                  store.UserName,
                   store.Rate ?? 0,
                   store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                   store.Status
@@ -86,7 +86,7 @@ namespace Manzili.EF.Implementaion
             var storeDtos = stores.Select(store => new GetStoreDto(
                 store.Id,
                 store.ImageUrl,
-                store.BusinessName,
+                store.UserName,
                 store.Rate ?? 0,
                 store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                 store.Status
@@ -106,7 +106,7 @@ namespace Manzili.EF.Implementaion
             var storeDtos = stores.Select(store => new GetStoreDto(
                   store.Id,
                   store.ImageUrl,
-                  store.BusinessName,
+                  store.UserName,
                   store.Rate,
                   [""],
                   store.Status
@@ -132,7 +132,7 @@ namespace Manzili.EF.Implementaion
             var storeDtos = stores.Select(store => new GetStoreDto(
                   store.Id,
                   store.ImageUrl,
-                  store.BusinessName,
+                  store.UserName,
                   store.Rate ?? 0,
                   store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                   store.Status
@@ -152,7 +152,7 @@ namespace Manzili.EF.Implementaion
             var storeDtos = stores.Select(store => new GetStoreDto(
                   store.Id,
                   store.ImageUrl,
-                  store.BusinessName,
+                  store.UserName,
                   store.Rate ?? 0,
                   store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                   store.Status
@@ -162,7 +162,7 @@ namespace Manzili.EF.Implementaion
         }
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> SearchStoreByNameAsync(string BusinessName)
         {
-            var stores = await _dbSet.Where(x => x.BusinessName.Contains(BusinessName)).ToListAsync();
+            var stores = await _dbSet.Where(x => x.UserName.Contains(BusinessName)).ToListAsync();
             if (!stores.Any())
                 return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
 
@@ -170,7 +170,7 @@ namespace Manzili.EF.Implementaion
             var storeDtos = stores.Select(store => new GetStoreDto(
                  store.Id,
                  store.ImageUrl,
-                 store.BusinessName,
+                 store.UserName,
                  store.Rate,
                  store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                  store.Status
@@ -212,7 +212,7 @@ namespace Manzili.EF.Implementaion
             var store = await _dbSet.FindAsync(id);
             if (store == null) return OperationResult<GetStoreDto>.Failure(message: "Store not found");
 
-            return OperationResult<GetStoreDto>.Success(new GetStoreDto(id, store.ImageUrl, store.BusinessName, store.Rate, [""], store.Status));
+            return OperationResult<GetStoreDto>.Success(new GetStoreDto(id, store.ImageUrl, store.UserName, store.Rate, [""], store.Status));
         }
 
         public async Task<OperationResult<StoreBasicInfoDto>> GetProfileStore(int storeId)
@@ -249,7 +249,7 @@ namespace Manzili.EF.Implementaion
                 return OperationResult<CreateStoreDto>.Failure("لم يتم العثور على أي فئات");
 
 
-            if (await _dbSet.AnyAsync(x => x.BusinessName == storeDto.BusinessName))
+            if (await _dbSet.AnyAsync(x => x.UserName == storeDto.UserName))
                 return OperationResult<CreateStoreDto>.Failure("BusinessName already exists");
 
             if (await _userManager.FindByEmailAsync(storeDto.Email) != null)
@@ -263,7 +263,6 @@ namespace Manzili.EF.Implementaion
             {
                 Status = enStoreStatus.Open.ToString(),
                 UserName = storeDto.UserName,
-                BusinessName = storeDto.BusinessName,
                 Description = storeDto.Description,
                 Email = storeDto.Email,
                 Address = storeDto.Address,
@@ -358,15 +357,15 @@ namespace Manzili.EF.Implementaion
                 await _userManager.Users.AnyAsync(u => u.PhoneNumber == newStore.PhoneNumber))
                 return OperationResult<UpdateStoreDto>.Failure("PhoneNumber already exists");
 
-            if (oldStore.BusinessName != newStore.BusinessName &&
-                await _dbSet.AnyAsync(x => x.BusinessName == newStore.BusinessName))
+            if (oldStore.UserName != newStore.BusinessName &&
+                await _dbSet.AnyAsync(x => x.UserName == newStore.BusinessName))
                 return OperationResult<UpdateStoreDto>.Failure("BusinessName already exists");
 
             oldStore.UserName = newStore.UserName;
             oldStore.PhoneNumber = newStore.PhoneNumber;
             oldStore.Address = newStore.Address;
             oldStore.Email = newStore.Email;
-            oldStore.BusinessName = newStore.BusinessName;
+            oldStore.UserName = newStore.BusinessName;
             oldStore.BankAccount = newStore.BankAccount;
 
 
@@ -410,7 +409,7 @@ namespace Manzili.EF.Implementaion
             var storeInfo = new GetInfoStoreDto(
                 store.Id,
                 store.ImageUrl!,
-                store.BusinessName,
+                store.UserName,
                 store.Description,
                 store.storeCategoryStores!.Select(x => x.StoreCategory.Name).ToList(),
                 store.DeliveryFees,
@@ -491,7 +490,7 @@ namespace Manzili.EF.Implementaion
                 .Select(s => new GetStoreDashbord
                 {
                     Id = s.Id,
-                    Name = s.BusinessName,
+                    Name = s.UserName,
                     CreateAt = s.CreateAt,
                     Statu = s.Status,
                     Location = s.Address, // Assuming `Address` represents the location
@@ -538,7 +537,7 @@ namespace Manzili.EF.Implementaion
                 .Select(s => new GetStoreDashbord
                 {
                     Id = s.Id,
-                    Name = s.BusinessName,
+                    Name = s.UserName,
                     CreateAt = s.CreateAt,
                     Statu = s.Status,
                     Location = s.Address, // Assuming `Address` represents the location

@@ -49,9 +49,13 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+
 // езого гАЕФМи (Identity)
 builder.Services.AddIdentity<User, Role>(options =>
 {
+    options.User.AllowedUserNameCharacters = "ц х й к л м н о п я р с т у ж ь ы з ш щ ч ъ А Ц Д Е Ф М abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+
     // езогогй ъАЦи гАЦяФя
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;

@@ -39,13 +39,14 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-  final TextEditingController businessNameController = TextEditingController();
   final TextEditingController bankAccountController = TextEditingController();
   final TextEditingController businessDescriptionController =
       TextEditingController();
   final TextEditingController socileMediaAcountController =
       TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+    final TextEditingController bookTime = TextEditingController();
+
 
   File? userImage;
   final AuthController authController = Get.find<AuthController>();
@@ -59,7 +60,6 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
     addressController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
-    businessNameController.dispose();
     bankAccountController.dispose();
     businessDescriptionController.dispose();
     socileMediaAcountController.dispose();
@@ -74,7 +74,6 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
       address: addressController.text,
       password: passwordController.text,
       confirmPassword: confirmPasswordController.text,
-      businessName: businessNameController.text,
       bankAccount: bankAccountController.text,
       description: descriptionController.text,
       image: userImage,
@@ -91,6 +90,7 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
         SizedBox(
           height: 500,
           child: CustomPageView(
+            bookTime: bookTime,
             pageController: widget.pageController,
             usernameController: usernameController,
             phoneController: phoneController,
@@ -98,7 +98,6 @@ class _ProducerRegistrationFormState extends State<ProducerRegistrationForm> {
             addressController: addressController,
             passwordController: passwordController,
             confirmPasswordController: confirmPasswordController,
-            businessNameController: businessNameController,
             bankAccountController: bankAccountController,
             categoryOfWorkController: businessDescriptionController,
             onUserImagePicked: (image) => setState(() => userImage = image),

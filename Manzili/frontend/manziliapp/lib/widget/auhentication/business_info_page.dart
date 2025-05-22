@@ -6,18 +6,19 @@ import 'package:manziliapp/controller/category_controller.dart';
 
 class BusinessInfoPage extends StatelessWidget {
   final PageController pageController;
-  final TextEditingController businessNameController;
   final TextEditingController bankAccountController;
   final TextEditingController socileMediaAcountController;
   final TextEditingController descriptionController;
+  final TextEditingController bookTime;
+
 
   const BusinessInfoPage({
     super.key,
     required this.pageController,
-    required this.businessNameController,
     required this.bankAccountController,
     required this.socileMediaAcountController,
-    required this.descriptionController,
+    required this.descriptionController, 
+    required this.bookTime,
   });
 
   @override
@@ -44,25 +45,26 @@ class BusinessInfoPage extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 10),
-        CustomeTextFiled(
-          controller: businessNameController,
-          hintText: 'Business Name',
-        ),
+       
         const SizedBox(height: 10),
         CustomeTextFiled(
           controller: descriptionController,
-          hintText: 'Business Name',
+          hintText: 'الوصف',
         ),
         const SizedBox(height: 10),
         CustomeTextFiled(
           controller: bankAccountController,
-          hintText: 'Bank',
+          hintText: 'حسابك',
         ),
         const SizedBox(height: 10),
         CustomeTextFiled(
           controller: socileMediaAcountController,
-          hintText: 'Social Media Account',
+          hintText: 'تواصل الاجتماعي',
+        ),
+        const SizedBox(height: 10),
+        CustomeTextFiled(
+          controller: socileMediaAcountController,
+          hintText: 'وقت تسليم',
         ),
         const SizedBox(height: 10),
         SizedBox(
@@ -75,7 +77,8 @@ class BusinessInfoPage extends StatelessWidget {
             return DropdownButtonFormField<String>(
               value: null, // Initial value
               decoration: InputDecoration(
-                hintText: 'Category Of Work',
+                hintText: 'تصنيف العمل',
+                filled: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

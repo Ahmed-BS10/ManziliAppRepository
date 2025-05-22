@@ -3,7 +3,7 @@
     public record GetInfoStoreDto(
         int Id,
         string ImageUrl,
-        string BusinessName,
+        string UserNamw,
         string Description,
         List<string> CategoryNames,
         int deliveryFee,

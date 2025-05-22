@@ -13,7 +13,6 @@ class StoreCreateModel {
   String password;
   String confirmPassword;
 
-  String businessName;
   String socileMediaAcount;
   String bankAccount;
 
@@ -26,7 +25,6 @@ class StoreCreateModel {
     required this.userName,
     required this.password,
     required this.confirmPassword,
-    required this.businessName,
     required this.bankAccount,
     required this.description,
     this.image,
@@ -40,7 +38,6 @@ class StoreCreateModel {
       "Description": description,
       "PhoneNumber": phonenumber,
       "Address": address,
-      "BusinessName": businessName,
       "BankAccount": bankAccount,
       "Password": password,
       "ConfirmPassword": confirmPassword,
