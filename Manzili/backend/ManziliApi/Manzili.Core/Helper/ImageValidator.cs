@@ -2,7 +2,7 @@
 
 public static class ImageValidator
 {
-    private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png"};
+    private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png" , ".pdf"};
     private const long MaxFileSize = 2 * 1024 * 1024; 
 
     public static bool IsValidImage(IFormFile file, out string errorMessage)

@@ -679,7 +679,7 @@ namespace Manzili.EF.Implementaion
                     TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
                     Status = o.Status.ToString(),
                     Note = o.Note,
-                  //  FileContent = o.PdfFile,
+                    FileContent = o.pathPdfFile,
                     OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
                     {
                         Id = op.ProductId ?? 0, // Handle null ProductId
@@ -713,7 +713,7 @@ namespace Manzili.EF.Implementaion
                     TotalOfEachProduct = o.OrderProducts.Sum(op => op.Quantity),
                     Status = o.Status.ToString(),
                     Note = o.Note,
-                    FileContent = o.PdfFile,
+                   // FileContent = o.PdfFile,
                     OrderProducts = o.OrderProducts.Select(op => new GetOrdeProduct
                     {
                         Id = op.ProductId ?? 0, // Handle null ProductId

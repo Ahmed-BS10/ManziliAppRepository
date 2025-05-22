@@ -10,7 +10,8 @@
     public string Status { get; set; }
     public string? Note { get; set; }
 
-    public byte[] FileContent { get; set; }
+   // public byte[] FileContent { get; set; }
+    public string FileContent { get; set; }
 
 
     public List<GetOrdeProduct> OrderProducts { get; set; }

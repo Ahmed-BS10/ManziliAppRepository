@@ -52,18 +52,18 @@ namespace Manzili.API.Controllers
 
         [HttpPost("AddOrder")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> AddOrderAsync([FromForm    ] CreateOrderDto createOrderDto)
+        public async Task<IActionResult> AddOrderAsync([FromForm] CreateOrderDto createOrderDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (createOrderDto.PdfFile != null)
-            {
-                if (createOrderDto.PdfFile.ContentType != "application/pdf")
-                    return BadRequest("الملف المرفوع ليس PDF.");
-                if (createOrderDto.PdfFile.Length > 5 * 1024 * 1024)
-                    return BadRequest("حجم الملف يتجاوز 5 ميغا.");
-            }
+            //if (createOrderDto.PdfFile != null)
+            //{
+            //    if (createOrderDto.PdfFile.ContentType != "application/pdf")
+            //        return BadRequest("الملف المرفوع ليس PDF.");
+            //    if (createOrderDto.PdfFile.Length > 5 * 1024 * 1024)
+            //        return BadRequest("حجم الملف يتجاوز 5 ميغا.");
+            //}
 
             var result = await _orderService.AddOrderAsync(createOrderDto);
 

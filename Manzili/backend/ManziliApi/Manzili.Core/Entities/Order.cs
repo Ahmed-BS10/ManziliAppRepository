@@ -26,9 +26,9 @@ namespace Manzili.Core.Entities
         public int NumberOfProducts { get; set; }
         
 
+        public string pathPdfFile { get; set; }
 
-
-        public byte[]? PdfFile { get; set; }
+        // public byte[]? PdfFile { get; set; }
 
         // Navigation properties
 

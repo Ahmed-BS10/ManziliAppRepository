@@ -3,6 +3,7 @@ using Manzili.Core.Entities;
 using Manzili.Core.Enum;
 using Manzili.Core.Services;
 using Manzili.EF.Implementaion;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -14,79 +15,88 @@ namespace Manzili.EF.Implementation
     public class OrderService : IOrdersService
     {
         private readonly ManziliDbContext _context;
+        private readonly IFileService _fileService;
         private readonly INotificationService _notificationService;
 
-        public OrderService(ManziliDbContext context, INotificationService notificationService)
+        public OrderService(ManziliDbContext context, INotificationService notificationService, IFileService fileService)
         {
             _context = context;
             _notificationService = notificationService;
+            _fileService = fileService;
         }
 
         public async Task<OperationResult<bool>> AddOrderAsync(CreateOrderDto createOrderDto)
         {
-            var store = await _context.Stores.FindAsync(createOrderDto.StoreId);
-            if (store == null)
-                return OperationResult<bool>.Failure("Store not found.");
+            // 1. Validate file (should be PDF, not image)
+            string errorMessage = string.Empty; // Initialize the variable to avoid CS0165
+            if (createOrderDto.PdfFile == null || !ImageValidator.IsValidImage(createOrderDto.PdfFile, out errorMessage))
+                return OperationResult<bool>.Failure(message: errorMessage);
 
-            // 1. بناء كائن الـ Order الأساسي
-            var order = new Order
+            try
             {
-                UserId = createOrderDto.UserId,
-                StoreId = createOrderDto.StoreId,
-                DeliveryAddress = createOrderDto.DeliveryAddress,
-                Note = createOrderDto.Note,
-                DeliveryFees = store.DeliveryFees,
-                DeliveryTime = store.BookTime,
-                CreatedAt = DateTime.UtcNow,
-                Status = enOrderStatus.التجهيز
-            };
+                // 2. Upload PDF file
+                string pdfPath = await _fileService.UploadImageAsync("pdfs", createOrderDto.PdfFile);
+                if (pdfPath == "FailedToUploadImage")
+                    return OperationResult<bool>.Failure("Failed to upload PDF file");
 
-            // 2. قراءة ملف PDF إن وُجد
-            if (createOrderDto.PdfFile != null && createOrderDto.PdfFile.Length > 0)
-            {
-                using var ms = new MemoryStream();
-                await createOrderDto.PdfFile.CopyToAsync(ms);
-                order.PdfFile = ms.ToArray();
-            }
+                var store = await _context.Stores.FindAsync(createOrderDto.StoreId);
+                if (store == null)
+                    return OperationResult<bool>.Failure("Store not found.");
 
-            // 3. معالجة عناصر الطلب
-            foreach (var dto in createOrderDto.OrderProducts)
-            {
-                var product = await _context.Products.FindAsync(dto.ProductId);
-                if (product == null)
-                    return OperationResult<bool>.Failure($"Product with ID {dto.ProductId} not found.");
-
-                order.OrderProducts.Add(new OrderProduct
+                // 3. Create Order object
+                var order = new Order
                 {
-                    ProductId = dto.ProductId,
-                    Quantity = dto.Quantity,
-                    Price = product.Price,
-                    TotlaPrice = product.Price * dto.Quantity
-                });
+                    UserId = createOrderDto.UserId,
+                    StoreId = createOrderDto.StoreId,
+                    DeliveryAddress = createOrderDto.DeliveryAddress,
+                    Note = createOrderDto.Note,
+                    DeliveryFees = store.DeliveryFees,
+                    DeliveryTime = store.BookTime,
+                    CreatedAt = DateTime.UtcNow,
+                    Status = enOrderStatus.التجهيز,
+                    pathPdfFile = pdfPath,
+                    OrderProducts = new List<OrderProduct>() // Ensure initialization
+                };
+
+                // 4. Add order products
+                foreach (var dto in createOrderDto.OrderProducts)
+                {
+                    var product = await _context.Products.FindAsync(dto.ProductId);
+                    if (product == null)
+                        return OperationResult<bool>.Failure($"Product with ID {dto.ProductId} not found.");
+
+                    order.OrderProducts.Add(new OrderProduct
+                    {
+                        ProductId = dto.ProductId,
+                        Quantity = dto.Quantity,
+                        Price = product.Price,
+                        TotlaPrice = product.Price * dto.Quantity
+                    });
+                }
+
+                // 5. Calculate totals
+                order.Total = order.OrderProducts.Sum(op => op.TotlaPrice) + store.DeliveryFees;
+                order.NumberOfProducts = order.OrderProducts.Count;
+
+                // 6. Save order
+                await _context.Orders.AddAsync(order);
+                await _context.SaveChangesAsync();
+
+                // 7. Send notification
+                await _notificationService.SendAsync(
+                    senderId: createOrderDto.UserId,
+                    receiverId: createOrderDto.StoreId,
+                    type: "OrderRequest",
+                    payload: "Your Order Is Send Plase wait for Respons"
+                );
+
+                return OperationResult<bool>.Success(true);
             }
-
-            // 4. حساب المجاميع
-            order.Total = order.OrderProducts.Sum(op => op.TotlaPrice) + store.DeliveryFees;
-            order.NumberOfProducts = order.OrderProducts.Count;
-
-            // 5. حفظ الطلب
-            await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
-
-            // 6. إرسال الإشعار للمتجر
-            await _notificationService.SendAsync(
-                senderId: createOrderDto.UserId,
-                receiverId: createOrderDto.StoreId,
-                type: "OrderRequest",
-                payload: "Your Order Is Send Plase wait for Respons"
-
-            );
-
-            return OperationResult<bool>.Success(true);
+            catch (Exception ex)
+            {
+                return OperationResult<bool>.Failure(message: ex.Message);
+            }
         }
-
-
-
 
         public async Task<OperationResult<bool>> UpdateOrderStatusAsync(int orderId, enOrderStatus status)
         {
