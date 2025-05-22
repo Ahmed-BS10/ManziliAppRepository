@@ -1,7 +1,7 @@
 class StoreModle {
   final int id;
   final String? imageUrl;
-  final String businessName;
+  final String UserName;
   final double rate;
   final List<String> categoryNames;
   final String status;
@@ -9,7 +9,7 @@ class StoreModle {
   StoreModle({
     required this.id,
     required this.imageUrl,
-    required this.businessName,
+    required this.UserName,
     required this.rate,
     required this.categoryNames,
     required this.status,
@@ -21,7 +21,7 @@ class StoreModle {
       imageUrl: json['imageUrl'].toString().startsWith('/')
           ? "http://man.runasp.net" + json['imageUrl']
           : 'assets/image/ad1.jpeg',
-      businessName: json['businessName'],
+      UserName: json['businessName'],
       rate: (json['rate'] as num).toDouble(),
       categoryNames: (json['categoryNames'] as List<dynamic>)
           .map((item) => item.toString())

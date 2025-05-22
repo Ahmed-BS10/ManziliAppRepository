@@ -123,7 +123,6 @@ class AuthController extends GetxController {
       request.fields.addAll({
         'BookTime' : storeData.bookTime ?? "1 - 2 hours",
         'UserName': storeData.userName,
-        'BusinessName': storeData.businessName,
         'Description': storeData.description,
         'Email': storeData.email,
         'PhoneNumber': storeData.phonenumber,

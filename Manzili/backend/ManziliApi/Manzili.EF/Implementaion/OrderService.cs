@@ -115,7 +115,7 @@ namespace Manzili.EF.Implementation
                 .Select(x => new GteBaseOrderDto
                 {
                     Id = x.OrderId,
-                    StoreName = x.Store.BusinessName,
+                    StoreName = x.Store.UserName,
                     CreatedAt = x.CreatedAt,
                     Statu = x.Status.ToString(),
                     NumberOfProducts = x.NumberOfProducts,
@@ -146,7 +146,7 @@ namespace Manzili.EF.Implementation
                 .Select(o => new GetOrderDetailsDto
                 {
                     Id = o.OrderId,
-                    StoreName = o.Store.BusinessName,
+                    StoreName = o.Store.UserName,
                     CreatedAt = o.CreatedAt,
                     Status = o.Status.ToString(),
                     NumberOfProducts = o.NumberOfProducts,
@@ -179,7 +179,7 @@ namespace Manzili.EF.Implementation
                 .Select(x => new GteBaseOrderDto
                 {
                     Id = x.OrderId,
-                    StoreName = x.Store.BusinessName,
+                    StoreName = x.Store.UserName,
                     CreatedAt = x.CreatedAt,
                     Statu = x.Status.ToString(),
                     NumberOfProducts = x.NumberOfProducts,
@@ -215,7 +215,8 @@ namespace Manzili.EF.Implementation
                 .Select(x => new GteOrdersDashbordDto
                 {
                     Id = x.OrderId,
-                    StoreName = x.Store.BusinessName,
+                    StoreName = x.Store.UserName
+                    ,
                     UserName = x.User.UserName,
                     CreatedAt = x.CreatedAt,
                     Statu = x.Status.ToString(),

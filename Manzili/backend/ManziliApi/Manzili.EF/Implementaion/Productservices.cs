@@ -93,7 +93,7 @@ namespace Manzili.Core.Services
                 Rate = product.ProductRatings != null && product.ProductRatings.Any()
                     ? product.ProductRatings.Average(x => x.RatingValue)
                     : 0, // Fix CS0029, CS1003, CS0029, CS0747, CS8604
-                StoreName = product.Store?.BusinessName ?? "Unknown", // Fix CS8602
+                StoreName = product.Store?.UserName ?? "Unknown", // Fix CS8602
                 images = product.Images.Select(i => i.ImageUrl).ToList() ?? [],
                 StoreImage = product.Store.ImageUrl ?? "/Profile/383ba157cb9f4367b67f7baeea98097d.jpg",
             };

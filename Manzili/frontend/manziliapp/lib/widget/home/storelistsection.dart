@@ -115,7 +115,7 @@ class _StoreListSectionState extends State<StoreListSection> {
                       )),
                   child: StoreListItem(
                     storeId: store.id,
-                    title: store.businessName,
+                    title: store.UserName,
                     rating: store.rate.toStringAsFixed(1),
                     status: statusMap["text"],
                     statusColor: statusMap["color"],
@@ -226,7 +226,6 @@ class StoreListItemState extends State<StoreListItem> {
                             _CategoryIndicators(
                               categories: widget.categoryNames,
                             ),
-                            
                           ],
                         ),
                       ),
@@ -258,7 +257,8 @@ class StoreListItemState extends State<StoreListItem> {
                   bottom: 10,
                   left: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
@@ -300,7 +300,8 @@ class _StatusIndicator extends StatelessWidget {
   final String status;
   final Color color;
 
-  const _StatusIndicator({super.key, required this.status, required this.color});
+  const _StatusIndicator(
+      {super.key, required this.status, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +327,6 @@ class _StatusIndicator extends StatelessWidget {
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(6),
-          
           ),
           child: Text(
             status,
@@ -360,7 +360,8 @@ class _CategoryIndicators extends StatelessWidget {
                 color: const Color(0xFFECF1F6),
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(
-                  color: const Color(0xFFECF1F6), // More obvious border color (blue)
+                  color: const Color(
+                      0xFFECF1F6), // More obvious border color (blue)
                   width: 1.5, // Thicker border for more visibility
                 ),
               ),
