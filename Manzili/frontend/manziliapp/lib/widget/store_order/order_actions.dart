@@ -268,6 +268,7 @@ class OrderActions extends StatelessWidget {
   final VoidCallback? onToShipping;
   final String? documentName;
   final String? documentUrl;
+  final bool statusChanged;
 
   const OrderActions({
     super.key,
@@ -280,6 +281,7 @@ class OrderActions extends StatelessWidget {
     this.onToShipping,
     this.documentName,
     this.documentUrl,
+    this.statusChanged = false,
   });
 
   @override
@@ -305,6 +307,7 @@ class OrderActions extends StatelessWidget {
           onProductDetails: onProductDetails,
           onContactCustomer: onContactCustomer,
           onToShipping: onToShipping,
+          statusChanged: statusChanged,
         );
         break;
       case OrderStatus.completed:

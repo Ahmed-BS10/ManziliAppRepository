@@ -33,6 +33,22 @@ class Order {
 
   int get totalQuantity =>
       items.fold(0, (previousValue, item) => previousValue + item.quantity);
+
+  Order copyWith({required OrderStatus status}) {
+    return Order(
+      id: id,
+      customerName: customerName,
+      customerAvatar: customerAvatar,
+      customerEmail: customerEmail,
+      customerAddress: customerAddress,
+      customerPhone: customerPhone,
+      items: items,
+      status: status,
+      date: date,
+      notes: notes,
+      documentUrl: documentUrl,
+    );
+  }
 }
 
 class OrderItem {

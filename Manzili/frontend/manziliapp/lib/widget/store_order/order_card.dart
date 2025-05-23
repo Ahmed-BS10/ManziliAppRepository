@@ -13,6 +13,7 @@ class OrderCard extends StatelessWidget {
   final VoidCallback? onProductDetails;
   final VoidCallback? onContactCustomer;
   final VoidCallback? onToShipping;
+  final bool statusChanged;
 
   const OrderCard({
     super.key,
@@ -23,6 +24,7 @@ class OrderCard extends StatelessWidget {
     this.onProductDetails,
     this.onContactCustomer,
     this.onToShipping,
+    this.statusChanged = false,
   });
 
   @override
@@ -100,6 +102,7 @@ class OrderCard extends StatelessWidget {
                   ? order.documentUrl!.split('/').last
                   : null,
               documentUrl: order.status == OrderStatus.new_order ? order.documentUrl : null,
+              statusChanged: statusChanged,
             ),
           ),
         ],

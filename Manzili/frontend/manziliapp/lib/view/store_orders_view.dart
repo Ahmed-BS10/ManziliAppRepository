@@ -18,6 +18,9 @@ class _OrdersScreenState extends State<StoreOrdersView>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  // Track which orders have had their status changed to shipping
+  final Set<String> _shippingStatusChanged = {};
+
   @override
   void initState() {
     super.initState();
@@ -128,8 +131,10 @@ class _OrdersScreenState extends State<StoreOrdersView>
       padding: const EdgeInsets.all(8.0),
       itemCount: orders.length,
       itemBuilder: (context, index) {
+        final order = orders[index];
+        final statusChanged = _shippingStatusChanged.contains(order.id) || order.status == OrderStatus.ongoing;
         return OrderCard(
-          order: orders[index],
+          order: order,
           onAccept: () async {
             final orderId = orders[index].id;
             final url = Uri.parse('http://man.runasp.net/api/Orders/UpdateOrderStatus?orderId=$orderId&status=2');
@@ -235,37 +240,41 @@ class _OrdersScreenState extends State<StoreOrdersView>
               );
             }
           },
-          onToShipping: () async {
-            final orderId = orders[index].id;
-            final url = Uri.parse('http://man.runasp.net/api/Orders/UpdateOrderStatus?orderId=$orderId&status=3');
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (ctx) => const Center(child: CircularProgressIndicator()),
-            );
-            try {
-              final response = await http.put(url);
-              Navigator.of(context).pop(); // remove loading dialog
-              if (response.statusCode == 200 && response.body.contains('"isSuccess": true')) {
-                setState(() {
-                  orders.removeAt(index);
-                });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('تم نقل الطلب $orderId الى الشحن')),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('فشل في نقل الطلب الى الشحن')),
-                );
-              }
-            } catch (e) {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('خطأ: $e')),
-              );
-            }
-          },
-         
+          onToShipping: statusChanged
+              ? null
+              : () async {
+                  final orderId = order.id;
+                  final url = Uri.parse('http://man.runasp.net/api/Orders/UpdateOrderStatus?orderId=$orderId&status=3');
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (ctx) => const Center(child: CircularProgressIndicator()),
+                  );
+                  try {
+                    final response = await http.put(url);
+                    Navigator.of(context).pop(); // remove loading dialog
+                    if (response.statusCode == 200 && response.body.contains('"isSuccess": true')) {
+                      setState(() {
+                        _shippingStatusChanged.add(orderId);
+                        // Optionally update the order's status in the list if you want immediate UI feedback
+                        orders[index] = order.copyWith(status: OrderStatus.ongoing);
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('تم نقل الطلب $orderId الى الشحن')),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('فشل في نقل الطلب الى الشحن')),
+                      );
+                    }
+                  } catch (e) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('خطأ: $e')),
+                    );
+                  }
+                },
+          statusChanged: statusChanged,
         );
       },
     );
