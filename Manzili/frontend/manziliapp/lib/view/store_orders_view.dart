@@ -236,10 +236,34 @@ class _OrdersScreenState extends State<StoreOrdersView>
             }
           },
           onToShipping: () async {
-            // Add your API logic for 'الى الشحن' here if needed
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('تم الضغط على زر الى الشحن')),
+            final orderId = orders[index].id;
+            final url = Uri.parse('http://man.runasp.net/api/Orders/UpdateOrderStatus?orderId=$orderId&status=3');
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (ctx) => const Center(child: CircularProgressIndicator()),
             );
+            try {
+              final response = await http.put(url);
+              Navigator.of(context).pop(); // remove loading dialog
+              if (response.statusCode == 200 && response.body.contains('"isSuccess": true')) {
+                setState(() {
+                  orders.removeAt(index);
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('تم نقل الطلب $orderId الى الشحن')),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('فشل في نقل الطلب الى الشحن')),
+                );
+              }
+            } catch (e) {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('خطأ: $e')),
+              );
+            }
           },
          
         );
