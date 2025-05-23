@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../model/order.dart';
 
 // Interface for order actions
@@ -14,6 +15,7 @@ class NewOrderActions implements IOrderActions {
   final VoidCallback? onProductDetails;
   final VoidCallback? onContactCustomer;
   final String? documentName;
+  final String? documentUrl;
 
   NewOrderActions({
     this.onAccept,
@@ -22,6 +24,7 @@ class NewOrderActions implements IOrderActions {
     this.onProductDetails,
     this.onContactCustomer,
     this.documentName,
+    this.documentUrl,
   });
 
   @override
@@ -83,11 +86,19 @@ class NewOrderActions implements IOrderActions {
           child: Padding(
             padding: const EdgeInsets.only(left: 4),
             child: OutlinedButton.icon(
-              onPressed: () {},
+              onPressed: documentUrl != null
+                  ? () async {
+                      // Open PDF in browser
+                      final url = Uri.parse(documentUrl!);
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
+                    }
+                  : null,
               icon: const Icon(Icons.insert_drive_file,
                   color: Colors.red, size: 16),
-              label: const Text('document-name.PDF',
-                  style: TextStyle(fontSize: 10)),
+              label: Text(documentName ?? 'PDF',
+                  style: const TextStyle(fontSize: 10)),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.black,
                 side: const BorderSide(color: Colors.blue),
@@ -222,6 +233,7 @@ class OrderActions extends StatelessWidget {
   final VoidCallback? onProductDetails;
   final VoidCallback? onContactCustomer;
   final String? documentName;
+  final String? documentUrl;
 
   const OrderActions({
     super.key,
@@ -232,6 +244,7 @@ class OrderActions extends StatelessWidget {
     this.onProductDetails,
     this.onContactCustomer,
     this.documentName,
+    this.documentUrl,
   });
 
   @override
@@ -248,6 +261,7 @@ class OrderActions extends StatelessWidget {
           onProductDetails: onProductDetails,
           onContactCustomer: onContactCustomer,
           documentName: documentName,
+          documentUrl: documentUrl,
         );
         break;
       case OrderStatus.in_progress:

@@ -93,9 +93,10 @@ class OrderCard extends StatelessWidget {
               onDetails: onDetails,
               onProductDetails: onProductDetails,
               onContactCustomer: onContactCustomer,
-              documentName: order.status == OrderStatus.new_order
-                  ? 'document-name.PDF'
+              documentName: order.status == OrderStatus.new_order && order.documentUrl != null
+                  ? order.documentUrl!.split('/').last
                   : null,
+              documentUrl: order.status == OrderStatus.new_order ? order.documentUrl : null,
             ),
           ),
         ],

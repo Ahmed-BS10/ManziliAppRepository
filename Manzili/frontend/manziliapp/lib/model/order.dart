@@ -12,6 +12,7 @@ class Order {
   final OrderStatus status;
   final DateTime date;
   final String notes;
+  final String? documentUrl; 
 
   Order({
     required this.id,
@@ -24,6 +25,7 @@ class Order {
     required this.status,
     required this.date,
     required this.notes,
+    this.documentUrl, 
   });
 
   double get totalPrice => items.fold(

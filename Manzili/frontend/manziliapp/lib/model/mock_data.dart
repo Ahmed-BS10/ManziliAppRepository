@@ -33,6 +33,9 @@ class MockData {
                     quantity: p['count'] ?? 0,
                   ))
               .toList(),
+          documentUrl: jsonOrder['fileContent'] != null && jsonOrder['fileContent'] != ''
+              ? 'http://man.runasp.net' + jsonOrder['fileContent']
+              : null,
         );
       }).toList();
     } else {
