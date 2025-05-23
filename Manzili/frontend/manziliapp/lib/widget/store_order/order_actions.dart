@@ -133,11 +133,15 @@ class InProgressOrderActions implements IOrderActions {
   final VoidCallback? onDetails;
   final VoidCallback? onProductDetails;
   final VoidCallback? onContactCustomer;
+  final VoidCallback? onToShipping;
+  final bool statusChanged;
 
   InProgressOrderActions({
     this.onDetails,
     this.onProductDetails,
     this.onContactCustomer,
+    this.onToShipping,
+    this.statusChanged = false,
   });
 
   @override
@@ -162,23 +166,36 @@ class InProgressOrderActions implements IOrderActions {
               ),
             ),
           ),
-        if (onDetails != null)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: OutlinedButton(
-                onPressed: onDetails,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                  side: const BorderSide(color: Colors.blue),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                ),
-                child:
-                    const Text('عرض التفاصيل', style: TextStyle(fontSize: 12)),
+        // الى الشحن button (light green)
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: ElevatedButton(
+              onPressed: statusChanged ? null : onToShipping,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.lightGreen,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               ),
+              child: Text(statusChanged ? 'تم تغيير الحالة' : 'الى الشحن', style: const TextStyle(fontSize: 12)),
             ),
           ),
+        ),
+        // Show Details button (blue outlined)
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: OutlinedButton(
+              onPressed: onDetails, // Always clickable if provided
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.blue,
+                side: const BorderSide(color: Colors.blue),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+              ),
+              child: const Text('عرض التفاصيل', style: TextStyle(fontSize: 12)),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -248,6 +265,7 @@ class OrderActions extends StatelessWidget {
   final VoidCallback? onDetails;
   final VoidCallback? onProductDetails;
   final VoidCallback? onContactCustomer;
+  final VoidCallback? onToShipping;
   final String? documentName;
   final String? documentUrl;
 
@@ -259,6 +277,7 @@ class OrderActions extends StatelessWidget {
     this.onDetails,
     this.onProductDetails,
     this.onContactCustomer,
+    this.onToShipping,
     this.documentName,
     this.documentUrl,
   });
@@ -285,6 +304,7 @@ class OrderActions extends StatelessWidget {
           onDetails: onDetails,
           onProductDetails: onProductDetails,
           onContactCustomer: onContactCustomer,
+          onToShipping: onToShipping,
         );
         break;
       case OrderStatus.completed:

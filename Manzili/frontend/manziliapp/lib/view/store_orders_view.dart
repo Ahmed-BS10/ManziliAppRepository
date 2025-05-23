@@ -167,7 +167,6 @@ class _OrdersScreenState extends State<StoreOrdersView>
               );
             }
           },
-          // acceptButtonLabel: 'تغيير حالة الطلب',
           onCancel: () async {
             final confirm = await showDialog<bool>(
               context: context,
@@ -210,11 +209,7 @@ class _OrdersScreenState extends State<StoreOrdersView>
           },
           onDetails: () {
             // Handle show details action
-            if (orders[index] is Order) {
-                  Get.toNamed('/sov', arguments: orders[index]);
-                } else {
-                  print('Invalid order object');
-                }
+            Get.toNamed('/sov', arguments: orders[index]);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('عرض تفاصيل الطلب ${orders[index].id}')),
             );
@@ -240,6 +235,13 @@ class _OrdersScreenState extends State<StoreOrdersView>
               );
             }
           },
+          onToShipping: () async {
+            // Add your API logic for 'الى الشحن' here if needed
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('تم الضغط على زر الى الشحن')),
+            );
+          },
+         
         );
       },
     );

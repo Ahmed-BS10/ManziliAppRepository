@@ -12,6 +12,7 @@ class OrderCard extends StatelessWidget {
   final VoidCallback? onDetails;
   final VoidCallback? onProductDetails;
   final VoidCallback? onContactCustomer;
+  final VoidCallback? onToShipping;
 
   const OrderCard({
     super.key,
@@ -21,6 +22,7 @@ class OrderCard extends StatelessWidget {
     this.onDetails,
     this.onProductDetails,
     this.onContactCustomer,
+    this.onToShipping,
   });
 
   @override
@@ -93,6 +95,7 @@ class OrderCard extends StatelessWidget {
               onDetails: onDetails,
               onProductDetails: onProductDetails,
               onContactCustomer: onContactCustomer,
+              onToShipping: onToShipping,
               documentName: order.status == OrderStatus.new_order && order.documentUrl != null
                   ? order.documentUrl!.split('/').last
                   : null,
