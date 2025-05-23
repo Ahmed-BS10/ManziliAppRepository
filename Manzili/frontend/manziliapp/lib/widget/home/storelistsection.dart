@@ -115,7 +115,7 @@ class _StoreListSectionState extends State<StoreListSection> {
                       )),
                   child: StoreListItem(
                     storeId: store.id,
-                    title: store.UserName,
+                    userName: store.UserName,
                     rating: store.rate.toStringAsFixed(1),
                     status: statusMap["text"],
                     statusColor: statusMap["color"],
@@ -134,7 +134,7 @@ class _StoreListSectionState extends State<StoreListSection> {
 
 class StoreListItem extends StatefulWidget {
   final int storeId;
-  final String title;
+  final String userName;
   final String rating;
   final String status;
   final Color statusColor;
@@ -144,7 +144,7 @@ class StoreListItem extends StatefulWidget {
   const StoreListItem({
     super.key,
     required this.storeId,
-    required this.title,
+    required this.userName,
     required this.rating,
     required this.status,
     required this.statusColor,
@@ -210,7 +210,7 @@ class StoreListItemState extends State<StoreListItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.title,
+                              widget.userName,
                               style: TextStyles.linkStyle.copyWith(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,

@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 
 class StoreData {
   final int id;
-  final String businessName;
+  final String userName;
   final String? imageUrl;
   final String description;
   final String phoneNumber;
@@ -30,7 +30,7 @@ class StoreData {
     required this.id,
     this.imageUrl,
     required this.phoneNumber,
-    required this.businessName,
+    required this.userName,
     required this.description,
     required this.categoryNames,
     required this.deliveryFee,
@@ -46,7 +46,7 @@ class StoreData {
     return StoreData(
       id: json['id'],
       imageUrl: json['imageUrl'],
-      businessName: json['businessName'],
+      userName: json['userName'],
       phoneNumber: json['phoneNumber'],
       description: json['description'],
       categoryNames: List<String>.from(json['categoryNames']),
@@ -128,7 +128,7 @@ class _StoreDetailsScreenState extends State<StoreDetailsScreen> {
                   // Store info (favorite, rating, name) and category display
                   StoreInfoSection(
                     rate: storeData.rate.toInt(),
-                    businessName: storeData.businessName,
+                    businessName: storeData.userName,
                     categoryNames: storeData.categoryNames,
                   ),
 

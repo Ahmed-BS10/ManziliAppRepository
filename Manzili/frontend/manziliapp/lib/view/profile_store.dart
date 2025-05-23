@@ -27,8 +27,9 @@ class StoreProvider with ChangeNotifier {
     return true;
   }
 
-  Future<void> fetchStoreProfile({int storeId = 5}) async {
-    final url = Uri.parse('http://man.runasp.net/api/Store/GetProfileStore?storeId=$storeId');
+  Future<void> fetchStoreProfile({int storeId = 1}) async {
+    final url = Uri.parse(
+        'http://man.runasp.net/api/Store/GetProfileStore?storeId=$storeId');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -108,9 +109,11 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                             const SizedBox(height: 8),
                             CircleAvatar(
                               radius: 40,
-                              backgroundImage: store.profileImage.startsWith('http')
-                                  ? NetworkImage(store.profileImage)
-                                  : FileImage(File(store.profileImage)) as ImageProvider,
+                              backgroundImage:
+                                  store.profileImage.startsWith('http')
+                                      ? NetworkImage(store.profileImage)
+                                      : FileImage(File(store.profileImage))
+                                          as ImageProvider,
                             ),
                             const SizedBox(height: 8),
                             Text(
@@ -122,7 +125,8 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                             ),
                             const SizedBox(height: 12),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: Row(
                                 children: [
                                   const Text("حالة المتجر: "),
@@ -131,15 +135,18 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                                     icon: const Icon(Icons.keyboard_arrow_down),
                                     underline: const SizedBox(),
                                     items: ['مفتوح', 'مغلق']
-                                        .map((status) => DropdownMenuItem<String>(
+                                        .map((status) =>
+                                            DropdownMenuItem<String>(
                                               value: status,
                                               child: Text(status),
                                             ))
                                         .toList(),
                                     onChanged: (value) async {
-                                      if (value == null || value == storeStatus) return;
+                                      if (value == null || value == storeStatus)
+                                        return;
                                       int enStore = value == 'مفتوح' ? 1 : 2;
-                                      final url = Uri.parse('http://man.runasp.net/api/Store/ChangeStoreStatsu?storeId=5&enStore=$enStore');
+                                      final url = Uri.parse(
+                                          'http://man.runasp.net/api/Store/ChangeStoreStatsu?storeId=1&enStore=$enStore');
                                       final response = await http.put(url);
                                       if (response.statusCode == 200) {
                                         final data = json.decode(response.body);
@@ -148,13 +155,19 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                                             storeStatus = value;
                                           });
                                         } else {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(content: Text('فشل في تغيير حالة المتجر')),
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                                content: Text(
+                                                    'فشل في تغيير حالة المتجر')),
                                           );
                                         }
                                       } else {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text('خطأ في الاتصال بالخادم')),
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  'خطأ في الاتصال بالخادم')),
                                         );
                                       }
                                     },
@@ -167,7 +180,8 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                               ),
                             ),
                             Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 16),
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: Colors.grey[100],
@@ -180,7 +194,9 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                   ),
                                   Text(
-                                    store.name.isNotEmpty ? store.name : "اسم المتجر غير متوفر",
+                                    store.name.isNotEmpty
+                                        ? store.name
+                                        : "اسم المتجر غير متوفر",
                                     style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -207,7 +223,8 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                             ),
                             const SizedBox(height: 8),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
@@ -226,14 +243,16 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                             ),
                             const SizedBox(height: 24),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: Column(
                                 children: [
                                   _buildNavItem("تعديل الملف الشخصي", () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => const EditProfileStoreScreen(),
+                                        builder: (_) =>
+                                            const EditProfileStoreScreen(),
                                       ),
                                     );
                                   }),
@@ -245,10 +264,12 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                             ),
                             const SizedBox(height: 24),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: TextButton(
                                 onPressed: () async {
-                                  final prefs = await SharedPreferences.getInstance();
+                                  final prefs =
+                                      await SharedPreferences.getInstance();
                                   await prefs.clear();
                                   Get.find<UserController>().clearUserData();
                                   Get.offAll(() => StartView());
@@ -270,7 +291,6 @@ class _StoreProfileScreenState extends State<StoreProfileScreen> {
                   ],
                 ),
         ),
-       
       ),
     );
   }

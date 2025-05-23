@@ -75,7 +75,7 @@ class _StoreDashboardState extends State<StoreDashboard> {
 
   Future<void> _fetchAnalyticsData() async {
     const String apiUrl =
-        'http://man.runasp.net/api/Store/GetAnalysisStore?storeId=5';
+        'http://man.runasp.net/api/Store/GetAnalysisStore?storeId=1';
     try {
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {

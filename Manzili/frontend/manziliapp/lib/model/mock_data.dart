@@ -5,7 +5,7 @@ import '../model/order.dart';
 
 class MockData {
   static Future<List<Order>> getNewOrders() async {
-    final url = Uri.parse('http://man.runasp.net/api/Store/GetStoreOrdersInNewStatus?storeId=5');
+    final url = Uri.parse('http://man.runasp.net/api/Store/GetStoreOrdersInNewStatus?storeId=1');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -41,7 +41,7 @@ class MockData {
   }
 
   static Future<List<Order>> getCurrentOrders() async {
-    final url = Uri.parse('http://man.runasp.net/api/Store/GetStoreOrdersInWorkStatus?storeId=5');
+    final url = Uri.parse('http://man.runasp.net/api/Store/GetStoreOrdersInWorkStatus?storeId=1');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -76,7 +76,7 @@ class MockData {
   }
 
   static Future<List<Order>> getPreviousOrders() async {
-    final url = Uri.parse('http://man.runasp.net/api/Store/GetStoreOrdersInPastStatus?storeId=5');
+    final url = Uri.parse('http://man.runasp.net/api/Store/GetStoreOrdersInPastStatus?storeId=1');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

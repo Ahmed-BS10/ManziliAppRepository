@@ -1,7 +1,7 @@
 ﻿public record GetStoreDto(
     int Id,
     string ImageUrl,
-    string BusinessName,
+    string UserName,
     double? Rate ,
     List<string> CategoryNames,
     string Status

@@ -21,7 +21,7 @@ class StoreModle {
       imageUrl: json['imageUrl'].toString().startsWith('/')
           ? "http://man.runasp.net" + json['imageUrl']
           : 'assets/image/ad1.jpeg',
-      UserName: json['businessName'],
+      UserName: json['userName'],
       rate: (json['rate'] as num).toDouble(),
       categoryNames: (json['categoryNames'] as List<dynamic>)
           .map((item) => item.toString())
