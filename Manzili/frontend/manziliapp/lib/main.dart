@@ -104,7 +104,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: '/login',
-          page: () => const HomeStoreView(),
+          page: () => const StoreOrdersView(),
         ),
         GetPage(
           name: '/register',

@@ -130,12 +130,44 @@ class _OrdersScreenState extends State<StoreOrdersView>
       itemBuilder: (context, index) {
         return OrderCard(
           order: orders[index],
-          onAccept: () {
-            // Handle accept action
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('تم قبول الطلب ${orders[index].id}')),
+          onAccept: () async {
+            final orderId = orders[index].id;
+            final url = Uri.parse('http://man.runasp.net/api/Orders/UpdateOrderStatus?orderId=$orderId&status=2');
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (ctx) => const Center(child: CircularProgressIndicator()),
             );
+            try {
+              final response = await http.put(url);
+              Navigator.of(context).pop(); // remove loading dialog
+              if (response.statusCode == 200) {
+                final body = response.body;
+                if (body.contains('"isSuccess": true')) {
+                  setState(() {
+                    orders.removeAt(index);
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('تم تغيير حالة الطلب $orderId')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('فشل في تغيير حالة الطلب')),
+                  );
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('فشل في تغيير حالة الطلب')),
+                );
+              }
+            } catch (e) {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('خطأ: $e')),
+              );
+            }
           },
+          // acceptButtonLabel: 'تغيير حالة الطلب',
           onCancel: () async {
             final confirm = await showDialog<bool>(
               context: context,

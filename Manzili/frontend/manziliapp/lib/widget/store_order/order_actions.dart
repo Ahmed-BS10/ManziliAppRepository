@@ -65,7 +65,23 @@ class NewOrderActions implements IOrderActions {
           ),
         ),
 
-        // Reject Order button
+        // Accept Order button (green)
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: ElevatedButton(
+              onPressed: onAccept,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+              ),
+              child: const Text('تغيير حالة الطلب', style: TextStyle(fontSize: 12)),
+            ),
+          ),
+        ),
+
+        // Reject Order button (red)
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
