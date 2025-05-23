@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:manziliapp/controller/auth_controller.dart';
 import 'package:manziliapp/controller/user_controller.dart';
 import 'package:manziliapp/core/constant/constant.dart';
+import 'package:manziliapp/core/globals/globals.dart';
 import 'package:manziliapp/core/widget/custom_text_bottun.dart';
 import 'package:manziliapp/model/login_model.dart';
+import 'package:manziliapp/view/home_store_view.dart';
 import 'package:manziliapp/view/home_view.dart';
 import 'package:manziliapp/widget/auhentication/custom_password_text.dart';
 import 'package:manziliapp/widget/auhentication/email_text_filed.dart';
@@ -95,7 +97,13 @@ class _LoginViewBodyState extends State<LoginViewBody> {
           final id = authController.apiResponseData['id'] as int;
           final token = authController.apiResponseData['token'] as String;
           await userController.saveUserData(id, token);
-          Get.offAll(() => HomeView());
+
+          if(userType == 'customer') {
+            Get.offAll(() => HomeView());
+          } else {
+            Get.offAll(() => HomeStoreView());
+          }
+         
         } catch (e) {
           print("Error saving user data: $e");
         }
