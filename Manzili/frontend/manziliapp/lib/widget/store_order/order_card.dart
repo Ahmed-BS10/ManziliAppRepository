@@ -60,20 +60,15 @@ class OrderCard extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Expanded(
-                      child: Text(
-                        'زيادة تكسب وبدون أي إضافات وأيضاً...',
+                      child: Text(order.notes.isNotEmpty
+                          ? order.notes
+                          : 'لا توجد ملاحظات',
                         style: const TextStyle(color: Colors.grey),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'المزيد',
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
+                   
                   ],
                 ),
               ],
