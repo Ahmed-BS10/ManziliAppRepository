@@ -669,6 +669,7 @@ namespace Manzili.EF.Implementaion
                 .Where(o => o.StoreId == storeId && o.Status == enOrderStatus.التجهيز)
                 .Select(o => new GetStoreOrders
                 {
+                    StoreName = o.Store.UserName,
                     Id = o.OrderId,
                     CustomerName = o.User != null ? o.User.UserName : "Unknown", // Replace null-propagating operator
                     CustomerPhoneNumber = o.User != null ? o.User.PhoneNumber : "Unknown", // Replace null-propagating operator
@@ -750,5 +751,3 @@ namespace Manzili.EF.Implementaion
 
     }
 }
-
-

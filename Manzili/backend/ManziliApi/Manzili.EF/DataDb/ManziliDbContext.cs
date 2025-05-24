@@ -9,10 +9,10 @@ public class ManziliDbContext : IdentityDbContext<User, Role, int>
     {
     }
 
+    public DbSet<ReturnOrder> ReturnOrders { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Store> Stores { get; set; }
     public DbSet<Product> Products { get; set; }
-
     public DbSet<Image> Images { get; set; }
     public DbSet<ProductCategory> ProductCategories { get; set; }
     public DbSet<StoreCategoryStore> StoreCategoryStores { get; set; }
