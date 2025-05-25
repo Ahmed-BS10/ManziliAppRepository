@@ -2,7 +2,7 @@
     int Id,
     string ImageUrl,
     string UserName,
-    double? Rate ,
+    int? Rate ,
     List<string> CategoryNames,
     string Status
 );

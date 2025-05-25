@@ -65,7 +65,7 @@ namespace Manzili.EF.Implementaion
                   store.Id,
                   store.ImageUrl,
                   store.UserName,
-                  store.Rate ?? 0,
+                  store.Rate.HasValue ? (int)Math.Round(store.Rate.Value) : 0,
                   store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                   store.Status
                   )).ToList();
@@ -88,7 +88,7 @@ namespace Manzili.EF.Implementaion
                 store.Id,
                 store.ImageUrl,
                 store.UserName,
-                store.Rate ?? 0,
+                store.Rate.HasValue ? (int)Math.Round(store.Rate.Value) : 0,
                 store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                 store.Status
             )).ToList();
@@ -108,7 +108,7 @@ namespace Manzili.EF.Implementaion
                   store.Id,
                   store.ImageUrl,
                   store.UserName,
-                  store.Rate,
+                 store.Rate.HasValue ? (int)Math.Round(store.Rate.Value) : 0,
                   [""],
                   store.Status
                   )).ToList();
@@ -134,7 +134,7 @@ namespace Manzili.EF.Implementaion
                   store.Id,
                   store.ImageUrl,
                   store.UserName,
-                  store.Rate ?? 0,
+                  store.Rate.HasValue ? (int)Math.Round(store.Rate.Value) : 0,
                   store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                   store.Status
                   )).ToList();
@@ -154,7 +154,7 @@ namespace Manzili.EF.Implementaion
                   store.Id,
                   store.ImageUrl,
                   store.UserName,
-                  store.Rate ?? 0,
+                  store.Rate.HasValue ? (int)Math.Round(store.Rate.Value) : 0,
                   store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                   store.Status
                   )).ToList();
@@ -177,7 +177,7 @@ namespace Manzili.EF.Implementaion
                  store.Id,
                  store.ImageUrl,
                  store.UserName,
-                 store.Rate,
+                store.Rate.HasValue ? (int)Math.Round(store.Rate.Value) : 0,
                  store.storeCategoryStores.Select(scs => scs.StoreCategory.Name).ToList(),
                  store.Status
                  )).ToList();
@@ -218,7 +218,7 @@ namespace Manzili.EF.Implementaion
             var store = await _dbSet.FindAsync(id);
             if (store == null) return OperationResult<GetStoreDto>.Failure(message: "Store not found");
 
-            return OperationResult<GetStoreDto>.Success(new GetStoreDto(id, store.ImageUrl, store.UserName, store.Rate, [""], store.Status));
+            return OperationResult<GetStoreDto>.Success(new GetStoreDto(id, store.ImageUrl, store.UserName, store.Rate.HasValue ? (int)Math.Round(store.Rate.Value) : 0, [""], store.Status));
         }
 
         public async Task<OperationResult<StoreBasicInfoDto>> GetProfileStore(int storeId)
@@ -424,7 +424,7 @@ namespace Manzili.EF.Implementaion
                 store.Address,
                 store.PhoneNumber!,
                 store.SocileMediaAcount,
-                store.Rate ?? 0,
+                store.Rate.HasValue ? (int)Math.Round(store.Rate.Value) : 0,
                 store.Status
             );
 
