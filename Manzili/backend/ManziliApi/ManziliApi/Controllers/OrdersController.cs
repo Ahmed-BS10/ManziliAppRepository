@@ -18,6 +18,15 @@ namespace Manzili.API.Controllers
 
 
 
+        [HttpGet("GetOrderDetails2")]
+        public async Task<IActionResult> GetOrderDetailsAsync2(int orderId)
+        {
+            var result = await _orderService.GetOrderDetailsAsync2(orderId);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
 
 
         [HttpGet("GetDeliveredOrdersByUserId")]

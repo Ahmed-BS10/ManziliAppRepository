@@ -205,7 +205,6 @@ namespace Manzili.EF.Implementation
         {
             throw new NotImplementedException();
         }
-
         public async Task<OperationResult<IEnumerable<GteOrdersDashbordDto>>> GetAllOrderDashbordAsync(int pageNumber, int size)
         {
             var orders = await _context.Orders
@@ -234,7 +233,6 @@ namespace Manzili.EF.Implementation
 
 
         }
-
         public OperationResult<bool> DeleteOrder(int orderId)
         {
            var order = _context.Orders.Find(orderId);
@@ -244,5 +242,47 @@ namespace Manzili.EF.Implementation
             _context.SaveChanges();
             return OperationResult<bool>.Success(true);
         }
+
+
+
+
+
+
+
+
+        public async Task<OperationResult<IEnumerable<GetOrderDetailsDto2>>> GetOrderDetailsAsync2(int orderId)
+        {
+            // Fetch orders with related data
+            var orders = await _context.Orders
+                .Include(o => o.Store)
+                .ThenInclude(s => s.Products)
+                .ThenInclude(p => p.Images)
+                .Where(o => o.OrderId == orderId)
+                .Select(o => new GetOrderDetailsDto2
+                {
+                    Id = o.OrderId,
+                    CreatedAt = o.CreatedAt,
+                    TotlaPrice = o.Total,
+                    DeliveryFees = o.DeliveryFees,
+                    ordeProducts = o.OrderProducts.Select(op => new GetOrdeProduct
+                    {
+                        Id = op.ProductId,
+                        Name = op.Product.Name,
+                        ImageUrl = op.Product.Images.Select(img => img.ImageUrl).FirstOrDefault(),
+                        Total = op.Price * op.Quantity,
+                        Count = op.Quantity
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            // Check if no orders were found
+            if (orders == null || !orders.Any())
+            {
+                return OperationResult<IEnumerable<GetOrderDetailsDto2>>.Failure("There are no orders.");
+            }
+
+            return OperationResult<IEnumerable<GetOrderDetailsDto2>>.Success(orders);
+        }
+
     }
 }
