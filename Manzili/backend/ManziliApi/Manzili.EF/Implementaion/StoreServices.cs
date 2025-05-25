@@ -6,6 +6,7 @@ using Manzili.Core.Extension;
 using Manzili.Core.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Manzili.EF.Implementaion
 {
@@ -160,12 +161,17 @@ namespace Manzili.EF.Implementaion
 
             return OperationResult<IEnumerable<GetStoreDto>>.Success(storeDtos);
         }
-        public async Task<OperationResult<IEnumerable<GetStoreDto>>> SearchStoreByNameAsync(string BusinessName)
+        public async Task<OperationResult<IEnumerable<GetStoreDto>>> SearchStoreByNameAsync(string userName)
         {
-            var stores = await _dbSet.Where(x => x.UserName.Contains(BusinessName)).ToListAsync();
+            var stores = await _db.Stores
+                .Include(sci => sci.storeCategoryStores)
+                .ThenInclude(sc => sc.StoreCategory)
+                 .Where(x =>  Microsoft.EntityFrameworkCore.EF.Functions.Like(x.UserName, $"%{userName}%")).ToListAsync();
+
+
+
             if (!stores.Any())
                 return OperationResult<IEnumerable<GetStoreDto>>.Failure("No stores found.");
-
 
             var storeDtos = stores.Select(store => new GetStoreDto(
                  store.Id,

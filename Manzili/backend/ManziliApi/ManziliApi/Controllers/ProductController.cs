@@ -35,6 +35,17 @@ namespace ManziliApi.Controllers
                 return Ok(result);
 
             return BadRequest(result);
+        } 
+        
+        
+        [HttpGet("SerchByProductName")]
+        public async Task<IActionResult> SerchByProductName(string name ,int storeId)
+        {
+            var result = await _productservices.SerchByProductName(name , storeId);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
         }
 
         [HttpGet(ProductRouting.GetAll)]

@@ -6,6 +6,7 @@ namespace Manzili.Core.Services
     public interface IProductServices
     {
 
+        Task<OperationResult<List<GetAllProduct>>> SerchByProductName(string name, int storeId);
         Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId);
         Task<OperationResult<IEnumerable<GetAllProduct>>> SearchProductByNameInStore(int storeId , string name);
         Task<OperationResult<List<GetAllProduct>>> GetStoreProductsAsync(int storeId, int productGategoryId);
