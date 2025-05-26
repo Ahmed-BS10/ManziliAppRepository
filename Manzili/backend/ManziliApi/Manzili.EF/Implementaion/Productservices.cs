@@ -240,17 +240,16 @@ namespace Manzili.Core.Services
             if (productDto.ProductCategoryId <= 0)
             {
                 return OperationResult<string>.Failure("Product category must be chosen.");
-
             }
 
-
-            if (productDto.formImages != null)
+            if (productDto.formImages != null && productDto.formImages.Any())
             {
+                var imageList = new List<Image>();
+
                 foreach (var imageFrom in productDto.formImages)
                 {
                     if (!ImageValidator.IsValidImage(imageFrom, out string errorMessage))
                         return OperationResult<string>.Failure(message: errorMessage);
-
 
                     try
                     {
@@ -258,47 +257,32 @@ namespace Manzili.Core.Services
                         if (imagePath == "FailedToUploadImage")
                             return OperationResult<string>.Failure("Failed to upload image");
 
-
-                        var product1 = new Product
+                        imageList.Add(new Image
                         {
-                            Name = productDto.Name,
-                            Description = productDto.Description,
-                            Price = productDto.Price,
-                            Quantity = productDto.Quantity,
-                          
-
-                            ProductCategoryId = productDto.ProductCategoryId,
-                            StoreId = storeId,
-
-                            Images = new List<Image>
-                            {
-                                new Image
-                                {
-                                    ImageUrl = imagePath
-                                }
-                            }
-
-                        };
-
-
-                        await _dbSet.AddAsync(product1);
-                        await _db.SaveChangesAsync();
-                        return OperationResult<string>.Success("Add Successed");
+                            ImageUrl = imagePath
+                        });
                     }
-
                     catch (Exception ex)
                     {
                         return OperationResult<string>.Failure(message: ex.Message);
                     }
-
-
-
-
                 }
 
+                var product1 = new Product
+                {
+                    Name = productDto.Name,
+                    Description = productDto.Description,
+                    Price = productDto.Price,
+                    Quantity = productDto.Quantity,
+                    ProductCategoryId = productDto.ProductCategoryId,
+                    StoreId = storeId,
+                    Images = imageList
+                };
 
+                await _dbSet.AddAsync(product1);
+                await _db.SaveChangesAsync();
+                return OperationResult<string>.Success("Add Successed");
             }
-
 
             return OperationResult<string>.Failure("Product not added successfully");
         }

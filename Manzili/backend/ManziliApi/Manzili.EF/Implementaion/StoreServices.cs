@@ -309,6 +309,9 @@ namespace Manzili.EF.Implementaion
                     if (!result.Succeeded)
                         return OperationResult<CreateStoreDto>.Failure(string.Join("; ", result.Errors.Select(e => e.Description)));
 
+                    // Add initial store rating after store creation
+                    await AddInitialStoreRatingAsync(store);
+
                     return OperationResult<CreateStoreDto>.Success(data: storeDto);
 
 
@@ -320,6 +323,9 @@ namespace Manzili.EF.Implementaion
                     var result = await _userManager.CreateAsync(store, storeDto.Password);
                     if (!result.Succeeded)
                         return OperationResult<CreateStoreDto>.Failure(string.Join("; ", result.Errors.Select(e => e.Description)));
+
+                    // Add initial store rating after store creation
+                    await AddInitialStoreRatingAsync(store);
 
                     return OperationResult<CreateStoreDto>.Success(data: storeDto);
                 }
@@ -334,6 +340,28 @@ namespace Manzili.EF.Implementaion
             return OperationResult<CreateStoreDto>.Failure("hi");
 
         }
+
+        // Add this private helper method to handle initial store rating
+        private async Task AddInitialStoreRatingAsync(Store store)
+        {
+            // Optionally, set a default user or system user for the initial rating
+            // Here, we use a default value of 5 for demonstration. Adjust as needed.
+            var initialRating = new StoreRating
+            {
+                StoreId = store.Id,
+                UserId = store.Id, // or set to a system/admin user if appropriate
+                RatingValue = 5,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _db.Set<StoreRating>().AddAsync(initialRating);
+
+            // Optionally, update the store's Rate property
+            store.Rate = initialRating.RatingValue;
+
+            await _db.SaveChangesAsync();
+        }
+
         public async Task<OperationResult<UpdateStoreDto>> UpdateAsync(UpdateStoreDto newStore, int storeId)
         {
 

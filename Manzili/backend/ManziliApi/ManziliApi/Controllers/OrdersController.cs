@@ -28,6 +28,17 @@ namespace Manzili.API.Controllers
             return BadRequest(result);
         }
 
+        
+        [HttpGet("IsCanChnageTodeliveredStatus")]
+        public async Task<IActionResult> IsCanChnageTodeliveredStatus(int orderId)
+        {
+            var result = await _orderService.IsCanChnageTodeliveredStatus(orderId);
+            if (result)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
 
         [HttpGet("GetDeliveredOrdersByUserId")]
         public async Task<IActionResult> GetDeliveredOrdersByUserIdAsync(int userId)

@@ -7,7 +7,7 @@ namespace Manzili.Core.Services
     {
         Task<OperationResult<AuthModel>> Login(LoginUserDto userLogin);
         Task<OperationResult<string>> RegisterAsStore(CreateStoreDto storeCreate , List<int> categories);
-        Task<OperationResult<string>> RegisterAsUser(CreateUserDto userCreate);
+        Task<OperationResult<AuthModel>> RegisterAsUser(CreateUserDto userCreate);
     }
 }
 

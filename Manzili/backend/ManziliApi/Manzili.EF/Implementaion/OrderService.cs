@@ -242,14 +242,6 @@ namespace Manzili.EF.Implementation
             _context.SaveChanges();
             return OperationResult<bool>.Success(true);
         }
-
-
-
-
-
-
-
-
         public async Task<OperationResult<IEnumerable<GetOrderDetailsDto2>>> GetOrderDetailsAsync2(int orderId)
         {
             // Fetch orders with related data
@@ -282,6 +274,17 @@ namespace Manzili.EF.Implementation
             }
 
             return OperationResult<IEnumerable<GetOrderDetailsDto2>>.Success(orders);
+        }
+
+
+
+        public async Task<bool> IsCanChnageTodeliveredStatus(int orderId)
+        {
+            var order = await _context.Orders.FindAsync(orderId);
+            if (order == null)
+                return false;
+            // Check if the order status is 'التجهيز' or 'في الطريق'
+            return order.Status == enOrderStatus.في_الطريق;
         }
 
     }

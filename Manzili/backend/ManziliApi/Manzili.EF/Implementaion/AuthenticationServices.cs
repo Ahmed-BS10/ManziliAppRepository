@@ -90,7 +90,7 @@ namespace Manzili.Core.Services
 
 
         }
-        public async Task<OperationResult<string>> RegisterAsUser(CreateUserDto userCreate)
+        public async Task<OperationResult<AuthModel>> RegisterAsUser(CreateUserDto userCreate)
         {
 
             User user = new User
@@ -106,17 +106,29 @@ namespace Manzili.Core.Services
 
             var result = await _userServices.CreateAsync(userCreate);
             if (result.IsSuccess)
-                return OperationResult<string>.Success(await GenerateJwtToken(user));
+            {
+                var authModel = new AuthModel
+                {
+                    id = user.Id,
+                    token = await GenerateJwtToken(user)
+                };
+
+
+                return OperationResult<AuthModel>.Success(authModel);
+
+            }
 
 
 
-            return OperationResult<string>.Failure(result.Message);
+            return OperationResult<AuthModel>.Failure(result.Message);
 
 
         }
         public async Task<OperationResult<string>> RegisterAsStore(CreateStoreDto storeCreate , List<int> categories)
         {
 
+
+           
 
             var user = new Store
             {
@@ -130,7 +142,12 @@ namespace Manzili.Core.Services
 
             var result = await _storeServices.CreateAsync(storeCreate , categories);
             if (result.IsSuccess)
+            {
+                
+
                 return OperationResult<string>.Success(await GenerateJwtToken(user));
+
+            }
 
 
             return OperationResult<string>.Failure(result.Message);

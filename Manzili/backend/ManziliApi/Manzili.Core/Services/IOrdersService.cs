@@ -4,7 +4,7 @@ using Manzili.Core.Enum;
 
 public interface IOrdersService
 {
-    
+
 
     Task<OperationResult<IEnumerable<GetOrderDetailsDto>>> GetOrderDetailsAsync(int orderId);
     Task<OperationResult<IEnumerable<GteBaseOrderDto>>> GetDeliveredOrdersByUserIdAsync(int userId);
@@ -16,6 +16,7 @@ public interface IOrdersService
     Task<OperationResult<IEnumerable<GteOrdersDashbordDto>>> GetAllOrderDashbordAsync(int pageNumber, int size);
     OperationResult<bool> DeleteOrder(int orderId);
     Task<OperationResult<IEnumerable<GetOrderDetailsDto2>>> GetOrderDetailsAsync2(int orderId);
+    Task<bool> IsCanChnageTodeliveredStatus(int orderId);
 
 }
 
