@@ -25,6 +25,7 @@ namespace Manzili.Core.Dto.StoreDtp
 
 
         public string BookTime { get; set; }
+        public int DeliveryFees { get; set; }
 
         public string Password { get; set; }
 

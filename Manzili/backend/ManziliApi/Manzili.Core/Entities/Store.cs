@@ -7,18 +7,11 @@ namespace Manzili.Core.Entities
         public string Description { get; set; }
         public string BankAccount { get; set; }
         public string BookTime { get; set; }
-
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
-
-
         public int DeliveryFees { get; set; }
-
-
-
         public string? SocileMediaAcount { get; set; }
         public double ? Rate {  get; set; }
-
         public string Status { get; set; }
 
 

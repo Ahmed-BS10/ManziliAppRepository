@@ -275,7 +275,8 @@ namespace Manzili.EF.Implementaion
                 BankAccount = storeDto.BankAccount,
                 PhoneNumber = storeDto.PhoneNumber,
                 SocileMediaAcount = storeDto.SocileMediaAcount,
-                BookTime = "حجز قبل يومين قبل الطلب"
+                BookTime = storeDto.BookTime,
+                DeliveryFees = storeDto.DeliveryFees
 
             };
 
