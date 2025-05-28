@@ -143,7 +143,9 @@ namespace Manzili.EF.Implementaion
         }
         public async Task<OperationResult<IEnumerable<GetStoreDto>>> GetListToPageinationAsync(int page, int pageSize)
         {
-            var stores = _dbSet.ToPageination(page, pageSize);
+            var stores = _dbSet
+                .Where(x => x.IsBlocked == false)
+                .ToPageination(page, pageSize);
 
             if (!stores.Any())
             {
